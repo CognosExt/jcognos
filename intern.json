@@ -1,0 +1,31 @@
+{
+  "description": "Run tests on Node, excluding the benchmark tests",
+  "suites": [
+    "tests/unit/Basic.js"
+  ],
+  "coverage": ["src/unit/**/*.js"],
+  "environments": ["node"],
+
+  "node": {
+       "plugins": "node_modules/babel-register/lib/node.js"
+   },
+   "browser": {
+        "loader": {
+            "script": "systemjs",
+            "options": {
+                "map": {
+                    "plugin-babel": "node_modules/systemjs-plugin-babel/plugin-babel.js",
+                    "systemjs-babel-build": "node_modules/systemjs-plugin-babel/systemjs-babel-browser.js"
+                },
+                "transpiler": "plugin-babel"
+            }
+        }
+    },
+   "instrumenterOptions": {
+       "esModules": true
+   },
+   "reporters": {
+   "name": "runner",
+   "options": { "hideSkipped": true, "hidePassed": true }
+}
+}

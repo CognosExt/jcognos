@@ -1,0 +1,61 @@
+{
+  "name": "jcognos",
+  "version": "0.0.1",
+  "description": "Javascript Library that simplifies working with IBM Cognos",
+  "main": "index.js",
+  "scripts": {
+    "build": "cp .babelrc_rollup .babelrc && rollup -c",
+    "precommit": "documentation readme tasks/cognos-ext-upload.js  --section Usage; git add README.md ; lint-staged",
+    "release": "standard-version",
+    "test": "cp .babelrc_test .babelrc && node_modules/mocha/bin/mocha --require babel-register"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write --single-quote",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CognosExt/grunt-cognos-ext-upload.git"
+  },
+  "keywords": [
+    "Cognos"
+  ],
+  "author": "Reinier Battenberg",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/CognosExt/jcognos/issues"
+  },
+  "homepage": "https://github.com/CognosExt/jcognos#readme",
+  "devDependencies": {
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015-rollup": "^3.0.0",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "cz-conventional-changelog": "^2.0.0",
+    "documentation": "^5.3.3",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.3.0",
+    "mocha": "^4.0.1",
+    "prettier": "^1.7.4",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-json": "^2.3.0",
+    "standard-version": "^4.2.0",
+    "uuid": "^3.1.0"
+  },
+  "dependencies": {
+    "fs-utils": "^0.7.0",
+    "minimatch": "^3.0.4",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "request-promise-native": "^1.0.5"
+  }
+}
