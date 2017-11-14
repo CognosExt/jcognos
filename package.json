@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cp .babelrc_rollup .babelrc && rollup -c",
-    "precommit": "documentation readme tasks/cognos-ext-upload.js  --section Usage; git add README.md ; lint-staged",
+    "precommit": "documentation readme src/Cognos.js --shallow  --section Usage; git add README.md ; lint-staged",
     "release": "standard-version",
     "test": "cp .babelrc_test .babelrc && node_modules/mocha/bin/mocha --require babel-register"
   },
