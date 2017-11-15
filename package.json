@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "cp .babelrc_rollup .babelrc && rollup -c",
-    "precommit": "documentation readme src/Cognos.js --shallow  --section Usage; git add README.md ; lint-staged",
+    "precommit": "documentation readme src/Cognos.js --section Usage ; git add README.md ; lint-staged",
     "release": "standard-version",
     "test": "cp .babelrc_test .babelrc && node_modules/mocha/bin/mocha --require babel-register"
   },
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CognosExt/grunt-cognos-ext-upload.git"
+    "url": "git+https://github.com/CognosExt/jcognos.git"
   },
   "keywords": [
     "Cognos"
@@ -41,7 +41,6 @@
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "cz-conventional-changelog": "^2.0.0",
-    "documentation": "^5.3.3",
     "husky": "^0.14.3",
     "lint-staged": "^4.3.0",
     "mocha": "^4.0.1",
@@ -52,6 +51,7 @@
     "uuid": "^3.1.0"
   },
   "dependencies": {
+    "documentation": "^5.3.3",
     "fs-utils": "^0.7.0",
     "minimatch": "^3.0.4",
     "request": "^2.83.0",
