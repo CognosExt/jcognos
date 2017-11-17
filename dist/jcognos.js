@@ -144,9 +144,6 @@ var createClass = (function() {
 
 var request = require('request-promise');
 
-/**
- * Local Variable that holds the single CognosRequest instance
- */
 var cRequest;
 
 var CognosRequest = (function() {
@@ -202,12 +199,10 @@ var CognosRequest = (function() {
           })
           .then(function(body) {
             me.log('Unexpected success');
-            // This will never happen, the first call to Cognos will always return a 401
           })
           .catch(function(err) {
             me.log('Expected Error in initialise');
 
-            // Find the XSRF Token in the cookie
             var cookies = j.getCookies(me.url + 'bi');
             cookies.forEach(function(cook) {
               if ((cook.key = 'XSRFToken')) {
@@ -217,7 +212,6 @@ var CognosRequest = (function() {
               }
             });
 
-            // Find the namespace in the body
             JSON.parse(
               err.response.body
             ).promptInfo.displayObjects.forEach(function(item) {
@@ -246,15 +240,11 @@ var CognosRequest = (function() {
               'X-XSRF-TOKEN': me.token,
               'X-Requested-With': 'XMLHttpRequest',
               'Content-Type': 'application/json; charset=UTF-8',
-              Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
+              Cookie: 'XSRF-TOKEN=' + me.token
             },
             jar: me.cookies
           })
           .then(function(response) {
-            // Ok, Cognos might return som invalid json.
-            // First up, it might return "hallo =\'give me a beer\']"
-            // To get things working (I dont need this personally),
-            // I will replace =\' with =' and \'] with ']
             response = response.replace(/=\\'/g, "='");
             response = response.replace(/\\']/g, "']");
 
@@ -275,7 +265,7 @@ var CognosRequest = (function() {
         var me = this;
         var paramsJSON = JSON.stringify(params);
         var result = {};
-        // Post the request
+
         me.log('params: ' + paramsJSON);
         var result = request
           .post({
@@ -285,17 +275,14 @@ var CognosRequest = (function() {
               'X-XSRF-TOKEN': me.token,
               'X-Requested-With': 'XMLHttpRequest',
               'Content-Type': 'application/json; charset=UTF-8',
-              Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
+              Cookie: 'XSRF-TOKEN=' + me.token
             },
             jar: me.cookies,
             resolveWithFullResponse: fullResponse
           })
           .then(function(response) {
             me.log('CognosRequest : Success Posting');
-            // Ok, Cognos might return som invalid json.
-            // First up, it might return "hallo =\'give me a beer\']"
-            // To get things working (I dont need this personally),
-            // I will replace =\' with =' and \'] with ']
+
             if (fullResponse) {
               result = response;
             } else {
@@ -312,7 +299,6 @@ var CognosRequest = (function() {
           })
           .catch(function(err) {
             me.log('CognosRequest : Error in post', err);
-            //me.error(err);
           });
         return result;
       }
@@ -323,7 +309,7 @@ var CognosRequest = (function() {
         var me = this;
         var paramsJSON = JSON.stringify(params);
         var result = {};
-        // Post the request
+
         me.log('params: ' + paramsJSON);
         var result = request
           .delete({
@@ -333,17 +319,14 @@ var CognosRequest = (function() {
               'X-XSRF-TOKEN': me.token,
               'X-Requested-With': 'XMLHttpRequest',
               'Content-Type': 'application/json; charset=UTF-8',
-              Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
+              Cookie: 'XSRF-TOKEN=' + me.token
             },
             jar: me.cookies,
             resolveWithFullResponse: fullResponse
           })
           .then(function(response) {
             me.log('CognosRequest : Success Deleting');
-            // Ok, Cognos might return som invalid json.
-            // First up, it might return "hallo =\'give me a beer\']"
-            // To get things working (I dont need this personally),
-            // I will replace =\' with =' and \'] with ']
+
             if (fullResponse) {
               result = response;
             } else {
@@ -360,7 +343,6 @@ var CognosRequest = (function() {
           })
           .catch(function(err) {
             me.log('CognosRequest : Error in post', err);
-            //me.error(err);
           });
         return result;
       }
@@ -376,16 +358,13 @@ var CognosRequest = (function() {
             headers: {
               'X-XSRF-TOKEN': me.token,
               'X-Requested-With': 'XMLHttpRequest',
-              Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
+              Cookie: 'XSRF-TOKEN=' + me.token
             },
             jar: me.cookies
           })
           .then(function(response) {
             me.log('CognosRequest : Success Putting ');
-            // Ok, Cognos might return som invalid json.
-            // First up, it might return "hallo =\'give me a beer\']"
-            // To get things working (I dont need this personally),
-            // I will replace =\' with =' and \'] with ']
+
             response = response.replace(/=\\'/g, "='");
             response = response.replace(/\\']/g, "']");
             var result = JSON.parse(response);
@@ -415,31 +394,12 @@ function getCognosRequest(url, debug) {
 
 var minimatch = require('minimatch');
 
-//Local static variable that holds Cognos instance
 var jCognos;
 
-/**
- * Class that helps you connect with your inner Cognos. You can not create this class directly, use {@link getCognos} to
- * retrieve the Cognos instance.
- * @class
- */
-
 var Cognos = (function() {
-  /**
-   * constructor - Called when creating a new Cognos.
-   *
-   * @return {Cognos}     New Cognos object
-   * @constructs
-   * @private
-   */
   function Cognos(debug) {
     classCallCheck(this, Cognos);
 
-    /**
-     * Check to see of user is loggedin or not
-     * @type {Boolean}
-     * @memberof Cognos
-     */
     this.loggedin = false;
     this.debug = debug;
   }
@@ -468,20 +428,12 @@ var Cognos = (function() {
           }
         }
       }
-      /**
-     * login - Logs into Cognos.
-     *
-     * @param  {String} user     Cognos username
-     * @param  {String} password Password
-     * @return {Promise}          returns a promise.
-     */
     },
     {
       key: 'login',
       value: function login(user, password) {
         var me = this;
 
-        // Set the parameters of the login POST request
         var params = {
           parameters: [
             {
@@ -519,19 +471,13 @@ var Cognos = (function() {
     {
       key: 'listfolderbyname',
       value: function listfolderbyname(name) {}
-
-      /**
-     * listRootFolder - Returns the Public Folders and the My Content
-     *
-     * @return {Array.CognosObject}  Array of CognosObjects
-     */
     },
     {
       key: 'listRootFolder',
       value: function listRootFolder() {
         var me = this;
         var rootfolders = [];
-        // Cognos 11
+
         var result = me.requester
           .get('bi/v1/objects/.my_folders?fields=permissions')
           .then(function(folders) {
@@ -558,12 +504,9 @@ var Cognos = (function() {
       key: 'listPublicFolders',
       value: function listPublicFolders() {
         var me = this;
-        // Cognos 11
+
         var result = me.requester
           .get('bi/v1/objects/.public_folders?fields=permissions')
-          // Cognos 10 & 11 (but might be depricated)
-          // the dojo= is added to make the result json. the alternative is xml.
-          //var result = me.requester.get('bi/v1/disp/icd/feeds/cm/?dojo=')
           .then(function(folders) {
             return me.listFolderById(folders.data[0].id);
           });
@@ -575,26 +518,12 @@ var Cognos = (function() {
       value: function listPublicFolders10() {
         var me = this;
 
-        // the dojo= is added to make the result json. the alternative is xml.
         var result = me.requester
           .get('bi/v1/disp/icd/feeds/cm/?dojo=')
-          .then(function(folders) {
-            // TODO build this
-            //        me.log(folders.data);
-            //return me.listFolderById(folders.data[0].id);
-          });
-        //  });
+          .then(function(folders) {});
+
         return result;
       }
-
-      /**
-     * listFolderById - Lists the folder content by id
-     *
-     * @param  {String} id            Cognos Object id of the folder
-     * @param  {String} pattern = '*' Pattern like you would use when listing folders in your filesystem. eg. 'Sales*'
-     * @return {Array.Object.id}  Id of the folder
-     * @return {Array.Object.name}  name of the folder
-     */
     },
     {
       key: 'listFolderById',
@@ -612,10 +541,8 @@ var Cognos = (function() {
               '/items?nav_filter=true&fields=defaultName,defaultScreenTip'
           )
           .then(function(folders) {
-            //me.log(folders);
             var result = [];
             folders.data.forEach(function(folder) {
-              // options is optional
               if (minimatch(folder.defaultName, pattern)) {
                 me.log('folder ', folder.defaultName);
 
@@ -630,14 +557,6 @@ var Cognos = (function() {
           });
         return result;
       }
-
-      /**
-     * addFolder - Creates a new folder
-     *
-     * @param  {String} parentid Id of the parent folder of the new folder.
-     * @param  {String} name     The name of the new folder
-     * @return {CognosObject}  The newly created folder
-     */
     },
     {
       key: 'addFolder',
@@ -664,15 +583,6 @@ var Cognos = (function() {
           });
         return result;
       }
-
-      /**
-     * deleteFolder - Deletes a folder, its content and subfolders
-     *
-     * @param  {String} id               Id of the folder to be deleted
-     * @param  {type} force = true     Not sure, actually
-     * @param  {type} recursive = true Will probably fail if folder contains children and set to false
-     * @return {Boolean}                  Returns true upon success
-     */
     },
     {
       key: 'deleteFolder',
@@ -704,14 +614,6 @@ var Cognos = (function() {
           });
         return result;
       }
-
-      /**
-     * uploadExtension - Uploads zipfile containing Cognos Extension to
-     *
-     * @param  {String} path Path to the .zip file
-     * @param  {String} name name of the module (as found in the spec.json)
-     * @return {Object}      Whatever JSON Cognos returns
-     */
     },
     {
       key: 'uploadExtension',
@@ -730,13 +632,6 @@ var Cognos = (function() {
   return Cognos;
 })();
 
-/**
- * getCognos - Static function to get the Cognos Object. You can have only 1 Cognos object in your application
- * at any time.
- *
- * @param  {String} url The URL of your Cognos installation
- * @return {Cognos}     The Cognos object
- */
 function getCognos(url) {
   var debug =
     arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;

@@ -2,12 +2,12 @@
   "name": "jcognos",
   "version": "0.1.1",
   "description": "Javascript Library that simplifies working with IBM Cognos",
-  "main": "index.js",
+  "main": "dist/jcognos",
   "scripts": {
-    "build": "cp .babelrc_rollup .babelrc && rollup -c",
+    "build": "cross-env NODE_ENV=rollup rollup -c",
     "precommit": "documentation readme src/Cognos.js --section Usage ; git add README.md ; lint-staged",
     "release": "standard-version",
-    "test": "cp .babelrc_test .babelrc && node_modules/mocha/bin/mocha --require babel-register"
+    "test": "cross-env NODE_ENV=test node_modules/mocha/bin/mocha --require babel-register"
   },
   "config": {
     "commitizen": {
@@ -36,11 +36,11 @@
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
-    "babel-preset-es2015-rollup": "^3.0.0",
-    "babel-preset-es2017": "^6.24.1",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
+    "cross-env": "^5.1.1",
     "cz-conventional-changelog": "^2.0.0",
+    "documentation": "^5.3.3",
     "husky": "^0.14.3",
     "lint-staged": "^4.3.0",
     "mocha": "^4.0.1",
@@ -51,7 +51,6 @@
     "uuid": "^3.1.0"
   },
   "dependencies": {
-    "documentation": "^5.3.3",
     "fs-utils": "^0.7.0",
     "minimatch": "^3.0.4",
     "request": "^2.83.0",

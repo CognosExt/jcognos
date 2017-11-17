@@ -1,13 +1,28 @@
 {
-  "presets": [
-    [
-      "env",
-      {
-        "modules": false
-      }
-    ]
-  ],
-  "plugins": [
-    "external-helpers"
-  ]
+  "env": {
+    "rollup": {
+      "presets": [
+        [
+          "env", {
+            "modules": false,
+            "plugins": [
+              "external-helpers"
+            ]
+          }
+        ]
+      ],
+      "comments": false
+    },
+    "test": {
+      "presets": [
+        [
+          "env", {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  }
 }
