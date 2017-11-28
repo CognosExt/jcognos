@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests</title>
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  <style>
+     #fixture {
+      position: absolute;
+      top: -9999;
+      left: -9999;
+     };
+  </style>
+
+  <script src="../dist/jcognos.js"></script>
+
+  <script src="//wzrd.in/standalone/uuid%2Fv4@latest"></script>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script> mocha.setup('bdd');</script>
+  <script src="basic.js"></script>
+  <script>
+  var url = '';
+  var debug = false;
+    window.onload = function() {
+
+      xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = handleStateChange;
+      xhr.open("GET", 'Settings.json', true);
+      xhr.send();
+      function handleStateChange() {
+        if (xhr.readyState === 4) {
+          if (xhr.status = 200) {
+            var settings = JSON.parse(xhr.responseText);
+            url = settings.url;
+            debug = settings.debug;
+            mocha.run()
+          }
+        }
+      }
+    };
+  </script>
+ </head>
+<body>
+  <div id="mocha"></div>
+</body>
+</html>

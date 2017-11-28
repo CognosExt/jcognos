@@ -1,12 +1,17 @@
-import { assert } from 'chai';
+if (typeof window == 'undefined') {
+  var chai = require('chai');
+  var settings = require('./Settings.json');
+  var uuidv4 = require('uuid/v4');
 
-import { getCognos } from '../src/Cognos';
+  var jcognos = require('../dist/jcognos.esm');
+  var url = settings.url;
+  var debug = settings.debug;
+}
+var getCognos = jcognos.getCognos;
 
-import { url } from './Settings.json';
+var assert = chai.assert;
 
-import { debug } from './Settings.json';
-
-const uuid = require('uuid/v4');
+//var getCognos;
 var cognos;
 describe('Cognos Object', function() {
   beforeEach(function() {
@@ -20,8 +25,16 @@ describe('Cognos Object', function() {
       })
       .then(function(mycognos) {
         assert.isOk(true, 'Succesfully logged in');
+      })
+      .catch(function(err) {
+        assert.fail(true, true, 'Can not login');
       });
     return result;
+  });
+  afterEach(function() {
+    return cognos.logoff().then(function(folder) {
+      assert.equal(cognos.loggedin, false, 'Logged off');
+    });
   });
   it('Should be able to fetch root folders', done => {
     cognos
@@ -34,16 +47,16 @@ describe('Cognos Object', function() {
   }),
     it('Should be able to create folders and delete them', done => {
       cognos.listRootFolder().then(function(folders) {
-        var foldername = uuid();
-        cognos
-          .addFolder(folders[0].id, foldername)
-          .then(function(folder) {
-            assert.equal(foldername, folder.name, 'New Folder Exists');
-            cognos.deleteFolder(folder.id).then(function(folder) {
+        var foldername = uuidv4();
+        cognos.addFolder(folders[0].id, foldername).then(function(folder) {
+          assert.equal(foldername, folder.name, 'New Folder Exists');
+          cognos
+            .deleteFolder(folder.id)
+            .then(function(folder) {
               assert.equal(folder, true, 'New Folder Deleted');
-            });
-          })
-          .then(done, done);
+            })
+            .then(done, done);
+        });
       });
     });
   it('Should give meaningful errors when logging in');

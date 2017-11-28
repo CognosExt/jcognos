@@ -3,11 +3,15 @@
   "version": "0.1.2",
   "description": "Javascript Library that simplifies working with IBM Cognos",
   "main": "dist/jcognos",
+  "module": "dist/jcognos.esm.js",
   "scripts": {
-    "build": "cross-env NODE_ENV=rollup rollup -c",
-    "precommit": "documentation readme src/Cognos.js --section Usage ; git add README.md ; lint-staged",
+    "build": "npm run buildbrowser && npm run buildnode",
+    "buildbrowser": "cross-env NODE_ENV=rollup rollup -c rollup.config.js",
+    "buildnode": "cross-env NODE_ENV=rollup rollup -c rollup.config.node.js",
+    "precommit": "node_modules/.bin/documentation readme src/Cognos.js --section Usage ; git add README.md ; node_modules/.bin/lint-staged",
     "release": "standard-version",
-    "test": "cross-env NODE_ENV=test node_modules/mocha/bin/mocha --require babel-register"
+    "test": "cross-env NODE_ENV=test node_modules/mocha/bin/mocha --require babel-register",
+    "testing": "cross-env NODE_ENV=test node_modules/.bin/wdio"
   },
   "config": {
     "commitizen": {
@@ -16,7 +20,7 @@
   },
   "lint-staged": {
     "*.js": [
-      "prettier --write --single-quote",
+      "node_modules/.bin/prettier --write --single-quote",
       "git add"
     ]
   },
@@ -44,17 +48,28 @@
     "husky": "^0.14.3",
     "lint-staged": "^4.3.0",
     "mocha": "^4.0.1",
-    "prettier": "^1.7.4",
+    "prettier": "^1.8.2",
+    "rollup": "^0.51.8",
     "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-filesize": "^1.5.0",
+    "rollup-plugin-inject": "^2.0.0",
     "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-sourcemaps": "^0.4.2",
     "standard-version": "^4.2.0",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "wdio-mocha-framework": "^0.5.11",
+    "wdio-phantomjs-service": "^0.2.2",
+    "wdio-spec-reporter": "^0.1.2",
+    "webdriverio": "^4.9.9"
   },
   "dependencies": {
+    "axios": "^0.17.1",
+    "axios-cookiejar-support": "^0.1.4",
     "fs-utils": "^0.7.0",
-    "minimatch": "^3.0.4",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2",
-    "request-promise-native": "^1.0.5"
+    "minimatch": "^3.0.4"
   }
 }

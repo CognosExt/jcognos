@@ -1,6 +1,7 @@
 import { getCognosRequest } from './CognosRequest';
+import { Utils } from './Utils';
 
-var minimatch = require('minimatch');
+import minimatch from 'minimatch';
 
 //Local static variable that holds Cognos instance
 var jCognos;
@@ -48,12 +49,12 @@ class Cognos {
     }
   }
   /**
-     * login - Logs into Cognos.
-     *
-     * @param  {String} user     Cognos username
-     * @param  {String} password Password
-     * @return {Promise}          returns a promise.
-     */
+   * login - Logs into Cognos.
+   *
+   * @param  {String} user     Cognos username
+   * @param  {String} password Password
+   * @return {Promise}          returns a promise.
+   */
   login(user, password) {
     var me = this;
 
@@ -83,11 +84,31 @@ class Cognos {
       .post('bi/v1/login', params)
       .then(function(body) {
         me.loggedin = true;
+        me.log('Successfully logged in');
         return body;
       })
       .catch(function(err) {
         me.log('Cognos: Error when logging in.');
-        me.log(err);
+      });
+    return result;
+  }
+
+  /**
+   * logoff - Logs off from Cognos.
+   * @return {Promise}          returns a promise.
+   */
+  logoff() {
+    var me = this;
+
+    var result = me.requester
+      .delete('bi/v1/login')
+      .then(function(body) {
+        me.loggedin = false;
+        me.log('Successfully logged off');
+        return body;
+      })
+      .catch(function(err) {
+        me.log('Cognos: Error when logging off.');
       });
     return result;
   }
@@ -106,6 +127,8 @@ class Cognos {
     var result = me.requester
       .get('bi/v1/objects/.my_folders?fields=permissions')
       .then(function(folders) {
+        me.log('Got the Private Folders');
+
         rootfolders.push({
           id: folders.data[0].id,
           name: 'My Content'
@@ -115,6 +138,7 @@ class Cognos {
         return me.requester
           .get('bi/v1/objects/.public_folders?fields=permissions')
           .then(function(folders) {
+            me.log('Got the Public Folders');
             rootfolders.push({
               id: folders.data[0].id,
               name: 'Team Content'
@@ -207,7 +231,11 @@ class Cognos {
       .post('bi/v1/objects/' + parentid + '/items', params, true)
       .then(function(response) {
         me.log('created folder');
-        var id = response.headers.location.split('/').pop();
+        if (Utils.isStandardBrowserEnv()) {
+          var id = response.headers.location.split('/').pop();
+        } else {
+          var id = response.data.data[0].id;
+        }
         return {
           name: name,
           id: id
@@ -217,6 +245,7 @@ class Cognos {
         me.log('Cognos: Error creating folder.');
         me.log(err);
       });
+    me.log('Maybe going to create folder');
     return result;
   }
 
@@ -249,7 +278,8 @@ class Cognos {
   }
 
   /**
-   * uploadExtension - Uploads zipfile containing Cognos Extension to
+   * uploadExtension - Uploads zipfile containing Cognos Extension. Only supports updating an existing module.
+   * This function is only supported by Node.js. In the browser this function returns false;
    *
    * @param  {String} path Path to the .zip file
    * @param  {String} name name of the module (as found in the spec.json)
@@ -257,12 +287,14 @@ class Cognos {
    */
   uploadExtension(path, name) {
     var me = this;
+    var result = false;
+    /*    if (!Utils.isStandardBrowserEnv()){
     var fs = require('fs');
-    path =
-      '/var/www/gologic/Cognos11/Buttons/InsightsAllwaysButton/dist/extension.zip';
-    var result = fs
+    result = fs
       .createReadStream(path)
       .pipe(me.requester.put('bi/v1/plugins/extensions/' + name));
+      }
+*/
     return result;
   }
 }
