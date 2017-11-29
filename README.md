@@ -1,6 +1,7 @@
 # jcognos
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/CognosExt/jcognos.svg)](https://greenkeeper.io/)
+[![CircleCI](https://circleci.com/gh/CognosExt/jcognos.svg?style=svg)](https://circleci.com/gh/CognosExt/jcognos)
 
 Library that encapsulates the (undocumented) [IBM Cognos Analytics](https://www.ibm.com/products/cognos-analytics) REST API.
 
