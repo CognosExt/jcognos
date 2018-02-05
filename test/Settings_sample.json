@@ -2,5 +2,7 @@
   "_comment":
     "Copy this file to Settings.json and adapt the settings to run tests",
   "debug": false,
-  "url": "https://localhost/ibmcognos/"
+  "url": "https://localhost/ibmcognos/",
+  "user": "tester",
+  "password": "samplepassword"
 }

@@ -6,6 +6,8 @@ if (typeof window == 'undefined') {
   var jcognos = require('../dist/jcognos.esm');
   var url = settings.url;
   var debug = settings.debug;
+  var user = settings.user;
+  var password = settings.password;
 }
 var getCognos = jcognos.getCognos;
 
@@ -20,7 +22,7 @@ describe('Cognos Object', function() {
         assert.isOk(lcognos, 'Succesfully created Cognos');
         cognos = lcognos;
         if (!cognos.loggedin) {
-          return lcognos.login('tester', 'tester');
+          return lcognos.login(user, password);
         }
       })
       .then(function(mycognos) {
