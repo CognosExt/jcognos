@@ -417,7 +417,7 @@ var Cognos = (function() {
             },
             {
               name: 'h_CAM_action',
-              value: 'LogonAs'
+              value: 'logonAs'
             },
             {
               name: 'CAMUsername',

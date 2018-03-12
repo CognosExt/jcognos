@@ -2,6 +2,8 @@ import axios from 'axios';
 import { Utils } from './Utils';
 
 import axiosCookieJarSupport from 'axios-cookiejar-support';
+
+// I dont think we should need this by now
 import tough from 'tough-cookie';
 
 /**
@@ -88,6 +90,7 @@ class CognosRequest {
 
     var result = axios
       .get(me.url + 'bi/v1/login', {
+        //TODO CookieJar is not set. Fix that.
         jar: cookieJar,
         withCredentials: false, // If true, send cookie stored in jar
         headers: firstheaders
