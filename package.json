@@ -1,6 +1,6 @@
 {
   "name": "jcognos",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Javascript Library that simplifies working with IBM Cognos",
   "main": "dist/jcognos",
   "module": "dist/jcognos.esm.js",
