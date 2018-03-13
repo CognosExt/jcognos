@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/CognosExt/jcognos/compare/v0.1.4...v1.0.0) (2018-03-13)
+
+
+### Features
+
+* Added GetReportData function ([2786922](https://github.com/CognosExt/jcognos/commit/2786922))
+
+
+### BREAKING CHANGES
+
+* The main API changed (the way the jcognos object is exported.
+
+
+
 <a name="0.1.4"></a>
 ## [0.1.4](https://github.com/CognosExt/jcognos/compare/v0.1.3...v0.1.4) (2018-03-12)
 
