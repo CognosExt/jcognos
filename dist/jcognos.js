@@ -27955,14 +27955,18 @@ exports.inflateUndermine = inflateUndermine;
               }
 
               try {
-                err.response.data.promptInfo.displayObjects.forEach(function(
-                  item
-                ) {
-                  if (item.name == 'CAMNamespace') {
-                    me.namespace = item.value;
-                    me.log('Namespace: ' + me.namespace);
-                  }
-                });
+                if (typeof err.response !== 'undefined') {
+                  err.response.data.promptInfo.displayObjects.forEach(function(
+                    item
+                  ) {
+                    if (item.name == 'CAMNamespace') {
+                      me.namespace = item.value;
+                      me.log('Namespace: ' + me.namespace);
+                    }
+                  });
+                } else {
+                  throw err.message;
+                }
               } catch (error) {
                 me.error(error);
               }
@@ -28032,8 +28036,21 @@ exports.inflateUndermine = inflateUndermine;
               return response;
             })
             .catch(function(err) {
+              var errormessage = '';
+              if (typeof err.response !== 'undefined') {
+                errormessage = err.response.data.messages[0].messageString;
+              } else {
+                errormessage = err.message;
+              }
+
               me.log('CognosRequest : Error in post', err);
               me.error(err);
+
+              if (
+                errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
+              ) {
+                throw errormessage;
+              }
             });
           return result;
         }
@@ -29660,6 +29677,7 @@ exports.inflateUndermine = inflateUndermine;
             })
             .catch(function(err) {
               me.log('Cognos: Error when logging in.');
+              throw err;
             });
           return result;
         }
@@ -29749,6 +29767,10 @@ exports.inflateUndermine = inflateUndermine;
             arguments.length > 1 && arguments[1] !== undefined
               ? arguments[1]
               : '*';
+          var types =
+            arguments.length > 2 && arguments[2] !== undefined
+              ? arguments[2]
+              : ['folder'];
 
           var me = this;
           var result = me.requester
@@ -29762,12 +29784,15 @@ exports.inflateUndermine = inflateUndermine;
               folders.data.forEach(function(folder) {
                 if (minimatch_1(folder.defaultName, pattern)) {
                   me.log('folder ', folder.defaultName);
-
-                  var tpFolder = {
-                    name: folder.defaultName,
-                    id: folder.id
-                  };
-                  result.push(tpFolder);
+                  if (types.indexOf(folder.type) > -1) {
+                    var tpFolder = {
+                      name: folder.defaultName,
+                      id: folder.id,
+                      searchPath: folder.searchPath,
+                      type: folder.type
+                    };
+                    result.push(tpFolder);
+                  }
                 }
               });
               return result;
@@ -29833,6 +29858,24 @@ exports.inflateUndermine = inflateUndermine;
             .catch(function(err) {
               me.log('Cognos: Error Deleting folder.');
               me.log(err);
+            });
+          return result;
+        }
+      },
+      {
+        key: 'getReportData',
+        value: function getReportData(id) {
+          var me = this;
+
+          var result = me.requester
+            .get(
+              'bi/v1/disp/rds/reportData/report/' +
+                id +
+                '?fmt=DataSetJSON&rowLimit=100'
+            )
+            .then(function(data) {
+              me.log('retrieved the data', data);
+              return data;
             });
           return result;
         }

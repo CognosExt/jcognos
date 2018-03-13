@@ -89,6 +89,7 @@ class Cognos {
       })
       .catch(function(err) {
         me.log('Cognos: Error when logging in.');
+        throw err;
       });
     return result;
   }
@@ -183,9 +184,10 @@ class Cognos {
    *
    * @param  {String} id            Cognos Object id of the folder
    * @param  {String} pattern = '*' Pattern like you would use when listing folders in your filesystem. eg. 'Sales*'
+   * @param {Array} types = '['folder']' Types of Cognos objects to list. defaults to folders only. Other values could be 'report'
    * @return {CognosObject[]}  List of sub-folders
    */
-  listFolderById(id, pattern = '*') {
+  listFolderById(id, pattern = '*', types = ['folder']) {
     var me = this;
     var result = me.requester
       .get(
@@ -200,12 +202,15 @@ class Cognos {
           // options is optional
           if (minimatch(folder.defaultName, pattern)) {
             me.log('folder ', folder.defaultName);
-
-            var tpFolder = {
-              name: folder.defaultName,
-              id: folder.id
-            };
-            result.push(tpFolder);
+            if (types.indexOf(folder.type) > -1) {
+              var tpFolder = {
+                name: folder.defaultName,
+                id: folder.id,
+                searchPath: folder.searchPath,
+                type: folder.type
+              };
+              result.push(tpFolder);
+            }
           }
         });
         return result;
@@ -273,6 +278,24 @@ class Cognos {
       .catch(function(err) {
         me.log('Cognos: Error Deleting folder.');
         me.log(err);
+      });
+    return result;
+  }
+
+  getReportData(id) {
+    var me = this;
+    // Cognos 11
+    // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/atom/cm/id/iD9D1A99B207B40D6AB25DB476C476E33?json=
+    // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/rds/reportData/report/i821EB6721EDB41A29E0361BC83393C56?fmt=DataSet&rowLimit=2000
+    var result = me.requester
+      .get(
+        'bi/v1/disp/rds/reportData/report/' +
+          id +
+          '?fmt=DataSetJSON&rowLimit=100'
+      )
+      .then(function(data) {
+        me.log('retrieved the data', data);
+        return data;
       });
     return result;
   }

@@ -140,12 +140,16 @@ class CognosRequest {
 
         // Find the namespace in the body
         try {
-          err.response.data.promptInfo.displayObjects.forEach(function(item) {
-            if (item.name == 'CAMNamespace') {
-              me.namespace = item.value;
-              me.log('Namespace: ' + me.namespace);
-            }
-          });
+          if (typeof err.response !== 'undefined') {
+            err.response.data.promptInfo.displayObjects.forEach(function(item) {
+              if (item.name == 'CAMNamespace') {
+                me.namespace = item.value;
+                me.log('Namespace: ' + me.namespace);
+              }
+            });
+          } else {
+            throw err.message;
+          }
         } catch (error) {
           me.error(error);
         }
@@ -219,8 +223,21 @@ class CognosRequest {
         return response;
       })
       .catch(function(err) {
+        var errormessage = '';
+        if (typeof err.response !== 'undefined') {
+          errormessage = err.response.data.messages[0].messageString;
+        } else {
+          errormessage = err.message;
+        }
+
         me.log('CognosRequest : Error in post', err);
         me.error(err);
+        /*
+         *  This happens when you didnt logout properly. It seems harmless.
+         */
+        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+          throw errormessage;
+        }
       });
     return result;
   }

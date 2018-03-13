@@ -100,6 +100,7 @@ listFolderById - Lists the folder content by id
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object id of the folder
 -   `pattern` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** = '_' Pattern like you would use when listing folders in your filesystem. eg. 'Sales_' (optional, default `'*'`)
+-   `types` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** = '['folder']' Types of Cognos objects to list. defaults to folders only. Other values could be 'report' (optional, default `['folder']`)
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[CognosObject](#cognosobject)>** List of sub-folders
 

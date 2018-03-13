@@ -9,13 +9,12 @@ if (typeof window == 'undefined') {
   var user = settings.user;
   var password = settings.password;
 }
-var getCognos = jcognos.getCognos;
 
+var getCognos = jcognos.getCognos;
 var assert = chai.assert;
 
-//var getCognos;
 var cognos;
-describe('Cognos Object', function() {
+describe('jcognos API Tests', function() {
   beforeEach(function() {
     var result = getCognos(url, debug)
       .then(function(lcognos) {
@@ -61,24 +60,4 @@ describe('Cognos Object', function() {
         });
       });
     });
-  it('Should give meaningful errors when logging in');
-  /*,
-        it('Should be able to fetch the public folders', (done) => {
-          getCognos(url)
-            .then(function (cognos) {
-              assert.isOk(cognos, 'Succesfully created Cognos');
-              cognos.login('tester', 'tester')
-                .then(function () {
-                  assert.isOk(cognos, 'Succesfully logged in');
-                  cognos.listPublicFolders()
-                    .then(function (folders) {
-                      assert.isOk(folders, 'There are public folders');
-                    })
-                    .then(done, done);
-                })
-                .catch(function (err) {
-                  assert.fail(err, 'none', 'login failed');
-                });
-            });
-        })*/
 });
