@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/CognosExt/jcognos/compare/v1.0.0...v1.0.1) (2018-03-15)
+
+
+### Bug Fixes
+
+* Fixed NodeJs support for Cognos including XSRF Cookie. Fixed tests, more error handling ([ff31d4b](https://github.com/CognosExt/jcognos/commit/ff31d4b))
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/CognosExt/jcognos/compare/v0.1.4...v1.0.0) (2018-03-13)
 
