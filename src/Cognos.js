@@ -129,23 +129,30 @@ class Cognos {
       .get('bi/v1/objects/.my_folders?fields=permissions')
       .then(function(folders) {
         me.log('Got the Private Folders');
-
-        rootfolders.push({
-          id: folders.data[0].id,
-          name: 'My Content'
-        });
+        if (typeof folders !== 'undefined') {
+          rootfolders.push({
+            id: folders.data[0].id,
+            name: 'My Content'
+          });
+        }
       })
       .then(function() {
         return me.requester
           .get('bi/v1/objects/.public_folders?fields=permissions')
           .then(function(folders) {
             me.log('Got the Public Folders');
-            rootfolders.push({
-              id: folders.data[0].id,
-              name: 'Team Content'
-            });
+            if (typeof folders !== 'undefined') {
+              rootfolders.push({
+                id: folders.data[0].id,
+                name: 'Team Content'
+              });
+            }
             return rootfolders;
           });
+      })
+      .catch(function(err) {
+        console.error(err);
+        throw 'Error in listRootFolder: ' + err;
       });
     return result;
   }
@@ -159,7 +166,10 @@ class Cognos {
       // the dojo= is added to make the result json. the alternative is xml.
       //var result = me.requester.get('bi/v1/disp/icd/feeds/cm/?dojo=')
       .then(function(folders) {
-        return me.listFolderById(folders.data[0].id);
+        if (typeof folders !== 'undefined') {
+          return me.listFolderById(folders.data[0].id);
+        }
+        return {};
       });
     return result;
   }
@@ -247,8 +257,7 @@ class Cognos {
         };
       })
       .catch(function(err) {
-        me.log('Cognos: Error creating folder.');
-        me.log(err);
+        mconsole.log('Cognos: Error creating folder.', err);
       });
     me.log('Maybe going to create folder');
     return result;

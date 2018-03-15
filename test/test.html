@@ -19,28 +19,28 @@
   <script src="../node_modules/chai/chai.js"></script>
   <script src="../node_modules/mocha/mocha.js"></script>
   <script> mocha.setup('bdd');</script>
-  <script src="basic.js"></script>
+  <script src="1_loginlogoff.js"></script>
+  <script src="2_APIjs"></script>
   <script>
   var url = '';
-  var debug = false;
-    window.onload = function() {
-
-      xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = handleStateChange;
-      xhr.open("GET", 'Settings.json', true);
-      xhr.send();
-      function handleStateChange() {
-        if (xhr.readyState === 4) {
-          if (xhr.status = 200) {
-            var settings = JSON.parse(xhr.responseText);
-            url = settings.url;
-            debug = settings.debug;
-            mocha.run()
-          }
-        }
+var debug = false;
+window.onload = function() {
+  xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = handleStateChange;
+  xhr.open('GET', 'Settings.json', true);
+  xhr.send();
+  function handleStateChange() {
+    if (xhr.readyState === 4) {
+      if ((xhr.status = 200)) {
+        var settings = JSON.parse(xhr.responseText);
+        url = settings.url;
+        debug = settings.debug;
+        mocha.run();
       }
-    };
-  </script>
+    }
+  }
+};
+</script>
  </head>
 <body>
   <div id="mocha"></div>

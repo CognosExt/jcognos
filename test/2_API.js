@@ -41,8 +41,18 @@ describe('jcognos API Tests', function() {
     cognos
       .listRootFolder()
       .then(function(folders) {
-        assert.equal('My Content', folders[0].name, 'My Content exists');
-        assert.equal('Team Content', folders[1].name, 'Team Content exists');
+        if (folders.length > 0) {
+          assert.equal('My Content', folders[0].name, 'My Content exists');
+          if (folders.length > 1) {
+            assert.equal(
+              'Team Content',
+              folders[1].name,
+              'Team Content exists'
+            );
+          }
+        } else {
+          assert.fail(true, true, 'Folders are empty. Are you logged in?');
+        }
       })
       .then(done, done);
   }),
@@ -55,6 +65,10 @@ describe('jcognos API Tests', function() {
             .deleteFolder(folder.id)
             .then(function(folder) {
               assert.equal(folder, true, 'New Folder Deleted');
+            })
+            .catch(function(err) {
+              console.log(err);
+              assert.fail(true, true, err);
             })
             .then(done, done);
         });

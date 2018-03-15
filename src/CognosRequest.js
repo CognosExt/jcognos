@@ -52,10 +52,10 @@ class CognosRequest {
       //var tough = require('tough-cookie');
       axiosCookieJarSupport(axios);
       var cookieJar = new tough.CookieJar();
+      me.log('CookieJar is set', cookieJar);
     } else {
       if (me.token == '') {
         var rawcookies = document.cookie.split(';');
-
         var goon = true;
         rawcookies.forEach(function(rawcookie) {
           var cookie = tough.parse(rawcookie);
@@ -102,7 +102,9 @@ class CognosRequest {
       })
       .catch(function(err) {
         me.log('Expected Error in initialise');
-        if (cookieJar) {
+
+        if (typeof cookieJar !== 'undefined') {
+          me.log('Cookiejar', cookieJar);
           // Find the XSRF Token in the cookie
           var cookieurl = me.url + 'bi';
           cookieurl = me.url + 'bi';
@@ -115,8 +117,10 @@ class CognosRequest {
             },
             function(err, cookies) {
               cookies.forEach(function(cook) {
+                me.log('cook: ', cook);
                 me.log('cookie key: ' + cook.key);
-                if (cook.key == 'XSRFToken') {
+                if (cook.key.toUpperCase() == 'XSRF-TOKEN') {
+                  me.log('cookie value: ', cook.value);
                   me.token = cook.value;
                   me.log('token: ' + me.token);
                   cookieJar.setCookie(
@@ -160,22 +164,29 @@ class CognosRequest {
 
   get(path) {
     var me = this;
+    var headers = {};
     me.log('get URL:    ' + me.url + path);
+    if (!Utils.isNode) {
+      document.cookie = 'XSRF-TOKEN=' + me.token;
+    } else {
+      headers['X-XSRF-TOKEN'] = me.token;
+    }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
 
     var result = axios
       .get(me.url + path, {
-        headers: {
-          //  'X-XSRF-TOKEN': me.token,
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json; charset=UTF-8' //,
-          //  Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
-        },
+        headers: headers,
         jar: me.cookies,
         withCredentials: true
       })
       .then(function(response) {
-        me.log('Get Response Data', response.data);
-        return response.data;
+        if (typeof response !== 'undefined') {
+          me.log('Get Response Data', response.data);
+          return response.data;
+        }
+        return '';
       })
       .catch(function(err) {
         me.error('Error in Fetch of ' + path);
@@ -189,21 +200,24 @@ class CognosRequest {
     var me = this;
     var paramsJSON = JSON.stringify(params);
     var result = {};
+    var headers = {};
     // Post the request
     me.log('params: ' + paramsJSON);
-    me.log('cookies: ' + me.cookies);
+    me.log('token: ' + me.token);
+    me.log('cookies: ', me.cookies);
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
+    } else {
+      headers['X-XSRF-TOKEN'] = me.token;
     }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
+
     var result = axios
       .post(me.url + path, paramsJSON, {
         //        method: 'post',
-        headers: {
-          //  'X-XSRF-TOKEN': me.token,
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json; charset=UTF-8' //,
-          //  Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
-        },
+        headers: headers,
         //  jar: false,
         jar: me.cookies,
         //resolveWithFullResponse: fullResponse,
@@ -215,7 +229,7 @@ class CognosRequest {
         // First up, it might return "hallo =\'give me a beer\']"
         // To get things working (I dont need this personally),
         // I will replace =\' with =' and \'] with ']
-        if (fullResponse) {
+        if (fullResponse && typeof response !== 'undefined') {
           result = response;
         } else {
           result = response.data;
@@ -224,13 +238,18 @@ class CognosRequest {
       })
       .catch(function(err) {
         var errormessage = '';
+        me.error('CognosRequest : Error in post', err);
+        // We have 3 different ways to return an error.
         if (typeof err.response !== 'undefined') {
-          errormessage = err.response.data.messages[0].messageString;
+          if (typeof err.response.data.messages !== 'undefined') {
+            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+          } else {
+            errormessage = err.response.data; // It will probably be 'Forbidden'
+          }
         } else {
-          errormessage = err.message;
+          errormessage = err.message; // This is axios saying 'Network Error'
         }
 
-        me.log('CognosRequest : Error in post', err);
         me.error(err);
         /*
          *  This happens when you didnt logout properly. It seems harmless.
@@ -244,19 +263,23 @@ class CognosRequest {
 
   delete(path, params = {}, fullResponse = false) {
     var me = this;
+    var headers = {};
     var paramsJSON = JSON.stringify(params);
     var result = {};
-    // Post the request
+    if (!Utils.isNode) {
+      document.cookie = 'XSRF-TOKEN=' + me.token;
+    } else {
+      headers['X-XSRF-TOKEN'] = me.token;
+    }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
+
     me.log('params: ' + paramsJSON);
     var result = axios
       .delete(me.url + path, {
         data: paramsJSON,
-        headers: {
-          'X-XSRF-TOKEN': me.token,
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json; charset=UTF-8'
-          //  Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
-        },
+        headers: headers,
         jar: me.cookies,
         withCredentials: true
       })
@@ -289,14 +312,19 @@ class CognosRequest {
 
   put(path) {
     var me = this;
+    var headers = {};
+    if (!Utils.isNode) {
+      document.cookie = 'XSRF-TOKEN=' + me.token;
+    } else {
+      headers['X-XSRF-TOKEN'] = me.token;
+    }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+    headers['Content-Type'] = 'application/json; charset=UTF-8';
 
     var result = axios
       .put(me.url + path, {
-        headers: {
-          //    'X-XSRF-TOKEN': me.token,
-          'X-Requested-With': 'XMLHttpRequest'
-          //          Cookie: 'XSRF-TOKEN=' + me.token // this last one is the trick, it is not a cookie!
-        },
+        headers: headers,
         jar: me.cookies,
         withCredentials: true
       })
