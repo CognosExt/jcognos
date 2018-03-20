@@ -141,6 +141,9 @@ var CognosRequest = (function() {
               'X-XSRF-TOKEN': me.token,
               'Content-Type': 'application/json; charset=UTF-8'
             };
+          } else {
+            axiosCookieJarSupport(axios);
+            var cookieJar = new tough.CookieJar();
           }
         }
 
@@ -157,7 +160,7 @@ var CognosRequest = (function() {
           .catch(function(err) {
             me.log('Expected Error in initialise');
 
-            if (typeof cookieJar !== 'undefined') {
+            if (Utils.isNode() && typeof cookieJar !== 'undefined') {
               me.log('Cookiejar', cookieJar);
 
               var cookieurl = me.url + 'bi';
@@ -225,7 +228,7 @@ var CognosRequest = (function() {
         me.log('get URL:    ' + me.url + path);
         if (!Utils.isNode) {
           document.cookie = 'XSRF-TOKEN=' + me.token;
-        } else {
+        } else if (me.token) {
           headers['X-XSRF-TOKEN'] = me.token;
         }
 
@@ -246,8 +249,26 @@ var CognosRequest = (function() {
             return '';
           })
           .catch(function(err) {
-            me.error('Error in Fetch of ' + path);
-            me.log(err);
+            var errormessage = '';
+            me.error('CognosRequest : Error in get', err);
+
+            if (typeof err.response !== 'undefined') {
+              if (typeof err.response.data.messages !== 'undefined') {
+                errormessage = err.response.data.messages[0].messageString;
+              } else {
+                errormessage = err.response.data;
+              }
+            } else {
+              errormessage = err.message;
+            }
+
+            me.error(err);
+
+            if (
+              errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
+            ) {
+              throw errormessage;
+            }
           });
 
         return result;
@@ -266,7 +287,7 @@ var CognosRequest = (function() {
         me.log('cookies: ', me.cookies);
         if (!Utils.isNode) {
           document.cookie = 'XSRF-TOKEN=' + me.token;
-        } else {
+        } else if (me.token) {
           headers['X-XSRF-TOKEN'] = me.token;
         }
 
@@ -334,7 +355,7 @@ var CognosRequest = (function() {
         var result = {};
         if (!Utils.isNode) {
           document.cookie = 'XSRF-TOKEN=' + me.token;
-        } else {
+        } else if (me.token) {
           headers['X-XSRF-TOKEN'] = me.token;
         }
 
@@ -367,7 +388,26 @@ var CognosRequest = (function() {
             return result;
           })
           .catch(function(err) {
-            me.log('CognosRequest : Error in delete', err);
+            var errormessage = '';
+            me.error('CognosRequest : Error in delete', err);
+
+            if (typeof err.response !== 'undefined') {
+              if (typeof err.response.data.messages !== 'undefined') {
+                errormessage = err.response.data.messages[0].messageString;
+              } else {
+                errormessage = err.response.data;
+              }
+            } else {
+              errormessage = err.message;
+            }
+
+            me.error(err);
+
+            if (
+              errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
+            ) {
+              throw errormessage;
+            }
           });
         return result;
       }
@@ -379,7 +419,7 @@ var CognosRequest = (function() {
         var headers = {};
         if (!Utils.isNode) {
           document.cookie = 'XSRF-TOKEN=' + me.token;
-        } else {
+        } else if (me.token) {
           headers['X-XSRF-TOKEN'] = me.token;
         }
 
@@ -401,8 +441,26 @@ var CognosRequest = (function() {
             return result;
           })
           .catch(function(err) {
-            me.log('CognosRequest : Error in put');
+            var errormessage = '';
+            me.error('CognosRequest : Error in put', err);
+
+            if (typeof err.response !== 'undefined') {
+              if (typeof err.response.data.messages !== 'undefined') {
+                errormessage = err.response.data.messages[0].messageString;
+              } else {
+                errormessage = err.response.data;
+              }
+            } else {
+              errormessage = err.message;
+            }
+
             me.error(err);
+
+            if (
+              errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
+            ) {
+              throw errormessage;
+            }
           });
         return result;
       }

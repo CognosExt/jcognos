@@ -54,6 +54,8 @@ class CognosRequest {
       var cookieJar = new tough.CookieJar();
       me.log('CookieJar is set', cookieJar);
     } else {
+      // This is the scenario when this lib is loaded from the cognos path ibmcognos/bi
+      // it is not working yet.
       if (me.token == '') {
         var rawcookies = document.cookie.split(';');
         var goon = true;
@@ -85,6 +87,9 @@ class CognosRequest {
           'X-XSRF-TOKEN': me.token,
           'Content-Type': 'application/json; charset=UTF-8'
         };
+      } else {
+        axiosCookieJarSupport(axios);
+        var cookieJar = new tough.CookieJar();
       }
     }
 
@@ -103,7 +108,7 @@ class CognosRequest {
       .catch(function(err) {
         me.log('Expected Error in initialise');
 
-        if (typeof cookieJar !== 'undefined') {
+        if (Utils.isNode() && typeof cookieJar !== 'undefined') {
           me.log('Cookiejar', cookieJar);
           // Find the XSRF Token in the cookie
           var cookieurl = me.url + 'bi';
@@ -168,7 +173,7 @@ class CognosRequest {
     me.log('get URL:    ' + me.url + path);
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
-    } else {
+    } else if (me.token) {
       headers['X-XSRF-TOKEN'] = me.token;
     }
 
@@ -189,8 +194,26 @@ class CognosRequest {
         return '';
       })
       .catch(function(err) {
-        me.error('Error in Fetch of ' + path);
-        me.log(err);
+        var errormessage = '';
+        me.error('CognosRequest : Error in get', err);
+        // We have 3 different ways to return an error.
+        if (typeof err.response !== 'undefined') {
+          if (typeof err.response.data.messages !== 'undefined') {
+            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+          } else {
+            errormessage = err.response.data; // It will probably be 'Forbidden'
+          }
+        } else {
+          errormessage = err.message; // This is axios saying 'Network Error'
+        }
+
+        me.error(err);
+        /*
+         *  This happens when you didnt logout properly. It seems harmless.
+         */
+        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+          throw errormessage;
+        }
       });
 
     return result;
@@ -207,7 +230,7 @@ class CognosRequest {
     me.log('cookies: ', me.cookies);
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
-    } else {
+    } else if (me.token) {
       headers['X-XSRF-TOKEN'] = me.token;
     }
 
@@ -268,7 +291,7 @@ class CognosRequest {
     var result = {};
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
-    } else {
+    } else if (me.token) {
       headers['X-XSRF-TOKEN'] = me.token;
     }
 
@@ -304,8 +327,26 @@ class CognosRequest {
         return result;
       })
       .catch(function(err) {
-        me.log('CognosRequest : Error in delete', err);
-        //me.error(err);
+        var errormessage = '';
+        me.error('CognosRequest : Error in delete', err);
+        // We have 3 different ways to return an error.
+        if (typeof err.response !== 'undefined') {
+          if (typeof err.response.data.messages !== 'undefined') {
+            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+          } else {
+            errormessage = err.response.data; // It will probably be 'Forbidden'
+          }
+        } else {
+          errormessage = err.message; // This is axios saying 'Network Error'
+        }
+
+        me.error(err);
+        /*
+         *  This happens when you didnt logout properly. It seems harmless.
+         */
+        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+          throw errormessage;
+        }
       });
     return result;
   }
@@ -315,7 +356,7 @@ class CognosRequest {
     var headers = {};
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
-    } else {
+    } else if (me.token) {
       headers['X-XSRF-TOKEN'] = me.token;
     }
 
@@ -340,8 +381,26 @@ class CognosRequest {
         return result;
       })
       .catch(function(err) {
-        me.log('CognosRequest : Error in put');
+        var errormessage = '';
+        me.error('CognosRequest : Error in put', err);
+        // We have 3 different ways to return an error.
+        if (typeof err.response !== 'undefined') {
+          if (typeof err.response.data.messages !== 'undefined') {
+            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+          } else {
+            errormessage = err.response.data; // It will probably be 'Forbidden'
+          }
+        } else {
+          errormessage = err.message; // This is axios saying 'Network Error'
+        }
+
         me.error(err);
+        /*
+         *  This happens when you didnt logout properly. It seems harmless.
+         */
+        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+          throw errormessage;
+        }
       });
     return result;
   }
