@@ -46,12 +46,12 @@ class CognosRequest {
     var me = this;
     var cookieJar = false;
     var firstheaders = {};
+    this.axios = axios.create({});
     if (Utils.isNode()) {
-      //var axiosCookieJarSupport =  require('axios-cookiejar-support');
-
-      //var tough = require('tough-cookie');
-      axiosCookieJarSupport(axios);
+      axiosCookieJarSupport(this.axios);
       var cookieJar = new tough.CookieJar();
+      me.cookies = cookieJar;
+
       me.log('CookieJar is set', cookieJar);
     } else {
       // This is the scenario when this lib is loaded from the cognos path ibmcognos/bi
@@ -88,12 +88,13 @@ class CognosRequest {
           'Content-Type': 'application/json; charset=UTF-8'
         };
       } else {
-        axiosCookieJarSupport(axios);
+        axiosCookieJarSupport(this.axios);
         var cookieJar = new tough.CookieJar();
+        me.cookies = cookieJar;
       }
     }
 
-    var result = axios
+    var result = this.axios
       .get(me.url + 'bi/v1/login', {
         //TODO CookieJar is not set. Fix that.
         jar: cookieJar,
@@ -106,6 +107,10 @@ class CognosRequest {
         // This will never happen, the first call to Cognos will always return a 401
       })
       .catch(function(err) {
+        // If there is another error, like a 500 or 404 (wrong URL)
+        if (err.response.status !== 441) {
+          throw err.message;
+        }
         me.log('Expected Error in initialise');
 
         if (Utils.isNode() && typeof cookieJar !== 'undefined') {
@@ -114,7 +119,7 @@ class CognosRequest {
           var cookieurl = me.url + 'bi';
           cookieurl = me.url + 'bi';
           me.log('cookie url: ' + cookieurl);
-          me.cookies = cookieJar;
+
           var cookies = cookieJar.getCookies(
             cookieurl,
             {
@@ -180,7 +185,7 @@ class CognosRequest {
     headers['X-Requested-With'] = 'XMLHttpRequest';
     headers['Content-Type'] = 'application/json; charset=UTF-8';
 
-    var result = axios
+    var result = this.axios
       .get(me.url + path, {
         headers: headers,
         jar: me.cookies,
@@ -228,6 +233,7 @@ class CognosRequest {
     me.log('params: ' + paramsJSON);
     me.log('token: ' + me.token);
     me.log('cookies: ', me.cookies);
+
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
     } else if (me.token) {
@@ -237,11 +243,9 @@ class CognosRequest {
     headers['X-Requested-With'] = 'XMLHttpRequest';
     headers['Content-Type'] = 'application/json; charset=UTF-8';
 
-    var result = axios
+    var result = this.axios
       .post(me.url + path, paramsJSON, {
-        //        method: 'post',
         headers: headers,
-        //  jar: false,
         jar: me.cookies,
         //resolveWithFullResponse: fullResponse,
         withCredentials: true
@@ -299,11 +303,11 @@ class CognosRequest {
     headers['Content-Type'] = 'application/json; charset=UTF-8';
 
     me.log('params: ' + paramsJSON);
-    var result = axios
+    var result = this.axios
       .delete(me.url + path, {
         data: paramsJSON,
         headers: headers,
-        jar: me.cookies,
+        jar: me.cookies, // Delete does not accept the jar parameter it seems
         withCredentials: true
       })
       .then(function(response) {
@@ -363,7 +367,7 @@ class CognosRequest {
     headers['X-Requested-With'] = 'XMLHttpRequest';
     headers['Content-Type'] = 'application/json; charset=UTF-8';
 
-    var result = axios
+    var result = this.axios
       .put(me.url + path, {
         headers: headers,
         jar: me.cookies,
@@ -406,7 +410,10 @@ class CognosRequest {
   }
 }
 
-function getCognosRequest(url, debug) {
+function getCognosRequest(url, debug, reset = false) {
+  if (reset) {
+    cRequest = undefined;
+  }
   var result;
   if (typeof cRequest == 'undefined') {
     cRequest = new CognosRequest(url, debug);

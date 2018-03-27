@@ -7,7 +7,11 @@ exports.config = {
     // you may need local Selenium standalone server.
   ],
   services: ['phantomjs'],
-  specs: ['./test/1_loginlogoff.js', './test/2_API.js'],
+  specs: [
+    './test/1_API.js',
+    './test/2_loginlogoff.js',
+    './test/3_loginlogofffailures.js'
+  ],
   exclude: [],
   maxInstances: 2,
   sync: true,

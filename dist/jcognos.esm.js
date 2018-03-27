@@ -103,9 +103,12 @@ var CognosRequest = (function() {
         var me = this;
         var cookieJar = false;
         var firstheaders = {};
+        this.axios = axios.create({});
         if (Utils.isNode()) {
-          axiosCookieJarSupport(axios);
+          axiosCookieJarSupport(this.axios);
           var cookieJar = new tough.CookieJar();
+          me.cookies = cookieJar;
+
           me.log('CookieJar is set', cookieJar);
         } else {
           if (me.token == '') {
@@ -142,12 +145,13 @@ var CognosRequest = (function() {
               'Content-Type': 'application/json; charset=UTF-8'
             };
           } else {
-            axiosCookieJarSupport(axios);
+            axiosCookieJarSupport(this.axios);
             var cookieJar = new tough.CookieJar();
+            me.cookies = cookieJar;
           }
         }
 
-        var result = axios
+        var result = this.axios
           .get(me.url + 'bi/v1/login', {
             jar: cookieJar,
             withCredentials: false,
@@ -158,6 +162,9 @@ var CognosRequest = (function() {
             return me;
           })
           .catch(function(err) {
+            if (err.response.status !== 441) {
+              throw err.message;
+            }
             me.log('Expected Error in initialise');
 
             if (Utils.isNode() && typeof cookieJar !== 'undefined') {
@@ -166,7 +173,7 @@ var CognosRequest = (function() {
               var cookieurl = me.url + 'bi';
               cookieurl = me.url + 'bi';
               me.log('cookie url: ' + cookieurl);
-              me.cookies = cookieJar;
+
               var cookies = cookieJar.getCookies(
                 cookieurl,
                 {
@@ -235,7 +242,7 @@ var CognosRequest = (function() {
         headers['X-Requested-With'] = 'XMLHttpRequest';
         headers['Content-Type'] = 'application/json; charset=UTF-8';
 
-        var result = axios
+        var result = this.axios
           .get(me.url + path, {
             headers: headers,
             jar: me.cookies,
@@ -285,6 +292,7 @@ var CognosRequest = (function() {
         me.log('params: ' + paramsJSON);
         me.log('token: ' + me.token);
         me.log('cookies: ', me.cookies);
+
         if (!Utils.isNode) {
           document.cookie = 'XSRF-TOKEN=' + me.token;
         } else if (me.token) {
@@ -294,10 +302,9 @@ var CognosRequest = (function() {
         headers['X-Requested-With'] = 'XMLHttpRequest';
         headers['Content-Type'] = 'application/json; charset=UTF-8';
 
-        var result = axios
+        var result = this.axios
           .post(me.url + path, paramsJSON, {
             headers: headers,
-
             jar: me.cookies,
 
             withCredentials: true
@@ -363,7 +370,7 @@ var CognosRequest = (function() {
         headers['Content-Type'] = 'application/json; charset=UTF-8';
 
         me.log('params: ' + paramsJSON);
-        var result = axios
+        var result = this.axios
           .delete(me.url + path, {
             data: paramsJSON,
             headers: headers,
@@ -426,7 +433,7 @@ var CognosRequest = (function() {
         headers['X-Requested-With'] = 'XMLHttpRequest';
         headers['Content-Type'] = 'application/json; charset=UTF-8';
 
-        var result = axios
+        var result = this.axios
           .put(me.url + path, {
             headers: headers,
             jar: me.cookies,
@@ -470,6 +477,12 @@ var CognosRequest = (function() {
 })();
 
 function getCognosRequest(url, debug) {
+  var reset =
+    arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+  if (reset) {
+    cRequest = undefined;
+  }
   var result;
   if (typeof cRequest == 'undefined') {
     cRequest = new CognosRequest(url, debug);
@@ -481,6 +494,8 @@ function getCognosRequest(url, debug) {
 }
 
 var jCognos;
+
+var cognosUrl;
 
 var Cognos = (function() {
   function Cognos(debug) {
@@ -667,14 +682,18 @@ var Cognos = (function() {
             folders.data.forEach(function(folder) {
               if (minimatch(folder.defaultName, pattern)) {
                 me.log('folder ', folder.defaultName);
-                if (types.indexOf(folder.type) > -1) {
-                  var tpFolder = {
-                    name: folder.defaultName,
-                    id: folder.id,
-                    searchPath: folder.searchPath,
-                    type: folder.type
-                  };
-                  result.push(tpFolder);
+                try {
+                  if (types.indexOf(folder.type) > -1) {
+                    var tpFolder = {
+                      name: folder.defaultName,
+                      id: folder.id,
+                      searchPath: folder.searchPath,
+                      type: folder.type
+                    };
+                    result.push(tpFolder);
+                  }
+                } catch (err) {
+                  me.error('something fishy', err);
                 }
               }
             });
@@ -707,7 +726,7 @@ var Cognos = (function() {
             };
           })
           .catch(function(err) {
-            mconsole.log('Cognos: Error creating folder.', err);
+            me.log('Cognos: Error creating folder.', err);
           });
         me.log('Maybe going to create folder');
         return result;
@@ -778,8 +797,15 @@ function getCognos(url) {
   var debug =
     arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
+  var reset = false;
+  if (url !== cognosUrl) {
+    jCognos = undefined;
+    reset = true;
+  }
   if (typeof jCognos == 'undefined') {
-    var myRequest = getCognosRequest(url, debug).then(function(cRequest) {
+    var myRequest = getCognosRequest(url, debug, reset).then(function(
+      cRequest
+    ) {
       jCognos = new Cognos(debug);
       jCognos.requester = cRequest;
       return jCognos;

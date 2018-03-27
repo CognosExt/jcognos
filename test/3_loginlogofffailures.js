@@ -15,35 +15,18 @@ var getCognos = jcognos.getCognos;
 var assert = chai.assert;
 
 var cognos;
-describe('Logon Logoff', function() {
-  beforeEach(function() {});
-  afterEach(function() {
-    // Somehow in WebRunner (wdio) cognos is not set on time to logout.
-    if (typeof cognos !== 'undefined') {
-      return cognos.logoff().then(function(folder) {
-        assert.equal(cognos.loggedin, false, 'Logged off');
-      });
-    }
-  });
-  it('Should be able to login', done => {
-    getCognos(url, debug)
+
+describe('Logon Logoff with errors', function() {
+  it('Should throw an error if page does not exist', done => {
+    getCognos(url + 'pagedoesnotexist', debug)
       .then(function(lcognos) {
-        cognos = lcognos;
-        assert.isOk(lcognos, 'Succesfully created Cognos');
-        if (!cognos.loggedin) {
-          return lcognos.login(user, password);
-        }
-      })
-      .then(function(mycognos) {
-        assert.isOk(true, 'Succesfully logged in');
+        assert.fail('Error 404', 'No Error was thrown');
       })
       .catch(function(err) {
-        console.log('Error is', err);
         assert.equal(
           err,
-          'Network Error. ' //note the space!
+          'Request failed with status code 404' //note the space!
         );
-        //        assert.fail(true, true, 'Can not login');
       })
       .then(done, done);
   }),

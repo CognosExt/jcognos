@@ -28,6 +28,7 @@ describe('jcognos API Tests', function() {
         assert.isOk(true, 'Succesfully logged in');
       })
       .catch(function(err) {
+        console.log(err);
         assert.fail(true, true, 'Can not login');
       });
     return result;

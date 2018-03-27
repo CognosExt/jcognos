@@ -5,7 +5,8 @@ import minimatch from 'minimatch';
 
 //Local static variable that holds Cognos instance
 var jCognos;
-
+// We keep the cognosUrl, if a second request to getCognos is made, we create a new jCognos
+var cognosUrl;
 /**
  * Class that helps you connect with your inner Cognos. You can not create this class directly, use {@link getCognos} to
  * retrieve the Cognos instance.
@@ -206,20 +207,23 @@ class Cognos {
           '/items?nav_filter=true&fields=defaultName,defaultScreenTip'
       )
       .then(function(folders) {
-        //me.log(folders);
         var result = [];
         folders.data.forEach(function(folder) {
           // options is optional
           if (minimatch(folder.defaultName, pattern)) {
             me.log('folder ', folder.defaultName);
-            if (types.indexOf(folder.type) > -1) {
-              var tpFolder = {
-                name: folder.defaultName,
-                id: folder.id,
-                searchPath: folder.searchPath,
-                type: folder.type
-              };
-              result.push(tpFolder);
+            try {
+              if (types.indexOf(folder.type) > -1) {
+                var tpFolder = {
+                  name: folder.defaultName,
+                  id: folder.id,
+                  searchPath: folder.searchPath,
+                  type: folder.type
+                };
+                result.push(tpFolder);
+              }
+            } catch (err) {
+              me.error('something fishy', err);
             }
           }
         });
@@ -257,7 +261,7 @@ class Cognos {
         };
       })
       .catch(function(err) {
-        mconsole.log('Cognos: Error creating folder.', err);
+        me.log('Cognos: Error creating folder.', err);
       });
     me.log('Maybe going to create folder');
     return result;
@@ -339,8 +343,15 @@ class Cognos {
  * @return {Cognos}     The Cognos object
  */
 function getCognos(url, debug = false) {
+  var reset = false;
+  if (url !== cognosUrl) {
+    jCognos = undefined;
+    reset = true;
+  }
   if (typeof jCognos == 'undefined') {
-    var myRequest = getCognosRequest(url, debug).then(function(cRequest) {
+    var myRequest = getCognosRequest(url, debug, reset).then(function(
+      cRequest
+    ) {
       jCognos = new Cognos(debug);
       jCognos.requester = cRequest;
       return jCognos;
