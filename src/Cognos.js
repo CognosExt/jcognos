@@ -295,16 +295,24 @@ class Cognos {
     return result;
   }
 
-  getReportData(id) {
+  getReportData(id, prompts = {}, limit = 2000) {
     var me = this;
     // Cognos 11
     // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/atom/cm/id/iD9D1A99B207B40D6AB25DB476C476E33?json=
     // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/rds/reportData/report/i821EB6721EDB41A29E0361BC83393C56?fmt=DataSet&rowLimit=2000
+    var promptString = '&';
+    var keys = Object.keys(prompts);
+    keys.forEach(function(key) {
+      promptString += 'p_' + key + '=' + prompts[key];
+    });
+
     var result = me.requester
       .get(
         'bi/v1/disp/rds/reportData/report/' +
           id +
-          '?fmt=DataSetJSON&rowLimit=100'
+          '?fmt=DataSetJSON&rowLimit=' +
+          limit +
+          promptString
       )
       .then(function(data) {
         me.log('retrieved the data', data);
