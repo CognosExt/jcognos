@@ -108,7 +108,11 @@ class CognosRequest {
       })
       .catch(function(err) {
         // If there is another error, like a 500 or 404 (wrong URL)
-        if (err.response.status !== 441) {
+        // Also, if there is a network error there is no response
+        if (
+          typeof err.response === 'undefined' ||
+          err.response.status !== 441
+        ) {
           throw err.message;
         }
         me.log('Expected Error in initialise');
