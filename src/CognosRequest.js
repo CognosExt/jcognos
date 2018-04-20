@@ -201,29 +201,9 @@ class CognosRequest {
           return response.data;
         }
         return '';
-      })
-      .catch(function(err) {
-        var errormessage = '';
-        me.error('CognosRequest : Error in get', err);
-        // We have 3 different ways to return an error.
-        if (typeof err.response !== 'undefined') {
-          if (typeof err.response.data.messages !== 'undefined') {
-            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
-          } else {
-            errormessage = err.response.data; // It will probably be 'Forbidden'
-          }
-        } else {
-          errormessage = err.message; // This is axios saying 'Network Error'
-        }
-
-        me.error(err);
-        /*
-         *  This happens when you didnt logout properly. It seems harmless.
-         */
-        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
-          throw errormessage;
-        }
       });
+    //      .catch(function(err) {
+    //      });
 
     return result;
   }
@@ -419,7 +399,7 @@ function getCognosRequest(url, debug, reset = false) {
     cRequest = undefined;
   }
   var result;
-  if (typeof cRequest == 'undefined') {
+  if (typeof cRequest == 'undefined' || reset) {
     cRequest = new CognosRequest(url, debug);
     result = cRequest.initialise();
   } else {

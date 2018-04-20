@@ -27,7 +27,13 @@ class Cognos {
      * @memberof Cognos
      */
     this.loggedin = false;
+    this.url = '';
     this.debug = debug;
+    this.username = '';
+    this.password = '';
+    this.retrycount = 0;
+    this.loginrequest = false;
+    this.resetting = false;
   }
 
   log(text, object) {
@@ -58,7 +64,14 @@ class Cognos {
    */
   login(user, password) {
     var me = this;
-
+    me.log('login: Starting to login');
+    if (me.loginrequest !== false) {
+      me.log(
+        'login: Already logging in, returning loginrequest promise',
+        me.loginrequest
+      );
+      return me.loginrequest;
+    }
     // Set the parameters of the login POST request
     var params = {
       parameters: [
@@ -81,18 +94,25 @@ class Cognos {
       ]
     };
 
-    var result = me.requester
+    this.loginrequest = me.requester
       .post('bi/v1/login', params)
       .then(function(body) {
         me.loggedin = true;
+        me.username = user;
+        me.password = password;
+        me.loginrequest = false;
         me.log('Successfully logged in');
         return body;
       })
       .catch(function(err) {
         me.log('Cognos: Error when logging in.');
+        me.loginrequest = false;
         throw err;
       });
-    return result;
+
+    this.log('login: returning login promise', this.loginrequest);
+
+    return this.loginrequest;
   }
 
   /**
@@ -115,7 +135,84 @@ class Cognos {
     return result;
   }
 
-  listfolderbyname(name) {}
+  handleError(err) {
+    var me = this;
+    var errormessage = '';
+
+    if (err.response.status == 441 || err.response.status == 403) {
+      me.log('going to reset');
+      let result = me.reset();
+      me.log('in handleError, returning promise', result);
+      return result;
+    }
+
+    // We have 3 different ways to return an error.
+    if (typeof err.response !== 'undefined') {
+      if (typeof err.response.data.messages !== 'undefined') {
+        errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+      } else {
+        errormessage = err.response.data; // It will probably be 'Forbidden'
+      }
+    } else {
+      errormessage = err.message; // This is axios saying 'Network Error'
+    }
+
+    me.error(err);
+    /*
+   *  This happens when you didnt logout properly. It seems harmless.
+   */
+    if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+      throw errormessage;
+    }
+    // all seems fine return a resolved promise
+    return Promise.resolve();
+  }
+
+  /**
+   * reset - Create a new connection
+   *
+   * @return {Promise}  When resolved we are logged in
+   */
+
+  reset() {
+    var me = this;
+    me.log('Going to Reset');
+
+    if (this.resetting) {
+      return this.resetting;
+    }
+
+    this.retrycount++;
+    me.log('retrycount = ' + this.retrycount);
+
+    if (this.retrycount > 2) {
+      return Promise.reject();
+    }
+    this.requester = undefined;
+    me.log('going to reset the cognos request');
+
+    this.resetting = getCognosRequest(this.url, this.debug, true)
+      .then(function(cRequest) {
+        me.requester = cRequest;
+        me.log('going to login again');
+        let result = me.login(me.username, me.password);
+        me.log('login promise', result);
+        return result;
+      })
+      .then(function() {
+        me.log('Done logging in');
+        return Promise.resolve();
+      })
+      .catch(function(err) {
+        me.error('Error resetting', err);
+        if (me.retrycount < 3) {
+          return me.reset();
+        }
+        throw err;
+      });
+    me.log('Returning a promise to reset', this.resetting);
+    return this.resetting;
+  }
 
   /**
    * listRootFolder - Returns the Public Folders and the My Content
@@ -152,8 +249,18 @@ class Cognos {
           });
       })
       .catch(function(err) {
-        console.error(err);
-        throw 'Error in listRootFolder: ' + err;
+        me.error('CognosRequest : Error in listRootFolder', err);
+
+        me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, list the root folder again');
+            me.resetting = false;
+            return me.listRootFolder();
+          })
+          .catch(function(rejecterr) {
+            throw err;
+          });
       });
     return result;
   }
@@ -171,22 +278,22 @@ class Cognos {
           return me.listFolderById(folders.data[0].id);
         }
         return {};
-      });
-    return result;
-  }
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in listPublicFolders', err);
 
-  listPublicFolders10() {
-    var me = this;
-
-    // the dojo= is added to make the result json. the alternative is xml.
-    var result = me.requester
-      .get('bi/v1/disp/icd/feeds/cm/?dojo=')
-      .then(function(folders) {
-        // TODO build this
-        //        me.log(folders.data);
-        //return me.listFolderById(folders.data[0].id);
+        me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, list the public folders again');
+            me.resetting = false;
+            return me.listPublicFolders();
+          })
+          .catch(function(rejecterr) {
+            throw err;
+          });
       });
-    //  });
+
     return result;
   }
 
@@ -228,6 +335,20 @@ class Cognos {
           }
         });
         return result;
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in listFolderById', err);
+
+        return me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, list the folder by id again');
+            me.resetting = false;
+            return me.listFolderById(id, pattern, types);
+          })
+          .catch(function(rejecterr) {
+            throw err;
+          });
       });
     return result;
   }
@@ -261,8 +382,20 @@ class Cognos {
         };
       })
       .catch(function(err) {
-        me.log('Cognos: Error creating folder.', err);
+        me.error('CognosRequest : Error in addFolder', err);
+
+        return me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, list add the folder again');
+            me.resetting = false;
+            return me.addFolder(parentid, name);
+          })
+          .catch(function(rejecterr) {
+            throw err;
+          });
       });
+
     me.log('Maybe going to create folder');
     return result;
   }
@@ -289,8 +422,18 @@ class Cognos {
         return true;
       })
       .catch(function(err) {
-        me.log('Cognos: Error Deleting folder.');
-        me.log(err);
+        me.error('CognosRequest : Error in deleteFolder', err);
+
+        return me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, delete the folder again');
+            me.resetting = false;
+            return me.deleteFolder(id, force, recursive);
+          })
+          .catch(function(rejecterr) {
+            throw err;
+          });
       });
     return result;
   }
@@ -317,7 +460,22 @@ class Cognos {
       .then(function(data) {
         me.log('retrieved the data', data);
         return data;
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in getReportData', err);
+
+        return me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, get Report Data again');
+            me.resetting = false;
+            return me.getReportData(id, prompts, limit);
+          })
+          .catch(function(rejecterr) {
+            throw err;
+          });
       });
+
     return result;
   }
 
@@ -362,6 +520,7 @@ function getCognos(url, debug = false) {
     ) {
       jCognos = new Cognos(debug);
       jCognos.requester = cRequest;
+      jCognos.url = url;
       return jCognos;
     });
     return myRequest;

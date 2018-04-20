@@ -365,7 +365,9 @@
       ? global
       : typeof self !== 'undefined'
         ? self
-        : typeof window !== 'undefined' ? window : {};
+        : typeof window !== 'undefined'
+          ? window
+          : {};
 
   // shim for using process in browser
   // based off https://github.com/defunctzombie/node-process/blob/master/browser.js
@@ -5909,7 +5911,9 @@
     if (psychotic) {
       result.hostname = result.host = isAbsolute
         ? ''
-        : srcPath.length ? srcPath.shift() : '';
+        : srcPath.length
+          ? srcPath.shift()
+          : '';
       //occationaly the auth can get stuck only in host
       //this especially happens in cases like
       //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
@@ -16196,7 +16200,10 @@
               return me;
             })
             .catch(function(err) {
-              if (err.response.status !== 441) {
+              if (
+                typeof err.response === 'undefined' ||
+                err.response.status !== 441
+              ) {
                 throw err.message;
               }
               me.log('Expected Error in initialise');
@@ -16288,28 +16295,6 @@
                 return response.data;
               }
               return '';
-            })
-            .catch(function(err) {
-              var errormessage = '';
-              me.error('CognosRequest : Error in get', err);
-
-              if (typeof err.response !== 'undefined') {
-                if (typeof err.response.data.messages !== 'undefined') {
-                  errormessage = err.response.data.messages[0].messageString;
-                } else {
-                  errormessage = err.response.data;
-                }
-              } else {
-                errormessage = err.message;
-              }
-
-              me.error(err);
-
-              if (
-                errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
-              ) {
-                throw errormessage;
-              }
             });
 
           return result;
@@ -16518,7 +16503,7 @@
       cRequest = undefined;
     }
     var result;
-    if (typeof cRequest == 'undefined') {
+    if (typeof cRequest == 'undefined' || reset) {
       cRequest = new CognosRequest(url, debug);
       result = cRequest.initialise();
     } else {
@@ -17350,7 +17335,9 @@
       pattern.charAt(0) === '.'
         ? '' // anything
         : // not (start or / followed by . or .. followed by / or end)
-          options.dot ? '(?!(?:^|\\/)\\.{1,2}(?:$|\\/))' : '(?!\\.)';
+          options.dot
+          ? '(?!(?:^|\\/)\\.{1,2}(?:$|\\/))'
+          : '(?!\\.)';
     var self = this;
 
     function clearStateChar() {
@@ -17712,7 +17699,9 @@
 
     var twoStar = options.noglobstar
       ? star
-      : options.dot ? twoStarDot : twoStarNoDot;
+      : options.dot
+        ? twoStarDot
+        : twoStarNoDot;
     var flags = options.nocase ? 'i' : '';
 
     var re = set
@@ -17721,7 +17710,9 @@
           .map(function(p) {
             return p === GLOBSTAR
               ? twoStar
-              : typeof p === 'string' ? regExpEscape(p) : p._src;
+              : typeof p === 'string'
+                ? regExpEscape(p)
+                : p._src;
           })
           .join('\\/');
       })
@@ -17994,7 +17985,13 @@
       classCallCheck(this, Cognos);
 
       this.loggedin = false;
+      this.url = '';
       this.debug = debug;
+      this.username = '';
+      this.password = '';
+      this.retrycount = 0;
+      this.loginrequest = false;
+      this.resetting = false;
     }
 
     createClass(Cognos, [
@@ -18026,6 +18023,14 @@
         key: 'login',
         value: function login(user, password) {
           var me = this;
+          me.log('login: Starting to login');
+          if (me.loginrequest !== false) {
+            me.log(
+              'login: Already logging in, returning loginrequest promise',
+              me.loginrequest
+            );
+            return me.loginrequest;
+          }
 
           var params = {
             parameters: [
@@ -18048,18 +18053,25 @@
             ]
           };
 
-          var result = me.requester
+          this.loginrequest = me.requester
             .post('bi/v1/login', params)
             .then(function(body) {
               me.loggedin = true;
+              me.username = user;
+              me.password = password;
+              me.loginrequest = false;
               me.log('Successfully logged in');
               return body;
             })
             .catch(function(err) {
               me.log('Cognos: Error when logging in.');
+              me.loginrequest = false;
               throw err;
             });
-          return result;
+
+          this.log('login: returning login promise', this.loginrequest);
+
+          return this.loginrequest;
         }
       },
       {
@@ -18081,8 +18093,78 @@
         }
       },
       {
-        key: 'listfolderbyname',
-        value: function listfolderbyname(name) {}
+        key: 'handleError',
+        value: function handleError(err) {
+          var me = this;
+          var errormessage = '';
+
+          if (err.response.status == 441 || err.response.status == 403) {
+            me.log('going to reset');
+            var result = me.reset();
+            me.log('in handleError, returning promise', result);
+            return result;
+          }
+
+          if (typeof err.response !== 'undefined') {
+            if (typeof err.response.data.messages !== 'undefined') {
+              errormessage = err.response.data.messages[0].messageString;
+            } else {
+              errormessage = err.response.data;
+            }
+          } else {
+            errormessage = err.message;
+          }
+
+          me.error(err);
+
+          if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+            throw errormessage;
+          }
+
+          return Promise.resolve();
+        }
+      },
+      {
+        key: 'reset',
+        value: function reset() {
+          var me = this;
+          me.log('Going to Reset');
+
+          if (this.resetting) {
+            return this.resetting;
+          }
+
+          this.retrycount++;
+          me.log('retrycount = ' + this.retrycount);
+
+          if (this.retrycount > 2) {
+            return Promise.reject();
+          }
+          this.requester = undefined;
+          me.log('going to reset the cognos request');
+
+          this.resetting = getCognosRequest(this.url, this.debug, true)
+            .then(function(cRequest) {
+              me.requester = cRequest;
+              me.log('going to login again');
+              var result = me.login(me.username, me.password);
+              me.log('login promise', result);
+              return result;
+            })
+            .then(function() {
+              me.log('Done logging in');
+              return Promise.resolve();
+            })
+            .catch(function(err) {
+              me.error('Error resetting', err);
+              if (me.retrycount < 3) {
+                return me.reset();
+              }
+              throw err;
+            });
+          me.log('Returning a promise to reset', this.resetting);
+          return this.resetting;
+        }
       },
       {
         key: 'listRootFolder',
@@ -18116,8 +18198,18 @@
                 });
             })
             .catch(function(err) {
-              console.error(err);
-              throw 'Error in listRootFolder: ' + err;
+              me.error('CognosRequest : Error in listRootFolder', err);
+
+              me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, list the root folder again');
+                  me.resetting = false;
+                  return me.listRootFolder();
+                })
+                .catch(function(rejecterr) {
+                  throw err;
+                });
             });
           return result;
         }
@@ -18134,18 +18226,21 @@
                 return me.listFolderById(folders.data[0].id);
               }
               return {};
-            });
-          return result;
-        }
-      },
-      {
-        key: 'listPublicFolders10',
-        value: function listPublicFolders10() {
-          var me = this;
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in listPublicFolders', err);
 
-          var result = me.requester
-            .get('bi/v1/disp/icd/feeds/cm/?dojo=')
-            .then(function(folders) {});
+              me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, list the public folders again');
+                  me.resetting = false;
+                  return me.listPublicFolders();
+                })
+                .catch(function(rejecterr) {
+                  throw err;
+                });
+            });
 
           return result;
         }
@@ -18190,6 +18285,20 @@
                 }
               });
               return result;
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in listFolderById', err);
+
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, list the folder by id again');
+                  me.resetting = false;
+                  return me.listFolderById(id, pattern, types);
+                })
+                .catch(function(rejecterr) {
+                  throw err;
+                });
             });
           return result;
         }
@@ -18218,8 +18327,20 @@
               };
             })
             .catch(function(err) {
-              me.log('Cognos: Error creating folder.', err);
+              me.error('CognosRequest : Error in addFolder', err);
+
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, list add the folder again');
+                  me.resetting = false;
+                  return me.addFolder(parentid, name);
+                })
+                .catch(function(rejecterr) {
+                  throw err;
+                });
             });
+
           me.log('Maybe going to create folder');
           return result;
         }
@@ -18249,8 +18370,18 @@
               return true;
             })
             .catch(function(err) {
-              me.log('Cognos: Error Deleting folder.');
-              me.log(err);
+              me.error('CognosRequest : Error in deleteFolder', err);
+
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, delete the folder again');
+                  me.resetting = false;
+                  return me.deleteFolder(id, force, recursive);
+                })
+                .catch(function(rejecterr) {
+                  throw err;
+                });
             });
           return result;
         }
@@ -18258,18 +18389,50 @@
       {
         key: 'getReportData',
         value: function getReportData(id) {
+          var prompts =
+            arguments.length > 1 && arguments[1] !== undefined
+              ? arguments[1]
+              : {};
+          var limit =
+            arguments.length > 2 && arguments[2] !== undefined
+              ? arguments[2]
+              : 2000;
+
           var me = this;
+
+          var promptString = '&';
+          var keys = Object.keys(prompts);
+          keys.forEach(function(key) {
+            promptString += 'p_' + key + '=' + prompts[key];
+          });
 
           var result = me.requester
             .get(
               'bi/v1/disp/rds/reportData/report/' +
                 id +
-                '?fmt=DataSetJSON&rowLimit=100'
+                '?fmt=DataSetJSON&rowLimit=' +
+                limit +
+                promptString
             )
             .then(function(data) {
               me.log('retrieved the data', data);
               return data;
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in getReportData', err);
+
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, get Report Data again');
+                  me.resetting = false;
+                  return me.getReportData(id, prompts, limit);
+                })
+                .catch(function(rejecterr) {
+                  throw err;
+                });
             });
+
           return result;
         }
       },
@@ -18300,6 +18463,7 @@
       ) {
         jCognos = new Cognos(debug);
         jCognos.requester = cRequest;
+        jCognos.url = url;
         return jCognos;
       });
       return myRequest;

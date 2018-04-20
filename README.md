@@ -48,6 +48,7 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
 -   [Cognos](#cognos)
     -   [login](#login)
     -   [logoff](#logoff)
+    -   [reset](#reset)
     -   [listRootFolder](#listrootfolder)
     -   [listFolderById](#listfolderbyid)
     -   [addFolder](#addfolder)
@@ -85,6 +86,12 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 logoff - Logs off from Cognos.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** returns a promise.
+
+### reset
+
+reset - Create a new connection
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** When resolved we are logged in
 
 ### listRootFolder
 
