@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/CognosExt/jcognos/compare/v1.0.3...v1.1.0) (2018-04-20)
+
+
+### Bug Fixes
+
+* Added another error scenario when the network connection disappears ([0c2412a](https://github.com/CognosExt/jcognos/commit/0c2412a))
+
+
+### Features
+
+* Add Filter to fetch report data URL ([133ee4b](https://github.com/CognosExt/jcognos/commit/133ee4b))
+* jcognos will reset the connection if a timeout has occured ([cac122f](https://github.com/CognosExt/jcognos/commit/cac122f))
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/CognosExt/jcognos/compare/v1.0.2...v1.0.3) (2018-03-27)
 
