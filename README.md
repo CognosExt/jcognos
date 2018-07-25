@@ -25,7 +25,14 @@ or as an ES2016 module
 import getCognos from 'jcognos'
 ```
 
-In your browser, Includes
+Then get going like:
+
+```javascript
+jcognos.getCognos('https://srv06.gologic.eu/ibmcognos/', true)
+  .then(function(lcognos) {
+    lcognos.login('username', 'password'); // Which also returns a promise
+});
+```
 
 This version does not support XSRF headers. It is (temporarily) broken. To use the
 module against Cognos Analytics 11.0.7 or later, follow these steps:

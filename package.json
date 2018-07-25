@@ -2,8 +2,9 @@
   "name": "jcognos",
   "version": "1.1.0",
   "description": "Javascript Library that simplifies working with IBM Cognos",
-  "main": "dist/jcognos",
+  "main": "dist/jcognos.cjs",
   "module": "dist/jcognos.esm.js",
+  "browser": "dist/jcognos.js",
   "scripts": {
     "build": "npm run buildbrowser && npm run buildnode",
     "buildbrowser": "cross-env NODE_ENV=rollup rollup -c rollup.config.js",
