@@ -1933,7 +1933,7 @@
     ) {
       delta = floor(delta / baseMinusTMin);
     }
-    return floor(k + (baseMinusTMin + 1) * delta / (delta + skew));
+    return floor(k + ((baseMinusTMin + 1) * delta) / (delta + skew));
   }
 
   /**
@@ -2131,7 +2131,7 @@
             qMinusT = q - t;
             baseMinusT = base - t;
             output.push(
-              stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+              stringFromCharCode(digitToBasic(t + (qMinusT % baseMinusT), 0))
             );
             q = floor(qMinusT / baseMinusT);
           }
@@ -2256,7 +2256,7 @@
     placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0;
 
     // base64 is 4/3 + up to two characters of the original data
-    arr = new Arr(len * 3 / 4 - placeHolders);
+    arr = new Arr((len * 3) / 4 - placeHolders);
 
     // if there are placeholders, only get up to the last complete 4 chars
     l = placeHolders > 0 ? len - 4 : len;
@@ -18200,8 +18200,7 @@
             .catch(function(err) {
               me.error('CognosRequest : Error in listRootFolder', err);
 
-              me
-                .handleError(err)
+              me.handleError(err)
                 .then(function() {
                   me.log('We have been reset, list the root folder again');
                   me.resetting = false;
@@ -18230,8 +18229,7 @@
             .catch(function(err) {
               me.error('CognosRequest : Error in listPublicFolders', err);
 
-              me
-                .handleError(err)
+              me.handleError(err)
                 .then(function() {
                   me.log('We have been reset, list the public folders again');
                   me.resetting = false;
