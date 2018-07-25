@@ -53,17 +53,25 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
 ### Table of Contents
 
 -   [Cognos](#cognos)
+    -   [Parameters](#parameters)
     -   [login](#login)
+        -   [Parameters](#parameters-1)
     -   [logoff](#logoff)
     -   [reset](#reset)
     -   [listRootFolder](#listrootfolder)
     -   [listFolderById](#listfolderbyid)
+        -   [Parameters](#parameters-2)
     -   [addFolder](#addfolder)
+        -   [Parameters](#parameters-3)
     -   [deleteFolder](#deletefolder)
+        -   [Parameters](#parameters-4)
     -   [uploadExtension](#uploadextension)
+        -   [Parameters](#parameters-5)
     -   [loggedin](#loggedin)
 -   [getCognos](#getcognos)
+    -   [Parameters](#parameters-6)
 -   [CognosObject](#cognosobject)
+    -   [Properties](#properties)
 -   [cRequest](#crequest)
 -   [isStandardBrowserEnv](#isstandardbrowserenv)
 -   [isNode](#isnode)
@@ -73,7 +81,7 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
 Class that helps you connect with your inner Cognos. You can not create this class directly, use [getCognos](#getcognos) to
 retrieve the Cognos instance.
 
-**Parameters**
+### Parameters
 
 -   `debug`  
 
@@ -81,7 +89,7 @@ retrieve the Cognos instance.
 
 login - Logs into Cognos.
 
-**Parameters**
+#### Parameters
 
 -   `user` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos username
 -   `password` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Password
@@ -110,7 +118,7 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 listFolderById - Lists the folder content by id
 
-**Parameters**
+#### Parameters
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object id of the folder
 -   `pattern` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** = '_' Pattern like you would use when listing folders in your filesystem. eg. 'Sales_' (optional, default `'*'`)
@@ -122,7 +130,7 @@ Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Gl
 
 addFolder - Creates a new folder
 
-**Parameters**
+#### Parameters
 
 -   `parentid` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Id of the parent folder of the new folder.
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The name of the new folder
@@ -133,7 +141,7 @@ Returns **[CognosObject](#cognosobject)** The newly created folder
 
 deleteFolder - Deletes a folder, its content and subfolders
 
-**Parameters**
+#### Parameters
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Id of the folder to be deleted
 -   `force` **type** = true     Not sure, actually (optional, default `true`)
@@ -146,7 +154,7 @@ Returns **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 uploadExtension - Uploads zipfile containing Cognos Extension. Only supports updating an existing module.
 This function is only supported by Node.js. In the browser this function returns false;
 
-**Parameters**
+#### Parameters
 
 -   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the module (as found in the spec.json)
@@ -157,12 +165,14 @@ Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 Check to see of user is loggedin or not
 
+Type: [Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
 ## getCognos
 
 getCognos - Static function to get the Cognos Object. You can have only 1 Cognos object in your application
 at any time.
 
-**Parameters**
+### Parameters
 
 -   `url` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The URL of your Cognos installation
 -   `debug`   (optional, default `false`)
@@ -173,7 +183,7 @@ Returns **[Cognos](#cognos)** The Cognos object
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
-**Properties**
+### Properties
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object Id
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of object.
