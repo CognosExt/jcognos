@@ -698,8 +698,7 @@ var Cognos = (function() {
           .catch(function(err) {
             me.error('CognosRequest : Error in listRootFolder', err);
 
-            me
-              .handleError(err)
+            me.handleError(err)
               .then(function() {
                 me.log('We have been reset, list the root folder again');
                 me.resetting = false;
@@ -728,8 +727,7 @@ var Cognos = (function() {
           .catch(function(err) {
             me.error('CognosRequest : Error in listPublicFolders', err);
 
-            me
-              .handleError(err)
+            me.handleError(err)
               .then(function() {
                 me.log('We have been reset, list the public folders again');
                 me.resetting = false;
