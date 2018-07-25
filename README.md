@@ -10,7 +10,7 @@ You can use this to write tests, external clients or build tools for your Cognos
 ## Getting Started
 
 ```shell
-npm install jcognos --save
+npm install jcognos
 ```
 
 Once the jcognos has been installed, you can include it in your projects as a CommonJS module
