@@ -251,8 +251,7 @@ class Cognos {
       .catch(function(err) {
         me.error('CognosRequest : Error in listRootFolder', err);
 
-        me
-          .handleError(err)
+        me.handleError(err)
           .then(function() {
             me.log('We have been reset, list the root folder again');
             me.resetting = false;
@@ -282,8 +281,7 @@ class Cognos {
       .catch(function(err) {
         me.error('CognosRequest : Error in listPublicFolders', err);
 
-        me
-          .handleError(err)
+        me.handleError(err)
           .then(function() {
             me.log('We have been reset, list the public folders again');
             me.resetting = false;
@@ -371,7 +369,8 @@ class Cognos {
       .post('bi/v1/objects/' + parentid + '/items', params, true)
       .then(function(response) {
         me.log('created folder');
-        if (Utils.isStandardBrowserEnv()) {
+        //    if (Utils.isStandardBrowserEnv()) did not work per-se
+        if (response.headers && response.headers.location) {
           var id = response.headers.location.split('/').pop();
         } else {
           var id = response.data.data[0].id;

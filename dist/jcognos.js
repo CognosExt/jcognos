@@ -18739,7 +18739,8 @@
             .post('bi/v1/objects/' + parentid + '/items', params, true)
             .then(function(response) {
               me.log('created folder');
-              if (Utils.isStandardBrowserEnv()) {
+
+              if (response.headers && response.headers.location) {
                 var id = response.headers.location.split('/').pop();
               } else {
                 var id = response.data.data[0].id;
