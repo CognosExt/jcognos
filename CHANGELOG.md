@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.4"></a>
+## [1.1.4](https://github.com/CognosExt/jcognos/compare/v1.1.3...v1.1.4) (2018-07-27)
+
+
+### Bug Fixes
+
+* **addFolder function:** in some environments the addFolder function failed ([8210cca](https://github.com/CognosExt/jcognos/commit/8210cca))
+
+
+
 <a name="1.1.3"></a>
 ## [1.1.3](https://github.com/CognosExt/jcognos/compare/v1.1.2...v1.1.3) (2018-07-25)
 
