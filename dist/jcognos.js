@@ -729,9 +729,7 @@
 
         if (utils.isArray(val)) {
           key = key + '[]';
-        }
-
-        if (!utils.isArray(val)) {
+        } else {
           val = [val];
         }
 
@@ -1257,6 +1255,10 @@
       }
     ],
 
+    /**
+     * A timeout in milliseconds to abort a request. If set to 0 (default) a
+     * timeout is not created.
+     */
     timeout: 0,
 
     xsrfCookieName: 'XSRF-TOKEN',
@@ -1496,7 +1498,7 @@
       );
     }
 
-    config = utils.merge(defaults_1, this.defaults, { method: 'get' }, config);
+    config = utils.merge(defaults_1, { method: 'get' }, this.defaults, config);
     config.method = config.method.toLowerCase();
 
     // Hook up interceptors middleware
@@ -6230,6 +6232,7 @@
       'gov.ar': true,
       'int.ar': true,
       'mil.ar': true,
+      'musica.ar': true,
       'net.ar': true,
       'org.ar': true,
       'tur.ar': true,
@@ -6383,30 +6386,79 @@
       bo: true,
       'com.bo': true,
       'edu.bo': true,
-      'gov.bo': true,
       'gob.bo': true,
       'int.bo': true,
       'org.bo': true,
       'net.bo': true,
       'mil.bo': true,
       'tv.bo': true,
+      'web.bo': true,
+      'academia.bo': true,
+      'agro.bo': true,
+      'arte.bo': true,
+      'blog.bo': true,
+      'bolivia.bo': true,
+      'ciencia.bo': true,
+      'cooperativa.bo': true,
+      'democracia.bo': true,
+      'deporte.bo': true,
+      'ecologia.bo': true,
+      'economia.bo': true,
+      'empresa.bo': true,
+      'indigena.bo': true,
+      'industria.bo': true,
+      'info.bo': true,
+      'medicina.bo': true,
+      'movimiento.bo': true,
+      'musica.bo': true,
+      'natural.bo': true,
+      'nombre.bo': true,
+      'noticias.bo': true,
+      'patria.bo': true,
+      'politica.bo': true,
+      'profesional.bo': true,
+      'plurinacional.bo': true,
+      'pueblo.bo': true,
+      'revista.bo': true,
+      'salud.bo': true,
+      'tecnologia.bo': true,
+      'tksat.bo': true,
+      'transporte.bo': true,
+      'wiki.bo': true,
       br: true,
+      '9guacu.br': true,
+      'abc.br': true,
       'adm.br': true,
       'adv.br': true,
       'agr.br': true,
+      'aju.br': true,
       'am.br': true,
+      'anani.br': true,
+      'aparecida.br': true,
       'arq.br': true,
       'art.br': true,
       'ato.br': true,
       'b.br': true,
+      'belem.br': true,
+      'bhz.br': true,
       'bio.br': true,
       'blog.br': true,
       'bmd.br': true,
+      'boavista.br': true,
+      'bsb.br': true,
+      'campinagrande.br': true,
+      'campinas.br': true,
+      'caxias.br': true,
       'cim.br': true,
       'cng.br': true,
       'cnt.br': true,
       'com.br': true,
+      'contagem.br': true,
       'coop.br': true,
+      'cri.br': true,
+      'cuiaba.br': true,
+      'curitiba.br': true,
+      'def.br': true,
       'ecn.br': true,
       'eco.br': true,
       'edu.br': true,
@@ -6416,48 +6468,114 @@
       'etc.br': true,
       'eti.br': true,
       'far.br': true,
+      'feira.br': true,
       'flog.br': true,
+      'floripa.br': true,
       'fm.br': true,
       'fnd.br': true,
+      'fortal.br': true,
       'fot.br': true,
+      'foz.br': true,
       'fst.br': true,
       'g12.br': true,
       'ggf.br': true,
+      'goiania.br': true,
       'gov.br': true,
+      'ac.gov.br': true,
+      'al.gov.br': true,
+      'am.gov.br': true,
+      'ap.gov.br': true,
+      'ba.gov.br': true,
+      'ce.gov.br': true,
+      'df.gov.br': true,
+      'es.gov.br': true,
+      'go.gov.br': true,
+      'ma.gov.br': true,
+      'mg.gov.br': true,
+      'ms.gov.br': true,
+      'mt.gov.br': true,
+      'pa.gov.br': true,
+      'pb.gov.br': true,
+      'pe.gov.br': true,
+      'pi.gov.br': true,
+      'pr.gov.br': true,
+      'rj.gov.br': true,
+      'rn.gov.br': true,
+      'ro.gov.br': true,
+      'rr.gov.br': true,
+      'rs.gov.br': true,
+      'sc.gov.br': true,
+      'se.gov.br': true,
+      'sp.gov.br': true,
+      'to.gov.br': true,
+      'gru.br': true,
       'imb.br': true,
       'ind.br': true,
       'inf.br': true,
+      'jab.br': true,
+      'jampa.br': true,
+      'jdf.br': true,
+      'joinville.br': true,
       'jor.br': true,
       'jus.br': true,
       'leg.br': true,
       'lel.br': true,
+      'londrina.br': true,
+      'macapa.br': true,
+      'maceio.br': true,
+      'manaus.br': true,
+      'maringa.br': true,
       'mat.br': true,
       'med.br': true,
       'mil.br': true,
+      'morena.br': true,
       'mp.br': true,
       'mus.br': true,
+      'natal.br': true,
       'net.br': true,
+      'niteroi.br': true,
       '*.nom.br': true,
       'not.br': true,
       'ntr.br': true,
       'odo.br': true,
       'org.br': true,
+      'osasco.br': true,
+      'palmas.br': true,
+      'poa.br': true,
       'ppg.br': true,
       'pro.br': true,
       'psc.br': true,
       'psi.br': true,
+      'pvh.br': true,
       'qsl.br': true,
       'radio.br': true,
       'rec.br': true,
+      'recife.br': true,
+      'ribeirao.br': true,
+      'rio.br': true,
+      'riobranco.br': true,
+      'riopreto.br': true,
+      'salvador.br': true,
+      'sampa.br': true,
+      'santamaria.br': true,
+      'santoandre.br': true,
+      'saobernardo.br': true,
+      'saogonca.br': true,
+      'sjc.br': true,
       'slg.br': true,
+      'slz.br': true,
+      'sorocaba.br': true,
       'srv.br': true,
       'taxi.br': true,
       'teo.br': true,
+      'the.br': true,
       'tmp.br': true,
       'trd.br': true,
       'tur.br': true,
       'tv.br': true,
+      'udi.br': true,
       'vet.br': true,
+      'vix.br': true,
       'vlog.br': true,
       'wiki.br': true,
       'zlg.br': true,
@@ -9160,7 +9278,16 @@
       'uenohara.yamanashi.jp': true,
       'yamanakako.yamanashi.jp': true,
       'yamanashi.yamanashi.jp': true,
-      '*.ke': true,
+      ke: true,
+      'ac.ke': true,
+      'co.ke': true,
+      'go.ke': true,
+      'info.ke': true,
+      'me.ke': true,
+      'mobi.ke': true,
+      'ne.ke': true,
+      'or.ke': true,
+      'sc.ke': true,
       kg: true,
       'org.kg': true,
       'net.kg': true,
@@ -10025,6 +10152,7 @@
       name: true,
       nc: true,
       'asso.nc': true,
+      'nom.nc': true,
       ne: true,
       net: true,
       nf: true,
@@ -10049,20 +10177,21 @@
       'net.ng': true,
       'org.ng': true,
       'sch.ng': true,
-      'com.ni': true,
-      'gob.ni': true,
-      'edu.ni': true,
-      'org.ni': true,
-      'nom.ni': true,
-      'net.ni': true,
-      'mil.ni': true,
-      'co.ni': true,
-      'biz.ni': true,
-      'web.ni': true,
-      'int.ni': true,
+      ni: true,
       'ac.ni': true,
+      'biz.ni': true,
+      'co.ni': true,
+      'com.ni': true,
+      'edu.ni': true,
+      'gob.ni': true,
       'in.ni': true,
       'info.ni': true,
+      'int.ni': true,
+      'mil.ni': true,
+      'net.ni': true,
+      'nom.ni': true,
+      'org.ni': true,
+      'web.ni': true,
       nl: true,
       'bv.nl': true,
       no: true,
@@ -10856,6 +10985,7 @@
       'net.om': true,
       'org.om': true,
       'pro.om': true,
+      onion: true,
       org: true,
       pa: true,
       'ac.pa': true,
@@ -11207,133 +11337,9 @@
       'org.rs': true,
       ru: true,
       'ac.ru': true,
-      'com.ru': true,
       'edu.ru': true,
-      'int.ru': true,
-      'net.ru': true,
-      'org.ru': true,
-      'pp.ru': true,
-      'adygeya.ru': true,
-      'altai.ru': true,
-      'amur.ru': true,
-      'arkhangelsk.ru': true,
-      'astrakhan.ru': true,
-      'bashkiria.ru': true,
-      'belgorod.ru': true,
-      'bir.ru': true,
-      'bryansk.ru': true,
-      'buryatia.ru': true,
-      'cbg.ru': true,
-      'chel.ru': true,
-      'chelyabinsk.ru': true,
-      'chita.ru': true,
-      'chukotka.ru': true,
-      'chuvashia.ru': true,
-      'dagestan.ru': true,
-      'dudinka.ru': true,
-      'e-burg.ru': true,
-      'grozny.ru': true,
-      'irkutsk.ru': true,
-      'ivanovo.ru': true,
-      'izhevsk.ru': true,
-      'jar.ru': true,
-      'joshkar-ola.ru': true,
-      'kalmykia.ru': true,
-      'kaluga.ru': true,
-      'kamchatka.ru': true,
-      'karelia.ru': true,
-      'kazan.ru': true,
-      'kchr.ru': true,
-      'kemerovo.ru': true,
-      'khabarovsk.ru': true,
-      'khakassia.ru': true,
-      'khv.ru': true,
-      'kirov.ru': true,
-      'koenig.ru': true,
-      'komi.ru': true,
-      'kostroma.ru': true,
-      'krasnoyarsk.ru': true,
-      'kuban.ru': true,
-      'kurgan.ru': true,
-      'kursk.ru': true,
-      'lipetsk.ru': true,
-      'magadan.ru': true,
-      'mari.ru': true,
-      'mari-el.ru': true,
-      'marine.ru': true,
-      'mordovia.ru': true,
-      'msk.ru': true,
-      'murmansk.ru': true,
-      'nalchik.ru': true,
-      'nnov.ru': true,
-      'nov.ru': true,
-      'novosibirsk.ru': true,
-      'nsk.ru': true,
-      'omsk.ru': true,
-      'orenburg.ru': true,
-      'oryol.ru': true,
-      'palana.ru': true,
-      'penza.ru': true,
-      'perm.ru': true,
-      'ptz.ru': true,
-      'rnd.ru': true,
-      'ryazan.ru': true,
-      'sakhalin.ru': true,
-      'samara.ru': true,
-      'saratov.ru': true,
-      'simbirsk.ru': true,
-      'smolensk.ru': true,
-      'spb.ru': true,
-      'stavropol.ru': true,
-      'stv.ru': true,
-      'surgut.ru': true,
-      'tambov.ru': true,
-      'tatarstan.ru': true,
-      'tom.ru': true,
-      'tomsk.ru': true,
-      'tsaritsyn.ru': true,
-      'tsk.ru': true,
-      'tula.ru': true,
-      'tuva.ru': true,
-      'tver.ru': true,
-      'tyumen.ru': true,
-      'udm.ru': true,
-      'udmurtia.ru': true,
-      'ulan-ude.ru': true,
-      'vladikavkaz.ru': true,
-      'vladimir.ru': true,
-      'vladivostok.ru': true,
-      'volgograd.ru': true,
-      'vologda.ru': true,
-      'voronezh.ru': true,
-      'vrn.ru': true,
-      'vyatka.ru': true,
-      'yakutia.ru': true,
-      'yamal.ru': true,
-      'yaroslavl.ru': true,
-      'yekaterinburg.ru': true,
-      'yuzhno-sakhalinsk.ru': true,
-      'amursk.ru': true,
-      'baikal.ru': true,
-      'cmw.ru': true,
-      'fareast.ru': true,
-      'jamal.ru': true,
-      'kms.ru': true,
-      'k-uralsk.ru': true,
-      'kustanai.ru': true,
-      'kuzbass.ru': true,
-      'mytis.ru': true,
-      'nakhodka.ru': true,
-      'nkz.ru': true,
-      'norilsk.ru': true,
-      'oskol.ru': true,
-      'pyatigorsk.ru': true,
-      'rubtsovsk.ru': true,
-      'snz.ru': true,
-      'syzran.ru': true,
-      'vdonsk.ru': true,
-      'zgrad.ru': true,
       'gov.ru': true,
+      'int.ru': true,
       'mil.ru': true,
       'test.ru': true,
       rw: true,
@@ -11466,38 +11472,6 @@
       'saotome.st': true,
       'store.st': true,
       su: true,
-      'adygeya.su': true,
-      'arkhangelsk.su': true,
-      'balashov.su': true,
-      'bashkiria.su': true,
-      'bryansk.su': true,
-      'dagestan.su': true,
-      'grozny.su': true,
-      'ivanovo.su': true,
-      'kalmykia.su': true,
-      'kaluga.su': true,
-      'karelia.su': true,
-      'khakassia.su': true,
-      'krasnodar.su': true,
-      'kurgan.su': true,
-      'lenug.su': true,
-      'mordovia.su': true,
-      'msk.su': true,
-      'murmansk.su': true,
-      'nalchik.su': true,
-      'nov.su': true,
-      'obninsk.su': true,
-      'penza.su': true,
-      'pokrovsk.su': true,
-      'sochi.su': true,
-      'spb.su': true,
-      'togliatti.su': true,
-      'troitsk.su': true,
-      'tula.su': true,
-      'tuva.su': true,
-      'vladikavkaz.su': true,
-      'vladimir.su': true,
-      'vologda.su': true,
       sv: true,
       'com.sv': true,
       'edu.sv': true,
@@ -11977,6 +11951,14 @@
       'pvt.k12.ma.us': true,
       'chtr.k12.ma.us': true,
       'paroch.k12.ma.us': true,
+      'ann-arbor.mi.us': true,
+      'cog.mi.us': true,
+      'dst.mi.us': true,
+      'eaton.mi.us': true,
+      'gen.mi.us': true,
+      'mus.mi.us': true,
+      'tec.mi.us': true,
+      'washtenaw.mi.us': true,
       uy: true,
       'com.uy': true,
       'edu.uy': true,
@@ -12051,6 +12033,7 @@
       'xn--mgbaam7a8h': true,
       'xn--y9a3aq': true,
       'xn--54b7fta0cc': true,
+      'xn--90ae': true,
       'xn--90ais': true,
       'xn--fiqs8s': true,
       'xn--fiqz9s': true,
@@ -12060,6 +12043,13 @@
       'xn--node': true,
       'xn--qxam': true,
       'xn--j6w193g': true,
+      'xn--2scrj9c': true,
+      'xn--3hcrj9c': true,
+      'xn--45br5cyl': true,
+      'xn--h2breg3eve': true,
+      'xn--h2brj9c8c': true,
+      'xn--mgbgu82a': true,
+      'xn--rvc1e0am3e': true,
       'xn--h2brj9c': true,
       'xn--mgbbh1a71e': true,
       'xn--fpcrj9c3d': true,
@@ -12104,6 +12094,12 @@
       'xn--ogbpf8fl': true,
       'xn--mgbtf8fl': true,
       'xn--o3cw4h': true,
+      'xn--12c1fe0br.xn--o3cw4h': true,
+      'xn--12co0c3b4eva.xn--o3cw4h': true,
+      'xn--h3cuzk1di.xn--o3cw4h': true,
+      'xn--o3cyx2a.xn--o3cw4h': true,
+      'xn--m3ch0j3a.xn--o3cw4h': true,
+      'xn--12cfi8ixb8l.xn--o3cw4h': true,
       'xn--pgbs0dh': true,
       'xn--kpry57d': true,
       'xn--kprw13d': true,
@@ -12141,7 +12137,12 @@
       'net.zm': true,
       'org.zm': true,
       'sch.zm': true,
-      '*.zw': true,
+      zw: true,
+      'ac.zw': true,
+      'co.zw': true,
+      'gov.zw': true,
+      'mil.zw': true,
+      'org.zw': true,
       aaa: true,
       aarp: true,
       abarth: true,
@@ -12340,7 +12341,6 @@
       chat: true,
       cheap: true,
       chintai: true,
-      chloe: true,
       christmas: true,
       chrome: true,
       chrysler: true,
@@ -12452,7 +12452,6 @@
       durban: true,
       dvag: true,
       dvr: true,
-      dwg: true,
       earth: true,
       eat: true,
       eco: true,
@@ -12460,7 +12459,6 @@
       education: true,
       email: true,
       emerck: true,
-      emerson: true,
       energy: true,
       engineer: true,
       engineering: true,
@@ -12623,6 +12621,7 @@
       honda: true,
       honeywell: true,
       horse: true,
+      hospital: true,
       host: true,
       hosting: true,
       hot: true,
@@ -12632,7 +12631,6 @@
       house: true,
       how: true,
       hsbc: true,
-      htc: true,
       hughes: true,
       hyatt: true,
       hyundai: true,
@@ -12642,7 +12640,6 @@
       icu: true,
       ieee: true,
       ifm: true,
-      iinet: true,
       ikano: true,
       imamat: true,
       imdb: true,
@@ -12785,8 +12782,6 @@
       maserati: true,
       mattel: true,
       mba: true,
-      mcd: true,
-      mcdonalds: true,
       mckinsey: true,
       med: true,
       media: true,
@@ -12817,7 +12812,6 @@
       monash: true,
       money: true,
       monster: true,
-      montblanc: true,
       mopar: true,
       mormon: true,
       mortgage: true,
@@ -12832,7 +12826,6 @@
       mtpc: true,
       mtr: true,
       mutual: true,
-      mutuelle: true,
       nab: true,
       nadex: true,
       nagoya: true,
@@ -12890,14 +12883,12 @@
       oracle: true,
       orange: true,
       organic: true,
-      orientexpress: true,
       origins: true,
       osaka: true,
       otsuka: true,
       ott: true,
       ovh: true,
       page: true,
-      pamperedchef: true,
       panasonic: true,
       panerai: true,
       paris: true,
@@ -12999,6 +12990,7 @@
       rogers: true,
       room: true,
       rsvp: true,
+      rugby: true,
       ruhr: true,
       run: true,
       rwe: true,
@@ -13141,7 +13133,6 @@
       thd: true,
       theater: true,
       theatre: true,
-      theguardian: true,
       tiaa: true,
       tickets: true,
       tienda: true,
@@ -13266,7 +13257,6 @@
       'xn--42c2d9a': true,
       'xn--45q11c': true,
       'xn--4gbrim': true,
-      'xn--4gq48lf9j': true,
       'xn--55qw42g': true,
       'xn--55qx5d': true,
       'xn--5su34j936bgsg': true,
@@ -13369,58 +13359,118 @@
       zippo: true,
       zone: true,
       zuerich: true,
+      'cc.ua': true,
+      'inf.ua': true,
+      'ltd.ua': true,
+      '1password.ca': true,
+      '1password.com': true,
+      '1password.eu': true,
       'beep.pl': true,
       '*.compute.estate': true,
       '*.alces.network': true,
-      '*.alwaysdata.net': true,
+      'alwaysdata.net': true,
       'cloudfront.net': true,
-      'compute.amazonaws.com': true,
-      'ap-northeast-1.compute.amazonaws.com': true,
-      'ap-northeast-2.compute.amazonaws.com': true,
-      'ap-southeast-1.compute.amazonaws.com': true,
-      'ap-southeast-2.compute.amazonaws.com': true,
-      'eu-central-1.compute.amazonaws.com': true,
-      'eu-west-1.compute.amazonaws.com': true,
-      'sa-east-1.compute.amazonaws.com': true,
-      'us-gov-west-1.compute.amazonaws.com': true,
-      'us-west-1.compute.amazonaws.com': true,
-      'us-west-2.compute.amazonaws.com': true,
-      'compute-1.amazonaws.com': true,
-      'z-1.compute-1.amazonaws.com': true,
-      'z-2.compute-1.amazonaws.com': true,
+      '*.compute.amazonaws.com': true,
+      '*.compute-1.amazonaws.com': true,
+      '*.compute.amazonaws.com.cn': true,
       'us-east-1.amazonaws.com': true,
-      'compute.amazonaws.com.cn': true,
-      'cn-north-1.compute.amazonaws.com.cn': true,
+      'cn-north-1.eb.amazonaws.com.cn': true,
       'elasticbeanstalk.com': true,
-      'elb.amazonaws.com': true,
+      'ap-northeast-1.elasticbeanstalk.com': true,
+      'ap-northeast-2.elasticbeanstalk.com': true,
+      'ap-south-1.elasticbeanstalk.com': true,
+      'ap-southeast-1.elasticbeanstalk.com': true,
+      'ap-southeast-2.elasticbeanstalk.com': true,
+      'ca-central-1.elasticbeanstalk.com': true,
+      'eu-central-1.elasticbeanstalk.com': true,
+      'eu-west-1.elasticbeanstalk.com': true,
+      'eu-west-2.elasticbeanstalk.com': true,
+      'eu-west-3.elasticbeanstalk.com': true,
+      'sa-east-1.elasticbeanstalk.com': true,
+      'us-east-1.elasticbeanstalk.com': true,
+      'us-east-2.elasticbeanstalk.com': true,
+      'us-gov-west-1.elasticbeanstalk.com': true,
+      'us-west-1.elasticbeanstalk.com': true,
+      'us-west-2.elasticbeanstalk.com': true,
+      '*.elb.amazonaws.com': true,
+      '*.elb.amazonaws.com.cn': true,
       's3.amazonaws.com': true,
       's3-ap-northeast-1.amazonaws.com': true,
       's3-ap-northeast-2.amazonaws.com': true,
+      's3-ap-south-1.amazonaws.com': true,
       's3-ap-southeast-1.amazonaws.com': true,
       's3-ap-southeast-2.amazonaws.com': true,
+      's3-ca-central-1.amazonaws.com': true,
       's3-eu-central-1.amazonaws.com': true,
       's3-eu-west-1.amazonaws.com': true,
+      's3-eu-west-2.amazonaws.com': true,
+      's3-eu-west-3.amazonaws.com': true,
       's3-external-1.amazonaws.com': true,
-      's3-external-2.amazonaws.com': true,
       's3-fips-us-gov-west-1.amazonaws.com': true,
       's3-sa-east-1.amazonaws.com': true,
       's3-us-gov-west-1.amazonaws.com': true,
+      's3-us-east-2.amazonaws.com': true,
       's3-us-west-1.amazonaws.com': true,
       's3-us-west-2.amazonaws.com': true,
       's3.ap-northeast-2.amazonaws.com': true,
+      's3.ap-south-1.amazonaws.com': true,
       's3.cn-north-1.amazonaws.com.cn': true,
+      's3.ca-central-1.amazonaws.com': true,
       's3.eu-central-1.amazonaws.com': true,
+      's3.eu-west-2.amazonaws.com': true,
+      's3.eu-west-3.amazonaws.com': true,
+      's3.us-east-2.amazonaws.com': true,
+      's3.dualstack.ap-northeast-1.amazonaws.com': true,
+      's3.dualstack.ap-northeast-2.amazonaws.com': true,
+      's3.dualstack.ap-south-1.amazonaws.com': true,
+      's3.dualstack.ap-southeast-1.amazonaws.com': true,
+      's3.dualstack.ap-southeast-2.amazonaws.com': true,
+      's3.dualstack.ca-central-1.amazonaws.com': true,
+      's3.dualstack.eu-central-1.amazonaws.com': true,
+      's3.dualstack.eu-west-1.amazonaws.com': true,
+      's3.dualstack.eu-west-2.amazonaws.com': true,
+      's3.dualstack.eu-west-3.amazonaws.com': true,
+      's3.dualstack.sa-east-1.amazonaws.com': true,
+      's3.dualstack.us-east-1.amazonaws.com': true,
+      's3.dualstack.us-east-2.amazonaws.com': true,
+      's3-website-us-east-1.amazonaws.com': true,
+      's3-website-us-west-1.amazonaws.com': true,
+      's3-website-us-west-2.amazonaws.com': true,
+      's3-website-ap-northeast-1.amazonaws.com': true,
+      's3-website-ap-southeast-1.amazonaws.com': true,
+      's3-website-ap-southeast-2.amazonaws.com': true,
+      's3-website-eu-west-1.amazonaws.com': true,
+      's3-website-sa-east-1.amazonaws.com': true,
+      's3-website.ap-northeast-2.amazonaws.com': true,
+      's3-website.ap-south-1.amazonaws.com': true,
+      's3-website.ca-central-1.amazonaws.com': true,
+      's3-website.eu-central-1.amazonaws.com': true,
+      's3-website.eu-west-2.amazonaws.com': true,
+      's3-website.eu-west-3.amazonaws.com': true,
+      's3-website.us-east-2.amazonaws.com': true,
+      't3l3p0rt.net': true,
+      'tele.amune.org': true,
       'on-aptible.com': true,
+      'user.party.eus': true,
       'pimienta.org': true,
       'poivron.org': true,
       'potager.org': true,
       'sweetpepper.org': true,
       'myasustor.com': true,
       'myfritz.net': true,
+      '*.awdev.ca': true,
+      '*.advisor.ws': true,
       'backplaneapp.io': true,
       'betainabox.com': true,
       'bnr.la': true,
+      'boomla.net': true,
       'boxfuse.io': true,
+      'square7.ch': true,
+      'bplaced.com': true,
+      'bplaced.de': true,
+      'square7.de': true,
+      'bplaced.net': true,
+      'square7.net': true,
       'browsersafetymark.io': true,
       'mycd.eu': true,
       'ae.org': true,
@@ -13460,6 +13510,13 @@
       'certmgr.org': true,
       'xenapponazure.com': true,
       'virtueeldomein.nl': true,
+      'c66.me': true,
+      'cloud66.ws': true,
+      'jdevcloud.com': true,
+      'wpdevcloud.com': true,
+      'cloudaccess.host': true,
+      'freesite.host': true,
+      'cloudaccess.net': true,
       'cloudcontrolled.com': true,
       'cloudcontrolapp.com': true,
       'co.ca': true,
@@ -13482,20 +13539,33 @@
       'cloudns.us': true,
       'co.nl': true,
       'co.no': true,
-      '*.platform.sh': true,
+      'webhosting.be': true,
+      'hosting-cluster.nl': true,
+      'dyn.cosidns.de': true,
+      'dynamisches-dns.de': true,
+      'dnsupdater.de': true,
+      'internet-dns.de': true,
+      'l-o-g-i-n.de': true,
+      'dynamic-dns.info': true,
+      'feste-ip.net': true,
+      'knx-server.net': true,
+      'static-access.net': true,
       'realm.cz': true,
       '*.cryptonomic.net': true,
       'cupcake.is': true,
       'cyon.link': true,
       'cyon.site': true,
       'daplie.me': true,
+      'localhost.daplie.me': true,
       'biz.dk': true,
       'co.dk': true,
       'firm.dk': true,
       'reg.dk': true,
       'store.dk': true,
+      'debian.net': true,
       'dedyn.io': true,
       'dnshome.de': true,
+      'drayddns.com': true,
       'dreamhosters.com': true,
       'mydrobo.com': true,
       'drud.io': true,
@@ -13791,8 +13861,30 @@
       'dyn.home-webserver.de': true,
       'myhome-server.de': true,
       'ddnss.org': true,
+      'definima.net': true,
+      'definima.io': true,
+      'ddnsfree.com': true,
+      'ddnsgeek.com': true,
+      'giize.com': true,
+      'gleeze.com': true,
+      'kozow.com': true,
+      'loseyourip.com': true,
+      'ooguy.com': true,
+      'theworkpc.com': true,
+      'casacam.net': true,
+      'dynu.net': true,
+      'accesscam.org': true,
+      'camdvr.org': true,
+      'freeddns.org': true,
+      'mywire.org': true,
+      'webredirect.org': true,
+      'myddns.rocks': true,
+      'blogsite.xyz': true,
       'dynv6.net': true,
       'e4.cz': true,
+      'mytuleap.com': true,
+      'enonic.io': true,
+      'customer.enonic.io': true,
       'eu.org': true,
       'al.eu.org': true,
       'asso.eu.org': true,
@@ -13851,37 +13943,127 @@
       'us.eu.org': true,
       'eu-1.evennode.com': true,
       'eu-2.evennode.com': true,
+      'eu-3.evennode.com': true,
+      'eu-4.evennode.com': true,
       'us-1.evennode.com': true,
       'us-2.evennode.com': true,
+      'us-3.evennode.com': true,
+      'us-4.evennode.com': true,
+      'twmail.cc': true,
+      'twmail.net': true,
+      'twmail.org': true,
+      'mymailer.com.tw': true,
+      'url.tw': true,
       'apps.fbsbx.com': true,
+      'ru.net': true,
+      'adygeya.ru': true,
+      'bashkiria.ru': true,
+      'bir.ru': true,
+      'cbg.ru': true,
+      'com.ru': true,
+      'dagestan.ru': true,
+      'grozny.ru': true,
+      'kalmykia.ru': true,
+      'kustanai.ru': true,
+      'marine.ru': true,
+      'mordovia.ru': true,
+      'msk.ru': true,
+      'mytis.ru': true,
+      'nalchik.ru': true,
+      'nov.ru': true,
+      'pyatigorsk.ru': true,
+      'spb.ru': true,
+      'vladikavkaz.ru': true,
+      'vladimir.ru': true,
+      'abkhazia.su': true,
+      'adygeya.su': true,
+      'aktyubinsk.su': true,
+      'arkhangelsk.su': true,
+      'armenia.su': true,
+      'ashgabad.su': true,
+      'azerbaijan.su': true,
+      'balashov.su': true,
+      'bashkiria.su': true,
+      'bryansk.su': true,
+      'bukhara.su': true,
+      'chimkent.su': true,
+      'dagestan.su': true,
+      'east-kazakhstan.su': true,
+      'exnet.su': true,
+      'georgia.su': true,
+      'grozny.su': true,
+      'ivanovo.su': true,
+      'jambyl.su': true,
+      'kalmykia.su': true,
+      'kaluga.su': true,
+      'karacol.su': true,
+      'karaganda.su': true,
+      'karelia.su': true,
+      'khakassia.su': true,
+      'krasnodar.su': true,
+      'kurgan.su': true,
+      'kustanai.su': true,
+      'lenug.su': true,
+      'mangyshlak.su': true,
+      'mordovia.su': true,
+      'msk.su': true,
+      'murmansk.su': true,
+      'nalchik.su': true,
+      'navoi.su': true,
+      'north-kazakhstan.su': true,
+      'nov.su': true,
+      'obninsk.su': true,
+      'penza.su': true,
+      'pokrovsk.su': true,
+      'sochi.su': true,
+      'spb.su': true,
+      'tashkent.su': true,
+      'termez.su': true,
+      'togliatti.su': true,
+      'troitsk.su': true,
+      'tselinograd.su': true,
+      'tula.su': true,
+      'tuva.su': true,
+      'vladikavkaz.su': true,
+      'vladimir.su': true,
+      'vologda.su': true,
+      'channelsdvr.net': true,
+      'fastlylb.net': true,
+      'map.fastlylb.net': true,
+      'freetls.fastly.net': true,
+      'map.fastly.net': true,
+      'a.prod.fastly.net': true,
+      'global.prod.fastly.net': true,
       'a.ssl.fastly.net': true,
       'b.ssl.fastly.net': true,
       'global.ssl.fastly.net': true,
-      'a.prod.fastly.net': true,
-      'global.prod.fastly.net': true,
       'fhapp.xyz': true,
+      'fedorainfracloud.org': true,
+      'fedorapeople.org': true,
+      'cloud.fedoraproject.org': true,
+      'app.os.fedoraproject.org': true,
+      'app.os.stg.fedoraproject.org': true,
+      'filegear.me': true,
       'firebaseapp.com': true,
       'flynnhub.com': true,
+      'flynnhosting.net': true,
       'freebox-os.com': true,
       'freeboxos.com': true,
       'fbx-os.fr': true,
       'fbxos.fr': true,
       'freebox-os.fr': true,
       'freeboxos.fr': true,
-      'myfusion.cloud': true,
+      '*.futurecms.at': true,
+      'futurehosting.at': true,
       'futuremailing.at': true,
       '*.ex.ortsinfo.at': true,
       '*.kunden.ortsinfo.at': true,
+      '*.statics.cloud': true,
       'service.gov.uk': true,
       'github.io': true,
       'githubusercontent.com': true,
-      'githubcloud.com': true,
-      '*.api.githubcloud.com': true,
-      '*.ext.githubcloud.com': true,
-      'gist.githubcloud.com': true,
-      '*.githubcloudusercontent.com': true,
       'gitlab.io': true,
-      'ro.com': true,
+      'homeoffice.gov.uk': true,
       'ro.im': true,
       'shop.ro': true,
       'goip.de': true,
@@ -13962,6 +14144,7 @@
       'blogspot.ug': true,
       'blogspot.vn': true,
       'cloudfunctions.net': true,
+      'cloud.goog': true,
       'codespot.com': true,
       'googleapis.com': true,
       'googlecode.com': true,
@@ -13974,9 +14157,11 @@
       'hepforge.org': true,
       'herokuapp.com': true,
       'herokussl.com': true,
+      'moonscale.net': true,
       'iki.fi': true,
       'biz.at': true,
       'info.at': true,
+      'info.cx': true,
       'ac.leg.br': true,
       'al.leg.br': true,
       'am.leg.br': true,
@@ -14004,6 +14189,8 @@
       'se.leg.br': true,
       'sp.leg.br': true,
       'to.leg.br': true,
+      'pixolino.com': true,
+      'ipifony.net': true,
       '*.triton.zone': true,
       '*.cns.joyent.com': true,
       'js.org': true,
@@ -14011,16 +14198,40 @@
       'knightpoint.systems': true,
       'co.krd': true,
       'edu.krd': true,
+      'git-repos.de': true,
+      'lcube-server.de': true,
+      'svn-repos.de': true,
+      'linkyard.cloud': true,
+      'linkyard-cloud.ch': true,
+      'we.bs': true,
+      'barsy.bg': true,
+      'barsyonline.com': true,
+      'barsy.de': true,
+      'barsy.eu': true,
+      'barsy.in': true,
+      'barsy.net': true,
+      'barsy.online': true,
+      'barsy.support': true,
       '*.magentosite.cloud': true,
+      'hb.cldmail.ru': true,
+      'cloud.metacentrum.cz': true,
+      'custom.metacentrum.cz': true,
       'meteorapp.com': true,
       'eu.meteorapp.com': true,
       'co.pl': true,
       'azurewebsites.net': true,
       'azure-mobile.net': true,
       'cloudapp.net': true,
+      'mozilla-iot.org': true,
       'bmoattachments.org': true,
+      'net.ru': true,
+      'org.ru': true,
+      'pp.ru': true,
+      'bitballoon.com': true,
+      'netlify.com': true,
       '4u.com': true,
       'ngrok.io': true,
+      'nh-serv.co.uk': true,
       'nfshost.com': true,
       'nsupdate.info': true,
       'nerdpol.ovh': true,
@@ -14109,7 +14320,48 @@
       'sytes.net': true,
       'webhop.me': true,
       'zapto.org': true,
+      'stage.nodeart.io': true,
+      'nodum.co': true,
+      'nodum.io': true,
       'nyc.mn': true,
+      'nom.ae': true,
+      'nom.ai': true,
+      'nom.al': true,
+      'nym.by': true,
+      'nym.bz': true,
+      'nom.cl': true,
+      'nom.gd': true,
+      'nom.gl': true,
+      'nym.gr': true,
+      'nom.gt': true,
+      'nom.hn': true,
+      'nom.im': true,
+      'nym.kz': true,
+      'nym.la': true,
+      'nom.li': true,
+      'nym.li': true,
+      'nym.lt': true,
+      'nym.lu': true,
+      'nym.me': true,
+      'nom.mk': true,
+      'nym.mx': true,
+      'nom.nu': true,
+      'nym.nz': true,
+      'nym.pe': true,
+      'nym.pt': true,
+      'nom.pw': true,
+      'nom.qa': true,
+      'nom.rs': true,
+      'nom.si': true,
+      'nym.sk': true,
+      'nym.su': true,
+      'nym.sx': true,
+      'nym.tw': true,
+      'nom.ug': true,
+      'nom.uy': true,
+      'nom.vc': true,
+      'nom.vg': true,
+      'cya.gg': true,
       'nid.io': true,
       'opencraft.hosting': true,
       'operaunite.com': true,
@@ -14127,17 +14379,26 @@
       'pantheonsite.io': true,
       'gotpantheon.com': true,
       'mypep.link': true,
+      'on-web.fr': true,
+      '*.platform.sh': true,
+      '*.platformsh.site': true,
       'xen.prgmr.com': true,
       'priv.at': true,
       'protonet.io': true,
       'chirurgiens-dentistes-en-france.fr': true,
+      'byen.site': true,
       'qa2.com': true,
       'dev-myqnapcloud.com': true,
       'alpha-myqnapcloud.com': true,
       'myqnapcloud.com': true,
+      '*.quipelements.com': true,
+      'vapor.cloud': true,
+      'vaporcloud.io': true,
       'rackmaze.com': true,
       'rackmaze.net': true,
       'rhcloud.com': true,
+      'resindevice.io': true,
+      'devices.resinstaging.io': true,
       'hzc.io': true,
       'wellbeingzone.eu': true,
       'ptplus.fit': true,
@@ -14145,6 +14406,8 @@
       'sandcats.io': true,
       'logoip.de': true,
       'logoip.com': true,
+      'schokokeks.net': true,
+      'scrysec.com': true,
       'firewall-gateway.com': true,
       'firewall-gateway.de': true,
       'my-gateway.de': true,
@@ -14155,6 +14418,8 @@
       'my-firewall.org': true,
       'myfirewall.org': true,
       'spdns.org': true,
+      '*.s5y.io': true,
+      '*.sensiosite.cloud': true,
       'biz.ua': true,
       'co.ua': true,
       'pp.ua': true,
@@ -14175,6 +14440,8 @@
       '*.stolos.io': true,
       'spacekit.io': true,
       'stackspace.space': true,
+      'storj.farm': true,
+      'temp-dns.com': true,
       'diskstation.me': true,
       'dscloud.biz': true,
       'dscloud.me': true,
@@ -14188,26 +14455,81 @@
       'i234.me': true,
       'myds.me': true,
       'synology.me': true,
+      'vpnplus.to': true,
       'taifun-dns.de': true,
       'gda.pl': true,
       'gdansk.pl': true,
       'gdynia.pl': true,
       'med.pl': true,
       'sopot.pl': true,
+      'cust.dev.thingdust.io': true,
+      'cust.disrec.thingdust.io': true,
+      'cust.prod.thingdust.io': true,
+      'cust.testing.thingdust.io': true,
       'bloxcms.com': true,
       'townnews-staging.com': true,
+      '12hp.at': true,
+      '2ix.at': true,
+      '4lima.at': true,
+      'lima-city.at': true,
+      '12hp.ch': true,
+      '2ix.ch': true,
+      '4lima.ch': true,
+      'lima-city.ch': true,
+      'trafficplex.cloud': true,
+      'de.cool': true,
+      '12hp.de': true,
+      '2ix.de': true,
+      '4lima.de': true,
+      'lima-city.de': true,
+      '1337.pictures': true,
+      'clan.rip': true,
+      'lima-city.rocks': true,
+      'webspace.rocks': true,
+      'lima.zone': true,
       '*.transurl.be': true,
       '*.transurl.eu': true,
       '*.transurl.nl': true,
       'tuxfamily.org': true,
+      'dd-dns.de': true,
+      'diskstation.eu': true,
+      'diskstation.org': true,
+      'dray-dns.de': true,
+      'draydns.de': true,
+      'dyn-vpn.de': true,
+      'dynvpn.de': true,
+      'mein-vigor.de': true,
+      'my-vigor.de': true,
+      'my-wan.de': true,
+      'syno-ds.de': true,
+      'synology-diskstation.de': true,
+      'synology-ds.de': true,
+      'uber.space': true,
       'hk.com': true,
       'hk.org': true,
       'ltd.hk': true,
       'inc.hk': true,
       'lib.de.us': true,
+      '2038.io': true,
       'router.management': true,
+      'v-info.info': true,
+      'wedeploy.io': true,
+      'wedeploy.me': true,
+      'wedeploy.sh': true,
+      'remotewd.com': true,
       'wmflabs.org': true,
+      'cistron.nl': true,
+      'demon.nl': true,
+      'xs4all.space': true,
+      'official.academy': true,
       'yolasite.com': true,
+      'ybo.faith': true,
+      'yombo.me': true,
+      'homelink.one': true,
+      'ybo.party': true,
+      'ybo.review': true,
+      'ybo.science': true,
+      'ybo.trade': true,
       'za.net': true,
       'za.org': true,
       'now.sh': true
@@ -14540,33 +14862,35 @@
     MemoryCookieStore: MemoryCookieStore_1
   };
 
-  var _args = [['tough-cookie@2.3.3', '/home/reinier/temp/jcognos']];
-  var _from = 'tough-cookie@2.3.3';
-  var _id = 'tough-cookie@2.3.3';
+  var _from = 'tough-cookie@~2.3.3';
+  var _id = 'tough-cookie@2.3.4';
   var _inBundle = false;
-  var _integrity = 'sha1-C2GKVWW23qkL80JdBNVe3EdadWE=';
+  var _integrity =
+    'sha512-TZ6TTfI5NtZnuyy/Kecv+CnoROnyXn2DN97LontgQpCwsX2XyLYCC0ENhYkehSOwAp8rTQKc/NUIF7BkQ5rKLA==';
   var _location = '/tough-cookie';
   var _phantomChildren = {};
   var _requested = {
-    type: 'version',
+    type: 'range',
     registry: true,
-    raw: 'tough-cookie@2.3.3',
+    raw: 'tough-cookie@~2.3.3',
     name: 'tough-cookie',
     escapedName: 'tough-cookie',
-    rawSpec: '2.3.3',
+    rawSpec: '~2.3.3',
     saveSpec: null,
-    fetchSpec: '2.3.3'
+    fetchSpec: '~2.3.3'
   };
-  var _requiredBy = ['/axios-cookiejar-support', '/request'];
+  var _requiredBy = ['/request'];
   var _resolved =
-    'https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.3.tgz';
-  var _spec = '2.3.3';
-  var _where = '/home/reinier/temp/jcognos';
+    'https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.4.tgz';
+  var _shasum = 'ec60cee38ac675063ffc97a5c18970578ee83655';
+  var _spec = 'tough-cookie@~2.3.3';
+  var _where = '/home/reinier/temp/jcognos/node_modules/request';
   var author = {
     name: 'Jeremy Stashewsky',
     email: 'jstashewsky@salesforce.com'
   };
   var bugs = { url: 'https://github.com/salesforce/tough-cookie/issues' };
+  var bundleDependencies = false;
   var contributors = [
     { name: 'Alexander Savin' },
     { name: 'Ian Livingstone' },
@@ -14576,6 +14900,7 @@
     { name: 'Sebastian Mayr' }
   ];
   var dependencies = { punycode: '^1.4.1' };
+  var deprecated = false;
   var description = 'RFC6265 Cookies and Cookie Jar for node.js';
   var devDependencies = {
     async: '^1.4.2',
@@ -14607,9 +14932,8 @@
       'curl -o public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && ./generate-pubsuffix.js',
     test: 'vows test/*_test.js'
   };
-  var version$2 = '2.3.3';
+  var version$2 = '2.3.4';
   var _package = {
-    _args: _args,
     _from: _from,
     _id: _id,
     _inBundle: _inBundle,
@@ -14619,12 +14943,15 @@
     _requested: _requested,
     _requiredBy: _requiredBy,
     _resolved: _resolved,
+    _shasum: _shasum,
     _spec: _spec,
     _where: _where,
     author: author,
     bugs: bugs,
+    bundleDependencies: bundleDependencies,
     contributors: contributors,
     dependencies: dependencies,
+    deprecated: deprecated,
     description: description,
     devDependencies: devDependencies,
     engines: engines,
@@ -14640,7 +14967,6 @@
   };
 
   var _package$1 = Object.freeze({
-    _args: _args,
     _from: _from,
     _id: _id,
     _inBundle: _inBundle,
@@ -14650,12 +14976,15 @@
     _requested: _requested,
     _requiredBy: _requiredBy,
     _resolved: _resolved,
+    _shasum: _shasum,
     _spec: _spec,
     _where: _where,
     author: author,
     bugs: bugs,
+    bundleDependencies: bundleDependencies,
     contributors: contributors,
     dependencies: dependencies,
+    deprecated: deprecated,
     description: description,
     devDependencies: devDependencies,
     engines: engines,
@@ -14693,37 +15022,24 @@
     );
   }
 
-  var DATE_DELIM = /[\x09\x20-\x2F\x3B-\x40\x5B-\x60\x7B-\x7E]/;
-
   // From RFC6265 S4.1.1
   // note that it excludes \x3B ";"
-  var COOKIE_OCTET = /[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]/;
-  var COOKIE_OCTETS = new RegExp('^' + COOKIE_OCTET.source + '+$');
+  var COOKIE_OCTETS = /^[\x21\x23-\x2B\x2D-\x3A\x3C-\x5B\x5D-\x7E]+$/;
 
   var CONTROL_CHARS = /[\x00-\x1F]/;
 
-  // For COOKIE_PAIR and LOOSE_COOKIE_PAIR below, the number of spaces has been
-  // restricted to 256 to side-step a ReDoS issue reported here:
-  // https://github.com/salesforce/tough-cookie/issues/92
-
-  // Double quotes are part of the value (see: S4.1.1).
-  // '\r', '\n' and '\0' should be treated as a terminator in the "relaxed" mode
-  // (see: https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/parsed_cookie.cc#L60)
-  // '=' and ';' are attribute/values separators
-  // (see: https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/parsed_cookie.cc#L64)
-  var COOKIE_PAIR = /^(([^=;]+))\s{0,256}=\s*([^\n\r\0]*)/;
-
-  // Used to parse non-RFC-compliant cookies like '=abc' when given the `loose`
-  // option in Cookie.parse:
-  var LOOSE_COOKIE_PAIR = /^((?:=)?([^=;]*)\s{0,256}=\s*)?([^\n\r\0]*)/;
+  // From Chromium // '\r', '\n' and '\0' should be treated as a terminator in
+  // the "relaxed" mode, see:
+  // https://github.com/ChromiumWebApps/chromium/blob/b3d3b4da8bb94c1b2e061600df106d590fda3620/net/cookies/parsed_cookie.cc#L60
+  var TERMINATORS = ['\n', '\r', '\0'];
 
   // RFC6265 S4.1.1 defines path value as 'any CHAR except CTLs or ";"'
   // Note ';' is \x3B
   var PATH_VALUE = /[\x20-\x3A\x3C-\x7E]+/;
 
-  var DAY_OF_MONTH = /^(\d{1,2})[^\d]*$/;
-  var TIME = /^(\d{1,2})[^\d]*:(\d{1,2})[^\d]*:(\d{1,2})[^\d]*$/;
-  var MONTH = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i;
+  // date-time parsing constants (RFC6265 S5.1.1)
+
+  var DATE_DELIM = /[\x09\x20-\x2F\x3B-\x40\x5B-\x60\x7B-\x7E]/;
 
   var MONTH_TO_NUM = {
     jan: 0,
@@ -14755,12 +15071,82 @@
   ];
   var NUM_TO_DAY = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  var YEAR = /^(\d{2}|\d{4})$/; // 2 to 4 digits
-
   var MAX_TIME = 2147483647000; // 31-bit max
   var MIN_TIME = 0; // 31-bit min
 
-  // RFC6265 S5.1.1 date parser:
+  /*
+ * Parses a Natural number (i.e., non-negative integer) with either the
+ *    <min>*<max>DIGIT ( non-digit *OCTET )
+ * or
+ *    <min>*<max>DIGIT
+ * grammar (RFC6265 S5.1.1).
+ *
+ * The "trailingOK" boolean controls if the grammar accepts a
+ * "( non-digit *OCTET )" trailer.
+ */
+  function parseDigits(token, minDigits, maxDigits, trailingOK) {
+    var count = 0;
+    while (count < token.length) {
+      var c = token.charCodeAt(count);
+      // "non-digit = %x00-2F / %x3A-FF"
+      if (c <= 0x2f || c >= 0x3a) {
+        break;
+      }
+      count++;
+    }
+
+    // constrain to a minimum and maximum number of digits.
+    if (count < minDigits || count > maxDigits) {
+      return null;
+    }
+
+    if (!trailingOK && count != token.length) {
+      return null;
+    }
+
+    return parseInt(token.substr(0, count), 10);
+  }
+
+  function parseTime(token) {
+    var parts = token.split(':');
+    var result = [0, 0, 0];
+
+    /* RF6256 S5.1.1:
+   *      time            = hms-time ( non-digit *OCTET )
+   *      hms-time        = time-field ":" time-field ":" time-field
+   *      time-field      = 1*2DIGIT
+   */
+
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    for (var i = 0; i < 3; i++) {
+      // "time-field" must be strictly "1*2DIGIT", HOWEVER, "hms-time" can be
+      // followed by "( non-digit *OCTET )" so therefore the last time-field can
+      // have a trailer
+      var trailingOK = i == 2;
+      var num = parseDigits(parts[i], 1, 2, trailingOK);
+      if (num === null) {
+        return null;
+      }
+      result[i] = num;
+    }
+
+    return result;
+  }
+
+  function parseMonth(token) {
+    token = String(token)
+      .substr(0, 3)
+      .toLowerCase();
+    var num = MONTH_TO_NUM[token];
+    return num >= 0 ? num : null;
+  }
+
+  /*
+ * RFC6265 S5.1.1 date parser (see RFC for full grammar)
+ */
   function parseDate(str) {
     if (!str) {
       return;
@@ -14776,9 +15162,9 @@
     }
 
     var hour = null;
-    var minutes = null;
-    var seconds = null;
-    var day = null;
+    var minute = null;
+    var second = null;
+    var dayOfMonth = null;
     var month = null;
     var year = null;
 
@@ -14796,22 +15182,12 @@
      * the date-token, respectively.  Skip the remaining sub-steps and continue
      * to the next date-token.
      */
-      if (seconds === null) {
-        result = TIME.exec(token);
+      if (second === null) {
+        result = parseTime(token);
         if (result) {
-          hour = parseInt(result[1], 10);
-          minutes = parseInt(result[2], 10);
-          seconds = parseInt(result[3], 10);
-          /* RFC6265 S5.1.1.5:
-         * [fail if]
-         * *  the hour-value is greater than 23,
-         * *  the minute-value is greater than 59, or
-         * *  the second-value is greater than 59.
-         */
-          if (hour > 23 || minutes > 59 || seconds > 59) {
-            return;
-          }
-
+          hour = result[0];
+          minute = result[1];
+          second = result[2];
           continue;
         }
       }
@@ -14821,16 +15197,11 @@
      * the day-of-month-value to the number denoted by the date-token.  Skip
      * the remaining sub-steps and continue to the next date-token.
      */
-      if (day === null) {
-        result = DAY_OF_MONTH.exec(token);
-        if (result) {
-          day = parseInt(result, 10);
-          /* RFC6265 S5.1.1.5:
-         * [fail if] the day-of-month-value is less than 1 or greater than 31
-         */
-          if (day < 1 || day > 31) {
-            return;
-          }
+      if (dayOfMonth === null) {
+        // "day-of-month = 1*2DIGIT ( non-digit *OCTET )"
+        result = parseDigits(token, 1, 2, true);
+        if (result !== null) {
+          dayOfMonth = result;
           continue;
         }
       }
@@ -14841,47 +15212,67 @@
      * continue to the next date-token.
      */
       if (month === null) {
-        result = MONTH.exec(token);
-        if (result) {
-          month = MONTH_TO_NUM[result[1].toLowerCase()];
+        result = parseMonth(token);
+        if (result !== null) {
+          month = result;
           continue;
         }
       }
 
-      /* 2.4. If the found-year flag is not set and the date-token matches the year
-     * production, set the found-year flag and set the year-value to the number
-     * denoted by the date-token.  Skip the remaining sub-steps and continue to
-     * the next date-token.
+      /* 2.4. If the found-year flag is not set and the date-token matches the
+     * year production, set the found-year flag and set the year-value to the
+     * number denoted by the date-token.  Skip the remaining sub-steps and
+     * continue to the next date-token.
      */
       if (year === null) {
-        result = YEAR.exec(token);
-        if (result) {
-          year = parseInt(result[0], 10);
+        // "year = 2*4DIGIT ( non-digit *OCTET )"
+        result = parseDigits(token, 2, 4, true);
+        if (result !== null) {
+          year = result;
           /* From S5.1.1:
          * 3.  If the year-value is greater than or equal to 70 and less
          * than or equal to 99, increment the year-value by 1900.
          * 4.  If the year-value is greater than or equal to 0 and less
          * than or equal to 69, increment the year-value by 2000.
          */
-          if (70 <= year && year <= 99) {
+          if (year >= 70 && year <= 99) {
             year += 1900;
-          } else if (0 <= year && year <= 69) {
+          } else if (year >= 0 && year <= 69) {
             year += 2000;
-          }
-
-          if (year < 1601) {
-            return; // 5. ... the year-value is less than 1601
           }
         }
       }
     }
 
-    if (seconds === null || day === null || month === null || year === null) {
-      return; // 5. ... at least one of the found-day-of-month, found-month, found-
-      // year, or found-time flags is not set,
+    /* RFC 6265 S5.1.1
+   * "5. Abort these steps and fail to parse the cookie-date if:
+   *     *  at least one of the found-day-of-month, found-month, found-
+   *        year, or found-time flags is not set,
+   *     *  the day-of-month-value is less than 1 or greater than 31,
+   *     *  the year-value is less than 1601,
+   *     *  the hour-value is greater than 23,
+   *     *  the minute-value is greater than 59, or
+   *     *  the second-value is greater than 59.
+   *     (Note that leap seconds cannot be represented in this syntax.)"
+   *
+   * So, in order as above:
+   */
+    if (
+      dayOfMonth === null ||
+      month === null ||
+      year === null ||
+      second === null ||
+      dayOfMonth < 1 ||
+      dayOfMonth > 31 ||
+      year < 1601 ||
+      hour > 23 ||
+      minute > 59 ||
+      second > 59
+    ) {
+      return;
     }
 
-    return new Date(Date.UTC(year, month, day, hour, minutes, seconds));
+    return new Date(Date.UTC(year, month, dayOfMonth, hour, minute, second));
   }
 
   function formatDate(date) {
@@ -15005,6 +15396,54 @@
     return path.slice(0, rightSlash);
   }
 
+  function trimTerminator(str) {
+    for (var t = 0; t < TERMINATORS.length; t++) {
+      var terminatorIdx = str.indexOf(TERMINATORS[t]);
+      if (terminatorIdx !== -1) {
+        str = str.substr(0, terminatorIdx);
+      }
+    }
+
+    return str;
+  }
+
+  function parseCookiePair(cookiePair, looseMode) {
+    cookiePair = trimTerminator(cookiePair);
+
+    var firstEq = cookiePair.indexOf('=');
+    if (looseMode) {
+      if (firstEq === 0) {
+        // '=' is immediately at start
+        cookiePair = cookiePair.substr(1);
+        firstEq = cookiePair.indexOf('='); // might still need to split on '='
+      }
+    } else {
+      // non-loose mode
+      if (firstEq <= 0) {
+        // no '=' or is at start
+        return; // needs to have non-empty "cookie-name"
+      }
+    }
+
+    var cookieName, cookieValue;
+    if (firstEq <= 0) {
+      cookieName = '';
+      cookieValue = cookiePair.trim();
+    } else {
+      cookieName = cookiePair.substr(0, firstEq).trim();
+      cookieValue = cookiePair.substr(firstEq + 1).trim();
+    }
+
+    if (CONTROL_CHARS.test(cookieName) || CONTROL_CHARS.test(cookieValue)) {
+      return;
+    }
+
+    var c = new Cookie();
+    c.key = cookieName;
+    c.value = cookieValue;
+    return c;
+  }
+
   function parse(str, options) {
     if (!options || typeof options !== 'object') {
       options = {};
@@ -15013,23 +15452,9 @@
 
     // We use a regex to parse the "name-value-pair" part of S5.2
     var firstSemi = str.indexOf(';'); // S5.2 step 1
-    var pairRe = options.loose ? LOOSE_COOKIE_PAIR : COOKIE_PAIR;
-    var result = pairRe.exec(firstSemi === -1 ? str : str.substr(0, firstSemi));
-
-    // Rx satisfies the "the name string is empty" and "lacks a %x3D ("=")"
-    // constraints as well as trimming any whitespace.
-    if (!result) {
-      return;
-    }
-
-    var c = new Cookie();
-    if (result[1]) {
-      c.key = result[2].trim();
-    } else {
-      c.key = '';
-    }
-    c.value = result[3].trim();
-    if (CONTROL_CHARS.test(c.key) || CONTROL_CHARS.test(c.value)) {
+    var cookiePair = firstSemi === -1 ? str : str.substr(0, firstSemi);
+    var c = parseCookiePair(cookiePair, !!options.loose);
+    if (!c) {
       return;
     }
 
