@@ -52,7 +52,7 @@
     "prettier": "^1.13.7",
     "rollup": "^0.51.8",
     "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-commonjs": "^8.4.1",
+    "rollup-plugin-commonjs": "^9.1.4",
     "rollup-plugin-filesize": "^1.5.0",
     "rollup-plugin-inject": "^2.1.0",
     "rollup-plugin-json": "^2.3.1",
