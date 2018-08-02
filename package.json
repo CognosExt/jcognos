@@ -8,7 +8,7 @@
     "build": "npm run buildbrowser && npm run buildnode",
     "buildbrowser": "cross-env NODE_ENV=rollup rollup -c rollup.config.js",
     "buildnode": "cross-env NODE_ENV=rollup rollup -c rollup.config.node.js",
-    "precommit": "node_modules/.bin/documentation readme src/Cognos.js --section Usage ; git add README.md ; node_modules/.bin/lint-staged",
+    "precommit": "bin/documentation.js build src/** -f html -o docs ; git add README.md ; node_modules/.bin/lint-staged",
     "release": "standard-version",
     "test": "cross-env NODE_ENV=test node_modules/mocha/bin/mocha --require babel-register",
     "testing": "cross-env NODE_ENV=test node_modules/.bin/wdio"
@@ -70,6 +70,8 @@
     "axios": "^0.17.1",
     "axios-cookiejar-support": "^0.1.4",
     "fs-utils": "^0.7.0",
+    "http": "0.0.0",
+    "https": "^1.0.0",
     "minimatch": "^3.0.4"
   }
 }
