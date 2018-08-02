@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Utils } from './Utils';
-
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 
 // I dont think we should need this by now
@@ -46,7 +45,15 @@ class CognosRequest {
     var me = this;
     var cookieJar = false;
     var firstheaders = {};
-    this.axios = axios.create({});
+    this.axios = axios.create({
+      timeout: 60000,
+
+      //follow up to 10 HTTP 3xx redirects
+      maxRedirects: 10,
+
+      //cap the maximum content length we'll accept to 50MBs, just in case
+      maxContentLength: 50 * 1000 * 1000
+    });
     if (Utils.isNode()) {
       axiosCookieJarSupport(this.axios);
       var cookieJar = new tough.CookieJar();
@@ -113,6 +120,7 @@ class CognosRequest {
           typeof err.response === 'undefined' ||
           err.response.status !== 441
         ) {
+          me.log('Unexpected Error in initialise', err);
           throw err.message;
         }
         me.log('Expected Error in initialise');
