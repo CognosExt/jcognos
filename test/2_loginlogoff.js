@@ -8,6 +8,7 @@ if (typeof window == 'undefined') {
   var debug = settings.debug;
   var user = settings.user;
   var password = settings.password;
+  var namespace = settings.namespace;
 }
 
 var getCognos = jcognos.getCognos;
@@ -26,13 +27,13 @@ describe('Logon Logoff with success', function() {
       });
     }
   });
-  it('Should be able to login', done => {
+  it('Succesful login without namespace', done => {
     getCognos(url, debug)
       .then(function(lcognos) {
         cognos = lcognos;
         assert.isOk(lcognos, 'Succesfully created Cognos');
         if (!cognos.loggedin) {
-          return lcognos.login(user, password);
+          return lcognos.login(user, password, namespace);
         }
       })
       .then(function(mycognos) {
@@ -46,5 +47,26 @@ describe('Logon Logoff with success', function() {
         );
       })
       .then(done, done);
-  });
+  }),
+    it('Successful login with namespace', done => {
+      getCognos(url, debug)
+        .then(function(lcognos) {
+          cognos = lcognos;
+          assert.isOk(lcognos, 'Succesfully created Cognos');
+          if (!cognos.loggedin) {
+            return lcognos.login(user, password, namespace);
+          }
+        })
+        .then(function(mycognos) {
+          assert.isOk(true, 'Succesfully logged in');
+        })
+        .catch(function(err) {
+          console.log('Error is', err);
+          assert.equal(
+            err,
+            'Network Error. ' //note the space!
+          );
+        })
+        .then(done, done);
+    });
 });

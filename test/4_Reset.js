@@ -8,6 +8,7 @@ if (typeof window == 'undefined') {
   var debug = settings.debug;
   var user = settings.user;
   var password = settings.password;
+  var namespace = settings.namespace;
 }
 
 var getCognos = jcognos.getCognos;
@@ -21,7 +22,7 @@ describe('jcognos Reset Tests', function() {
         assert.isOk(lcognos, 'Succesfully created Cognos');
         cognos = lcognos;
         if (!cognos.loggedin) {
-          return lcognos.login(user, password);
+          return lcognos.login(user, password, namespace);
         }
       })
       .then(function(mycognos) {
@@ -58,6 +59,9 @@ describe('jcognos Reset Tests', function() {
           assert.fail(true, true, 'Folders are empty. Are you logged in?');
         }
       })
+      .catch(function(err) {
+        console.log('There was an error fetching the root folder', err);
+      })
       .then(done, done);
   }),
     it('Should be able to create folders and delete them', done => {
@@ -76,11 +80,14 @@ describe('jcognos Reset Tests', function() {
                 assert.equal(folder, true, 'New Folder Deleted');
               })
               .catch(function(err) {
-                console.log(err);
+                console.log('Three was an error deleting a folder', err);
                 assert.fail(true, true, err);
               })
               .then(done, done);
           });
+        })
+        .catch(function(err) {
+          console.log('There was an error listing the root folder', err);
         });
     });
 });

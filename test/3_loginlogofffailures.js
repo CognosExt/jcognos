@@ -8,6 +8,7 @@ if (typeof window == 'undefined') {
   var debug = settings.debug;
   var user = settings.user;
   var password = settings.password;
+  var namespace = settings.namespace;
 }
 
 var getCognos = jcognos.getCognos;
@@ -37,7 +38,7 @@ describe('Logon Logoff with errors', function() {
 
         if (!cognos.loggedin) {
           lcognos
-            .login('SOMEONE', 'WRONGPASSWORD')
+            .login('SOMEONE', 'WRONGPASSWORD', namespace)
             .then(function(someresult) {
               //dummy code
             })

@@ -31,6 +31,7 @@ class Cognos {
     this.debug = debug;
     this.username = '';
     this.password = '';
+    this.namespace = '';
     this.retrycount = 0;
     this.loginrequest = false;
     this.resetting = false;
@@ -62,7 +63,7 @@ class Cognos {
    * @param  {String} password Password
    * @return {Promise}          returns a promise.
    */
-  login(user, password) {
+  login(user, password, namespace = '') {
     var me = this;
     me.log('login: Starting to login');
     if (me.loginrequest !== false) {
@@ -72,12 +73,19 @@ class Cognos {
       );
       return me.loginrequest;
     }
+
+    if (namespace == '') {
+      namespace = me.requester.namespace;
+    }
+    if (!namespace) {
+      throw 'Namespace not known.';
+    }
     // Set the parameters of the login POST request
     var params = {
       parameters: [
         {
           name: 'CAMNamespace',
-          value: me.requester.namespace
+          value: namespace
         },
         {
           name: 'h_CAM_action',
@@ -100,6 +108,7 @@ class Cognos {
         me.loggedin = true;
         me.username = user;
         me.password = password;
+        me.namespace = namespace;
         me.loginrequest = false;
         me.log('Successfully logged in');
         return body;
@@ -195,7 +204,7 @@ class Cognos {
       .then(function(cRequest) {
         me.requester = cRequest;
         me.log('going to login again');
-        let result = me.login(me.username, me.password);
+        let result = me.login(me.username, me.password, me.namespace);
         me.log('login promise', result);
         return result;
       })
@@ -387,7 +396,7 @@ class Cognos {
         return me
           .handleError(err)
           .then(function() {
-            me.log('We have been reset, list add the folder again');
+            me.log('We have been reset, lets add the folder again');
             me.resetting = false;
             return me.addFolder(parentid, name);
           })
@@ -515,14 +524,16 @@ function getCognos(url, debug = false) {
     reset = true;
   }
   if (typeof jCognos == 'undefined') {
-    var myRequest = getCognosRequest(url, debug, reset).then(function(
-      cRequest
-    ) {
-      jCognos = new Cognos(debug);
-      jCognos.requester = cRequest;
-      jCognos.url = url;
-      return jCognos;
-    });
+    var myRequest = getCognosRequest(url, debug, reset)
+      .then(function(cRequest) {
+        jCognos = new Cognos(debug);
+        jCognos.requester = cRequest;
+        jCognos.url = url;
+        return jCognos;
+      })
+      .catch(function(err) {
+        throw err;
+      });
     return myRequest;
   } else {
     return Promise.resolve(jCognos);

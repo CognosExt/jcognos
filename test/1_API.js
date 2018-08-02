@@ -8,6 +8,7 @@ if (typeof window == 'undefined') {
   var debug = settings.debug;
   var user = settings.user;
   var password = settings.password;
+  var namespace = settings.namespace;
 }
 
 var getCognos = jcognos.getCognos;
@@ -16,19 +17,20 @@ var assert = chai.assert;
 var cognos;
 describe('jcognos API Tests', function() {
   beforeEach(function() {
+    this.timeout(0);
     var result = getCognos(url, debug)
       .then(function(lcognos) {
         assert.isOk(lcognos, 'Succesfully created Cognos');
         cognos = lcognos;
         if (!cognos.loggedin) {
-          return lcognos.login(user, password);
+          return lcognos.login(user, password, namespace);
         }
       })
       .then(function(mycognos) {
         assert.isOk(true, 'Succesfully logged in');
       })
       .catch(function(err) {
-        console.log(err);
+        console.log('here', err);
         assert.fail(true, true, 'Can not login');
       });
     return result;

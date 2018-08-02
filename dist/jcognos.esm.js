@@ -103,7 +103,13 @@ var CognosRequest = (function() {
         var me = this;
         var cookieJar = false;
         var firstheaders = {};
-        this.axios = axios.create({});
+        this.axios = axios.create({
+          timeout: 60000,
+
+          maxRedirects: 10,
+
+          maxContentLength: 50 * 1000 * 1000
+        });
         if (Utils.isNode()) {
           axiosCookieJarSupport(this.axios);
           var cookieJar = new tough.CookieJar();
@@ -166,6 +172,7 @@ var CognosRequest = (function() {
               typeof err.response === 'undefined' ||
               err.response.status !== 441
             ) {
+              me.log('Unexpected Error in initialise', err);
               throw err.message;
             }
             me.log('Expected Error in initialise');
@@ -487,6 +494,7 @@ var Cognos = (function() {
     this.debug = debug;
     this.username = '';
     this.password = '';
+    this.namespace = '';
     this.retrycount = 0;
     this.loginrequest = false;
     this.resetting = false;
@@ -520,6 +528,11 @@ var Cognos = (function() {
     {
       key: 'login',
       value: function login(user, password) {
+        var namespace =
+          arguments.length > 2 && arguments[2] !== undefined
+            ? arguments[2]
+            : '';
+
         var me = this;
         me.log('login: Starting to login');
         if (me.loginrequest !== false) {
@@ -530,11 +543,18 @@ var Cognos = (function() {
           return me.loginrequest;
         }
 
+        if (namespace == '') {
+          namespace = me.requester.namespace;
+        }
+        if (!namespace) {
+          throw 'Namespace not known.';
+        }
+
         var params = {
           parameters: [
             {
               name: 'CAMNamespace',
-              value: me.requester.namespace
+              value: namespace
             },
             {
               name: 'h_CAM_action',
@@ -557,6 +577,7 @@ var Cognos = (function() {
             me.loggedin = true;
             me.username = user;
             me.password = password;
+            me.namespace = namespace;
             me.loginrequest = false;
             me.log('Successfully logged in');
             return body;
@@ -645,7 +666,7 @@ var Cognos = (function() {
           .then(function(cRequest) {
             me.requester = cRequest;
             me.log('going to login again');
-            var result = me.login(me.username, me.password);
+            var result = me.login(me.username, me.password, me.namespace);
             me.log('login promise', result);
             return result;
           })
@@ -830,7 +851,7 @@ var Cognos = (function() {
             return me
               .handleError(err)
               .then(function() {
-                me.log('We have been reset, list add the folder again');
+                me.log('We have been reset, lets add the folder again');
                 me.resetting = false;
                 return me.addFolder(parentid, name);
               })
@@ -956,14 +977,16 @@ function getCognos(url) {
     reset = true;
   }
   if (typeof jCognos == 'undefined') {
-    var myRequest = getCognosRequest(url, debug, reset).then(function(
-      cRequest
-    ) {
-      jCognos = new Cognos(debug);
-      jCognos.requester = cRequest;
-      jCognos.url = url;
-      return jCognos;
-    });
+    var myRequest = getCognosRequest(url, debug, reset)
+      .then(function(cRequest) {
+        jCognos = new Cognos(debug);
+        jCognos.requester = cRequest;
+        jCognos.url = url;
+        return jCognos;
+      })
+      .catch(function(err) {
+        throw err;
+      });
     return myRequest;
   } else {
     return Promise.resolve(jCognos);

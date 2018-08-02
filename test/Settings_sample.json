@@ -4,5 +4,6 @@
   "debug": false,
   "url": "https://localhost/ibmcognos/",
   "user": "tester",
-  "password": "samplepassword"
+  "password": "samplepassword",
+  "namespace": "namespaceid or empty if there is only 1 or a default namespace"
 }
