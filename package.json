@@ -8,7 +8,7 @@
     "build": "npm run buildbrowser && npm run buildnode",
     "buildbrowser": "cross-env NODE_ENV=rollup rollup -c rollup.config.js",
     "buildnode": "cross-env NODE_ENV=rollup rollup -c rollup.config.node.js",
-    "precommit": "bin/documentation.js build src/** -f html -o docs ; git add README.md ; node_modules/.bin/lint-staged",
+    "precommit": "node_modules/documentation/bin/documentation.js build src/** -f html -o docs ; git add README.md ; node_modules/.bin/lint-staged",
     "release": "standard-version",
     "test": "cross-env NODE_ENV=test node_modules/mocha/bin/mocha --require babel-register",
     "testing": "cross-env NODE_ENV=test node_modules/.bin/wdio"

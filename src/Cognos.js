@@ -61,6 +61,7 @@ class Cognos {
    *
    * @param  {String} user     Cognos username
    * @param  {String} password Password
+   * @param {String} [namespace=Cognos Default namespace or the namespace that is the only namespace] Namespace
    * @return {Promise}          returns a promise.
    */
   login(user, password, namespace = '') {
