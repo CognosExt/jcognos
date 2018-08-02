@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/CognosExt/jcognos/compare/v1.1.0...v1.2.0) (2018-08-02)
+
+
+### Bug Fixes
+
+* Small improvements in reselience of http requests to Cognos. Support of Redirects for example. ([eb20164](https://github.com/CognosExt/jcognos/commit/eb20164))
+
+
+### Features
+
+* Add support for namespaces as requested in [#6](https://github.com/CognosExt/jcognos/issues/6) ([3f09039](https://github.com/CognosExt/jcognos/commit/3f09039))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/CognosExt/jcognos/compare/v1.0.3...v1.1.0) (2018-04-20)
 
