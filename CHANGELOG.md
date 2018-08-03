@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.2"></a>
+## [1.2.2](https://github.com/CognosExt/jcognos/compare/v1.2.1...v1.2.2) (2018-08-03)
+
+
+### Bug Fixes
+
+* Never compiled a version for node usage. ([1fa5729](https://github.com/CognosExt/jcognos/commit/1fa5729))
+* typo in package.json ([a2c6e8a](https://github.com/CognosExt/jcognos/commit/a2c6e8a))
+* **addFolder function:** in some environments the addFolder function failed ([8210cca](https://github.com/CognosExt/jcognos/commit/8210cca))
+
+
+
 <a name="1.2.1"></a>
 
 ## [1.2.1](https://github.com/CognosExt/jcognos/compare/v1.2.0...v1.2.1) (2018-08-02)
