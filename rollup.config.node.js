@@ -14,10 +14,16 @@ export default {
  */
 `,
   input: 'src/index.js',
-  output: {
-    file: 'dist/jcognos.esm.js', // equivalent to --output
-    format: 'es'
-  },
+  output: [
+    {
+      file: 'dist/jcognos.esm.js', // equivalent to --output
+      format: 'es'
+    },
+    {
+      file: 'dist/jcognos.cjs.js', // equivalent to --output
+      format: 'cjs'
+    }
+  ],
   name: 'jcognos',
   plugins: [
     json(),

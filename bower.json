@@ -2,20 +2,10 @@
   "name": "jcognos",
   "description": "Javascript Library that simplifies working with IBM Cognos",
   "main": "dist/jcognos",
-  "authors": [
-    "Reinier Battenberg"
-  ],
+  "authors": ["Reinier Battenberg"],
   "license": "GPL-3.0",
-  "keywords": [
-    "Cognos"
-  ],
+  "keywords": ["Cognos"],
   "homepage": "https://github.com/CognosExt/jcognos",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"],
   "version": "1.2.1"
 }

@@ -1,7 +1,15 @@
-import axios from 'axios';
-import axiosCookieJarSupport from 'axios-cookiejar-support';
-import tough from 'tough-cookie';
-import minimatch from 'minimatch';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function _interopDefault(ex) {
+  return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex;
+}
+
+var axios = _interopDefault(require('axios'));
+var axiosCookieJarSupport = _interopDefault(require('axios-cookiejar-support'));
+var tough = _interopDefault(require('tough-cookie'));
+var minimatch = _interopDefault(require('minimatch'));
 
 var Utils = {
   isStandardBrowserEnv: function isStandardBrowserEnv() {
@@ -982,4 +990,4 @@ function getCognos(url) {
   }
 }
 
-export { getCognos };
+exports.getCognos = getCognos;
