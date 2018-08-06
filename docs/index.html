@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>jcognos 1.2.3 | Documentation</title>
+  <title>jcognos 1.3.0 | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
@@ -14,7 +14,7 @@
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>jcognos</h3>
-          <div class='mb1'><code>1.2.3</code></div>
+          <div class='mb1'><code>1.3.0</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -49,15 +49,15 @@
                       <li class='h5'><span>Instance members</span></li>
                       
                       <li><a
-                        href='#cognosnamespaces'
-                        class='regular pre-open'>
-                        #namespaces
-                      </a></li>
-                      
-                      <li><a
                         href='#cognosdefaultnamespace'
                         class='regular pre-open'>
                         #defaultNamespace
+                      </a></li>
+                      
+                      <li><a
+                        href='#cognosnamespaces'
+                        class='regular pre-open'>
+                        #namespaces
                       </a></li>
                       
                       <li><a
@@ -304,62 +304,6 @@ retrieve the Cognos instance.</p>
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
-    <div class='border-bottom' id='cognosnamespaces'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>namespaces</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>get namespaces - returns a list of possible namespaces, also when there is only 1</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>namespaces</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="#namespace">NameSpace</a>></code>:
-        An array of objects describing the namespaces
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
     <div class='border-bottom' id='cognosdefaultnamespace'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -372,7 +316,7 @@ retrieve the Cognos instance.</p>
 
   
 
-  <p>get defaultNamespace - returns the default namespace that jCognos will login to</p>
+  <p>defaultNamespace - returns the default namespace that jCognos will login to</p>
 
  
   
@@ -397,6 +341,62 @@ retrieve the Cognos instance.</p>
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a></code>:
         id of the default namespace
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cognosnamespaces'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>namespaces</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>namespaces - returns a list of possible namespaces, also when there is only 1</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>namespaces</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="#namespace">NameSpace</a>></code>:
+        An array of objects describing the namespaces
 
       
     

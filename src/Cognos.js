@@ -31,7 +31,19 @@ class Cognos {
     this.debug = debug;
     this.username = '';
     this.password = '';
+    /**
+     *  defaultNamespace - returns the default namespace that jCognos will login to
+     *
+     * @return {String} id of the default namespace
+     */
+    this.defaultNamespace = '';
     this.namespace = '';
+    /**
+     * namespaces - returns a list of possible namespaces, also when there is only 1
+     *
+     * @return {Array<NameSpace>}  An array of objects describing the namespaces
+     */
+    this.namespaces = '';
     this.retrycount = 0;
     this.loginrequest = false;
     this.resetting = false;
@@ -55,25 +67,6 @@ class Cognos {
         console.error(text);
       }
     }
-  }
-
-  /**
-   * get namespaces - returns a list of possible namespaces, also when there is only 1
-   *
-   * @return {Array<NameSpace>}  An array of objects describing the namespaces
-   */
-  get namespaces() {
-    return this.requester.namespaces;
-  }
-
-  /**
-   * get defaultNamespace - returns the default namespace that jCognos will login to
-   *
-   * @return {String} id of the default namespace
-   */
-
-  get defaultNamespace() {
-    return this.requester.namespace;
   }
 
   /**
@@ -549,6 +542,8 @@ function getCognos(url, debug = false) {
         jCognos = new Cognos(debug);
         jCognos.requester = cRequest;
         jCognos.url = url;
+        jCognos.defaultNamespace = cRequest.namespace;
+        jCognos.namespaces = cRequest.namespaces;
         return jCognos;
       })
       .catch(function(err) {

@@ -523,7 +523,10 @@ var Cognos = (function() {
     this.debug = debug;
     this.username = '';
     this.password = '';
+
     this.namespace = '';
+
+    this.namespaces = '';
     this.retrycount = 0;
     this.loginrequest = false;
     this.resetting = false;
@@ -990,18 +993,6 @@ var Cognos = (function() {
 
         return result;
       }
-    },
-    {
-      key: 'namespaces',
-      get: function get$$1() {
-        return this.requester.namespaces;
-      }
-    },
-    {
-      key: 'defaultNamespace',
-      get: function get$$1() {
-        return this.requester.namespace;
-      }
     }
   ]);
   return Cognos;
@@ -1022,6 +1013,8 @@ function getCognos(url) {
         jCognos = new Cognos(debug);
         jCognos.requester = cRequest;
         jCognos.url = url;
+        jCognos.defaultNamespace = cRequest.namespace;
+        jCognos.namespaces = cRequest.namespaces;
         return jCognos;
       })
       .catch(function(err) {
