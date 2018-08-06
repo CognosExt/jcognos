@@ -63,6 +63,8 @@ var CognosRequest = (function() {
     this.debug = debug;
     this.token = '';
     this.loggedin = false;
+    this.namespace = '';
+    this.namespaces = [];
   }
 
   createClass(CognosRequest, [
@@ -221,9 +223,38 @@ var CognosRequest = (function() {
                 ) {
                   if (item.name == 'CAMNamespace') {
                     me.namespace = item.value;
-                    me.log('Namespace: ' + me.namespace);
+                    me.log('Default Namespace: ' + me.namespace);
                   }
                 });
+                var displayName = '';
+                err.response.data.promptInfo.displayObjects.forEach(function(
+                  item
+                ) {
+                  if (item.name == 'CAMNamespaceDisplayName') {
+                    displayName = item.value;
+                    me.log('Default Namespace Name: ' + displayName);
+                  }
+                });
+                if (displayName) {
+                  me.namespaces.push({
+                    isDefault: true,
+                    id: me.namespace,
+                    value: displayName
+                  });
+                }
+                if (!me.namespace) {
+                  err.response.data.promptInfo.displayObjects[0].promptOptions.forEach(
+                    function(item) {
+                      if (item.isDefault) {
+                        me.namespace = item.id;
+                      }
+                      me.namespaces.push(item);
+                    }
+                  );
+                  if (!me.namespace) {
+                    me.namespace = me.namespaces[0].id;
+                  }
+                }
               } else {
                 throw err.message;
               }
@@ -542,7 +573,7 @@ var Cognos = (function() {
         }
 
         if (namespace == '') {
-          namespace = me.requester.namespace;
+          namespace = me.defaultNamespace;
         }
         if (!namespace) {
           throw 'Namespace not known.';
@@ -958,6 +989,18 @@ var Cognos = (function() {
         var result = false;
 
         return result;
+      }
+    },
+    {
+      key: 'namespaces',
+      get: function get$$1() {
+        return this.requester.namespaces;
+      }
+    },
+    {
+      key: 'defaultNamespace',
+      get: function get$$1() {
+        return this.requester.namespace;
       }
     }
   ]);

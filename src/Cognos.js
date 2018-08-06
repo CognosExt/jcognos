@@ -3,7 +3,7 @@ import { Utils } from './Utils';
 
 import minimatch from 'minimatch';
 
-//Local static variable that holds Cognos instance
+// Local static variable that holds Cognos instance
 var jCognos;
 // We keep the cognosUrl, if a second request to getCognos is made, we create a new jCognos
 var cognosUrl;
@@ -56,6 +56,26 @@ class Cognos {
       }
     }
   }
+
+  /**
+   * get namespaces - returns a list of possible namespaces, also when there is only 1
+   *
+   * @return {Array<NameSpace>}  An array of objects describing the namespaces
+   */
+  get namespaces() {
+    return this.requester.namespaces;
+  }
+
+  /**
+   * get defaultNamespace - returns the default namespace that jCognos will login to
+   *
+   * @return {String} id of the default namespace
+   */
+
+  get defaultNamespace() {
+    return this.requester.namespace;
+  }
+
   /**
    * login - Logs into Cognos.
    *
@@ -76,7 +96,7 @@ class Cognos {
     }
 
     if (namespace == '') {
-      namespace = me.requester.namespace;
+      namespace = me.defaultNamespace;
     }
     if (!namespace) {
       throw 'Namespace not known.';
@@ -548,4 +568,13 @@ export { getCognos };
  * @typedef {Object} CognosObject
  * @property {String} id - Cognos Object Id
  * @property {String} name - Name of object.
+ *
+ */
+
+/**
+ * @typedef {Object} NameSpace Object holding a namespace
+ * @property {String} id - The id of the namespace
+ * @property {String} value - Displayname of the NameSpace
+ * @property {Boolean} isDefault - Set to true if this is the default namespace
+ *
  */

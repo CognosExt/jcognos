@@ -19,6 +19,8 @@ class CognosRequest {
     this.debug = debug;
     this.token = '';
     this.loggedin = false;
+    this.namespace = '';
+    this.namespaces = [];
   }
 
   log(text, object) {
@@ -167,12 +169,40 @@ class CognosRequest {
         // Find the namespace in the body
         try {
           if (typeof err.response !== 'undefined') {
+            // This is the scenario where there is only 1 namespace
             err.response.data.promptInfo.displayObjects.forEach(function(item) {
               if (item.name == 'CAMNamespace') {
                 me.namespace = item.value;
-                me.log('Namespace: ' + me.namespace);
+                me.log('Default Namespace: ' + me.namespace);
               }
             });
+            var displayName = '';
+            err.response.data.promptInfo.displayObjects.forEach(function(item) {
+              if (item.name == 'CAMNamespaceDisplayName') {
+                displayName = item.value;
+                me.log('Default Namespace Name: ' + displayName);
+              }
+            });
+            if (displayName) {
+              me.namespaces.push({
+                isDefault: true,
+                id: me.namespace,
+                value: displayName
+              });
+            }
+            if (!me.namespace) {
+              err.response.data.promptInfo.displayObjects[0].promptOptions.forEach(
+                function(item) {
+                  if (item.isDefault) {
+                    me.namespace = item.id;
+                  }
+                  me.namespaces.push(item);
+                }
+              );
+              if (!me.namespace) {
+                me.namespace = me.namespaces[0].id;
+              }
+            }
           } else {
             throw err.message;
           }
