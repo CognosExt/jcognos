@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/CognosExt/jcognos/compare/v1.2.3...v1.3.0) (2018-08-06)
+
+
+### Features
+
+* Added attributes for possible NameSpaces and the defaultNamespace ([fbf4aef](https://github.com/CognosExt/jcognos/commit/fbf4aef))
+
+
+
 <a name="1.2.3"></a>
 ## [1.2.3](https://github.com/CognosExt/jcognos/compare/v1.2.2...v1.2.3) (2018-08-03)
 
