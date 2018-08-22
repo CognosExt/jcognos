@@ -527,16 +527,17 @@ class Cognos {
  * getCognos - Static function to get the Cognos Object. You can have only 1 Cognos object in your application
  * at any time.
  *
- * @param  {String} url The URL of your Cognos installation
+ * @param  {String} url The URL of your Cognos installation. If empty, this function becomes static and the current jCognos object is returned.
+ * @param  {Boolean} debug If true, starts debugging into the console
  * @return {Cognos}     The Cognos object
  */
-function getCognos(url, debug = false) {
+function getCognos(url = false, debug = false) {
   var reset = false;
-  if (url !== cognosUrl) {
+  if (url && url !== cognosUrl) {
     jCognos = undefined;
     reset = true;
   }
-  if (typeof jCognos == 'undefined') {
+  if (typeof jCognos == 'undefined' && url) {
     var myRequest = getCognosRequest(url, debug, reset)
       .then(function(cRequest) {
         jCognos = new Cognos(debug);

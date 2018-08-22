@@ -516,6 +516,7 @@ var Cognos = (function() {
     this.username = '';
     this.password = '';
 
+    this.defaultNamespace = '';
     this.namespace = '';
 
     this.namespaces = '';
@@ -990,16 +991,21 @@ var Cognos = (function() {
   return Cognos;
 })();
 
-function getCognos(url) {
+function getCognos() {
+  var url =
+    arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
   var debug =
     arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
+  console.log('Start');
   var reset = false;
-  if (url !== cognosUrl) {
+  if (url && url !== cognosUrl) {
+    console.log('New URL, Resetting', url);
     jCognos = undefined;
     reset = true;
   }
-  if (typeof jCognos == 'undefined') {
+  if (typeof jCognos == 'undefined' && url) {
+    console.log('No jCognos obejct and a url. So we create a new jCognos', url);
     var myRequest = getCognosRequest(url, debug, reset)
       .then(function(cRequest) {
         jCognos = new Cognos(debug);
@@ -1014,6 +1020,7 @@ function getCognos(url) {
       });
     return myRequest;
   } else {
+    console.log('Returning Resolved jCognos promise');
     return Promise.resolve(jCognos);
   }
 }

@@ -89,5 +89,25 @@ describe('jcognos Reset Tests', function() {
         .catch(function(err) {
           console.log('There was an error listing the root folder', err);
         });
+    }),
+    it('getCognos should return same object', done => {
+      var newCognos = jcognos.getCognos().then(function(freshCognos) {
+        assert.equal(cognos, freshCognos, 'Two Cognosses are the same.');
+        cognos
+          .reset()
+          .then(function() {
+            jcognos.getCognos().then(function(newerCognos) {
+              assert.notEqual(
+                cognos,
+                newCognos,
+                'After reset, Two Cognosses are not the same.'
+              );
+            });
+          })
+          .catch(function(err) {
+            console.log('There was an error fetching the root folder', err);
+          })
+          .then(done, done);
+      });
     });
 });
