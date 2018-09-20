@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/CognosExt/jcognos/compare/v1.4.0...v1.5.0) (2018-09-20)
+
+
+### Features
+
+* Added support for uploading themes and extensions in the compiled sources ([dbd2ac8](https://github.com/CognosExt/jcognos/commit/dbd2ac8))
+* Added uploadExtension method that allows you to upload extensions and themes ([7423305](https://github.com/CognosExt/jcognos/commit/7423305))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/CognosExt/jcognos/compare/v1.3.1...v1.4.0) (2018-08-22)
 
