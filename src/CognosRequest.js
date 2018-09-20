@@ -377,34 +377,48 @@ class CognosRequest {
     return result;
   }
 
-  put(path) {
+  put(path, filename) {
     var me = this;
+    if (Utils.isStandardBrowserEnv()) {
+      console.log(
+        'The put function is not implemented for browser environments'
+      );
+      return false;
+    }
     var headers = {};
-    if (!Utils.isNode) {
-      document.cookie = 'XSRF-TOKEN=' + me.token;
-    } else if (me.token) {
+    if (me.token) {
+      me.log('Token: ' + me.token);
       headers['X-XSRF-TOKEN'] = me.token;
+      // This is a very tricky extra bonus that you only have to add when using PUT
+      headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
     }
 
     headers['X-Requested-With'] = 'XMLHttpRequest';
-    headers['Content-Type'] = 'application/json; charset=UTF-8';
+    headers['Content-Type'] = 'application/zip';
 
-    var result = this.axios
-      .put(me.url + path, {
+    var fs = require('fs');
+    var url = me.url + path;
+    me.log('About to upload extension');
+    me.log('File: ' + filename);
+    me.log('To:', url);
+    var result = false;
+    var fs = require('fs');
+    //try {
+    var stream = fs.createReadStream(filename);
+    stream.on('error', console.log);
+
+    var result = me
+      .axios({
+        method: 'PUT',
+        url: url,
         headers: headers,
         jar: me.cookies,
-        withCredentials: true
+        withCredentials: true,
+        data: stream
       })
       .then(function(response) {
         me.log('CognosRequest : Success Putting ');
-        // Ok, Cognos might return som invalid json.
-        // First up, it might return "hallo =\'give me a beer\']"
-        // To get things working (I dont need this personally),
-        // I will replace =\' with =' and \'] with ']
-        response = response.replace(/=\\'/g, "='");
-        response = response.replace(/\\']/g, "']");
-        var result = JSON.parse(response);
-        return result;
+        return response.data;
       })
       .catch(function(err) {
         var errormessage = '';
@@ -414,13 +428,14 @@ class CognosRequest {
           if (typeof err.response.data.messages !== 'undefined') {
             errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
           } else {
-            errormessage = err.response.data; // It will probably be 'Forbidden'
+            errormessage = err.response.data
+              ? err.response.data
+              : err.response.statusText; // It will probably be 'Forbidden'
           }
         } else {
           errormessage = err.message; // This is axios saying 'Network Error'
         }
-
-        me.error(err);
+        me.error(errormessage);
         /*
          *  This happens when you didnt logout properly. It seems harmless.
          */
@@ -428,6 +443,7 @@ class CognosRequest {
           throw errormessage;
         }
       });
+
     return result;
   }
 }
