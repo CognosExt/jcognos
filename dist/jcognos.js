@@ -16832,31 +16832,48 @@
       },
       {
         key: 'put',
-        value: function put(path) {
+        value: function put(path, filename) {
           var me = this;
+          if (Utils.isStandardBrowserEnv()) {
+            console.log(
+              'The put function is not implemented for browser environments'
+            );
+            return false;
+          }
           var headers = {};
-          if (!Utils.isNode) {
-            document.cookie = 'XSRF-TOKEN=' + me.token;
-          } else if (me.token) {
+          if (me.token) {
+            me.log('Token: ' + me.token);
             headers['X-XSRF-TOKEN'] = me.token;
+
+            headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
           }
 
           headers['X-Requested-With'] = 'XMLHttpRequest';
-          headers['Content-Type'] = 'application/json; charset=UTF-8';
+          headers['Content-Type'] = 'application/zip';
 
-          var result = this.axios
-            .put(me.url + path, {
+          var fs = require('fs');
+          var url = me.url + path;
+          me.log('About to upload extension');
+          me.log('File: ' + filename);
+          me.log('To:', url);
+          var result = false;
+          var fs = require('fs');
+
+          var stream = fs.createReadStream(filename);
+          stream.on('error', console.log);
+
+          var result = me
+            .axios({
+              method: 'PUT',
+              url: url,
               headers: headers,
               jar: me.cookies,
-              withCredentials: true
+              withCredentials: true,
+              data: stream
             })
             .then(function(response) {
               me.log('CognosRequest : Success Putting ');
-
-              response = response.replace(/=\\'/g, "='");
-              response = response.replace(/\\']/g, "']");
-              var result = JSON.parse(response);
-              return result;
+              return response.data;
             })
             .catch(function(err) {
               var errormessage = '';
@@ -16866,13 +16883,14 @@
                 if (typeof err.response.data.messages !== 'undefined') {
                   errormessage = err.response.data.messages[0].messageString;
                 } else {
-                  errormessage = err.response.data;
+                  errormessage = err.response.data
+                    ? err.response.data
+                    : err.response.statusText;
                 }
               } else {
                 errormessage = err.message;
               }
-
-              me.error(err);
+              me.error(errormessage);
 
               if (
                 errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
@@ -16880,6 +16898,7 @@
                 throw errormessage;
               }
             });
+
           return result;
         }
       }
@@ -18845,9 +18864,24 @@
       },
       {
         key: 'uploadExtension',
-        value: function uploadExtension(path, name) {
-          var result = false;
+        value: function uploadExtension(filename, name) {
+          var type =
+            arguments.length > 2 && arguments[2] !== undefined
+              ? arguments[2]
+              : 'extensions';
 
+          var me = this;
+          var path = 'bi/v1/plugins/' + type + '/' + name;
+
+          var result = this.requester
+            .put(path, filename)
+            .then(function(response) {
+              me.log('New extension id =' + response.id);
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in uploadExtension', err);
+              throw err;
+            });
           return result;
         }
       }
@@ -18861,18 +18895,12 @@
     var debug =
       arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-    console.log('Start');
     var reset = false;
     if (url && url !== cognosUrl) {
-      console.log('New URL, Resetting', url);
       jCognos = undefined;
       reset = true;
     }
     if (typeof jCognos == 'undefined' && url) {
-      console.log(
-        'No jCognos obejct and a url. So we create a new jCognos',
-        url
-      );
       var myRequest = getCognosRequest(url, debug, reset)
         .then(function(cRequest) {
           jCognos = new Cognos(debug);
@@ -18887,7 +18915,6 @@
         });
       return myRequest;
     } else {
-      console.log('Returning Resolved jCognos promise');
       return Promise.resolve(jCognos);
     }
   }
