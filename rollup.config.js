@@ -9,22 +9,22 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 
 export default {
-  banner: `/**
- * Copyright (c) 2017, Reinier Battenberg
- * All rights reserved.
- *
- * Source code can be found at:
- * https://github.com/CognosExt/jcognos
- *
- * @license GPL 3.0
- */
-`,
   input: 'src/index.js',
   output: {
     file: 'dist/jcognos.js', // equivalent to --output
-    format: 'umd'
+    format: 'umd',
+    name: 'jcognos',
+    banner: `/**
+   * Copyright (c) 2017, Reinier Battenberg
+   * All rights reserved.
+   *
+   * Source code can be found at:
+   * https://github.com/CognosExt/jcognos
+   *
+   * @license GPL 3.0
+   */
+  `
   },
-  name: 'jcognos',
   plugins: [
     builtins(),
     /*  inject({

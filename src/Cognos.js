@@ -505,20 +505,24 @@ class Cognos {
    * uploadExtension - Uploads zipfile containing Cognos Extension. Only supports updating an existing module.
    * This function is only supported by Node.js. In the browser this function returns false;
    *
-   * @param  {String} path Path to the .zip file
+   * @param  {String} filename Path to the .zip file
    * @param  {String} name name of the module (as found in the spec.json)
-   * @return {Object}      Whatever JSON Cognos returns
+   * @param  {String} type type of upload. Default is 'extensions', for themes use 'themes'.
+   * @return {Promise} Promise that resolves to a string.
    */
-  uploadExtension(path, name) {
+  uploadExtension(filename, name, type = 'extensions') {
     var me = this;
-    var result = false;
-    /*    if (!Utils.isStandardBrowserEnv()){
-    var fs = require('fs');
-    result = fs
-      .createReadStream(path)
-      .pipe(me.requester.put('bi/v1/plugins/extensions/' + name));
-      }
-*/
+    var path = 'bi/v1/plugins/' + type + '/' + name;
+    // The reading of the file and the actual put have to be in the same function. So not much to see here.
+    var result = this.requester
+      .put(path, filename)
+      .then(function(response) {
+        me.log('New extension id =' + response.id);
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in uploadExtension', err);
+        throw err;
+      });
     return result;
   }
 }
@@ -527,9 +531,9 @@ class Cognos {
  * getCognos - Static function to get the Cognos Object. You can have only 1 Cognos object in your application
  * at any time.
  *
- * @param  {String} url The URL of your Cognos installation. If empty, this function becomes static and the current jCognos object is returned.
+ * @param  {String} url The URL of your Cognos installation. If empty, this function becomes static and a Promise for the current jCognos object is returned.
  * @param  {Boolean} debug If true, starts debugging into the console
- * @return {Cognos}     The Cognos object
+ * @return {Promise}  a promise that will return the jCognos object
  */
 function getCognos(url = false, debug = false) {
   var reset = false;
