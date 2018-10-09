@@ -509,6 +509,142 @@ var CognosRequest = (function() {
 
         return result;
       }
+    },
+    {
+      key: 'uploadfilepart',
+      value: function uploadfilepart(path, filename) {
+        var me = this;
+        if (Utils.isStandardBrowserEnv()) {
+          console.log(
+            'The uploadfile function is not implemented for browser environments'
+          );
+          return false;
+        }
+        var headers = {};
+        if (me.token) {
+          me.log('Token: ' + me.token);
+          headers['X-XSRF-TOKEN'] = me.token;
+
+          headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
+        }
+
+        headers['X-Requested-With'] = 'XMLHttpRequest';
+        headers['Content-Type'] = 'text/csv';
+
+        var fs = require('fs');
+        var url = me.url + path;
+        me.log('About to upload data file');
+        me.log('File: ' + filename);
+        me.log('To:', url);
+        var result = false;
+        var fs = require('fs');
+
+        var stream = fs.createReadStream(filename);
+        stream.on('error', console.log);
+
+        var result = me.axios
+          .put(url, filename, {
+            headers: headers,
+            jar: me.cookies,
+            withCredentials: true
+          })
+          .then(function(response) {
+            me.log('CognosRequest : Success Putting ');
+
+            return response.data;
+          })
+          .catch(function(err) {
+            var errormessage = '';
+            me.error('CognosRequest : Error in put', err);
+
+            if (typeof err.response !== 'undefined') {
+              if (typeof err.response.data.messages !== 'undefined') {
+                errormessage = err.response.data.messages[0].messageString;
+              } else {
+                errormessage = err.response.data
+                  ? err.response.data
+                  : err.response.statusText;
+              }
+            } else {
+              errormessage = err.message;
+            }
+            me.error(errormessage);
+
+            if (
+              errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
+            ) {
+              throw errormessage;
+            }
+          });
+
+        return result;
+      }
+    },
+    {
+      key: 'uploadfilepartFinish',
+      value: function uploadfilepartFinish(path) {
+        var me = this;
+        if (Utils.isStandardBrowserEnv()) {
+          console.log(
+            'The uploadfile function is not implemented for browser environments'
+          );
+          return false;
+        }
+        var headers = {};
+        if (me.token) {
+          me.log('Token: ' + me.token);
+          headers['X-XSRF-TOKEN'] = me.token;
+
+          headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
+        }
+
+        headers['X-Requested-With'] = 'XMLHttpRequest';
+        headers['Content-Type'] = 'application/json';
+        headers['Content-Length'] = 0;
+
+        var url = me.url + path;
+        me.log('About to upload data file');
+
+        me.log('To:', url);
+        var result = false;
+
+        var result = me.axios
+          .put(url, false, {
+            headers: headers,
+            jar: me.cookies,
+            withCredentials: true
+          })
+          .then(function(response) {
+            me.log('CognosRequest : Success Putting ');
+            me.log(response.data);
+            return response.data;
+          })
+          .catch(function(err) {
+            var errormessage = '';
+            me.error('CognosRequest : Error in uploadfilepartFinish', err);
+
+            if (typeof err.response !== 'undefined') {
+              if (typeof err.response.data.messages !== 'undefined') {
+                errormessage = err.response.data.messages[0].messageString;
+              } else {
+                errormessage = err.response.data
+                  ? err.response.data
+                  : err.response.statusText;
+              }
+            } else {
+              errormessage = err.message;
+            }
+            me.error(errormessage);
+
+            if (
+              errormessage != 'AAA-AUT-0011 Invalid namespace was selected.'
+            ) {
+              throw errormessage;
+            }
+          });
+
+        return result;
+      }
     }
   ]);
   return CognosRequest;
@@ -972,10 +1108,10 @@ var Cognos = (function() {
 
         var me = this;
 
-        var promptString = '&';
+        var promptString = '';
         var keys = Object.keys(prompts);
         keys.forEach(function(key) {
-          promptString += 'p_' + key + '=' + prompts[key];
+          promptString += '&p_' + key + '=' + prompts[key];
         });
 
         var result = me.requester
@@ -1026,6 +1162,52 @@ var Cognos = (function() {
           })
           .catch(function(err) {
             me.error('CognosRequest : Error in uploadExtension', err);
+            throw err;
+          });
+        return result;
+      }
+    },
+    {
+      key: 'upLoadDataFile',
+      value: function upLoadDataFile(filename) {
+        var me = this;
+
+        var file = 'countries.csv';
+        var path = 'bi/v1/metadata/files?filename=' + file;
+        var result = this.requester
+          .uploadfile(path, filename)
+          .then(function(response) {
+            me.log('New extension id =' + response);
+
+            if (response) {
+              path = 'bi/v1/metadata/files/segment/' + response + '?index=1';
+              me.requester
+                .uploadfilepart(path, filename)
+                .then(function(response) {
+                  me.log('New extension id =' + response);
+                  path =
+                    'bi/v1/metadata/files/segment/' + response + '?index=-1';
+                  me.requester
+                    .uploadfilepartFinish(path)
+                    .then(function(response) {
+                      me.log('New extension id =' + response);
+                    })
+                    .catch(function(err) {
+                      me.error(
+                        'CognosRequest : Error in uploadDataFile Part',
+                        err
+                      );
+                      throw err;
+                    });
+                })
+                .catch(function(err) {
+                  me.error('CognosRequest : Error in uploadDataFile Part', err);
+                  throw err;
+                });
+            }
+          })
+          .catch(function(err) {
+            me.error('CognosRequest : Error in uploadDataFile', err);
             throw err;
           });
         return result;
