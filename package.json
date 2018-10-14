@@ -53,7 +53,7 @@
     "rollup": "^0.64.0",
     "rollup-plugin-babel": "^3.0.7",
     "rollup-plugin-commonjs": "^9.1.4",
-    "rollup-plugin-filesize": "^4.0.1",
+    "rollup-plugin-filesize": "^5.0.0",
     "rollup-plugin-inject": "^2.1.0",
     "rollup-plugin-json": "^2.3.1",
     "rollup-plugin-node-builtins": "^2.1.2",
