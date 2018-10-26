@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/CognosExt/jcognos/compare/v1.5.0...v1.5.1) (2018-10-09)
+
+
+### Bug Fixes
+
+* Multiple prompts were not concatenated correctly ([6c21d89](https://github.com/CognosExt/jcognos/commit/6c21d89))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/CognosExt/jcognos/compare/v1.4.0...v1.5.0) (2018-09-20)
 

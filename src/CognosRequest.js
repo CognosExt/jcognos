@@ -446,6 +446,138 @@ class CognosRequest {
 
     return result;
   }
+
+  uploadfilepart(path, filename) {
+    var me = this;
+    if (Utils.isStandardBrowserEnv()) {
+      console.log(
+        'The uploadfile function is not implemented for browser environments'
+      );
+      return false;
+    }
+    var headers = {};
+    if (me.token) {
+      me.log('Token: ' + me.token);
+      headers['X-XSRF-TOKEN'] = me.token;
+      // This is a very tricky extra bonus that you only have to add when using PUT
+      headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
+    }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+    headers['Content-Type'] = 'text/csv';
+
+    var fs = require('fs');
+    var url = me.url + path;
+    me.log('About to upload data file');
+    me.log('File: ' + filename);
+    me.log('To:', url);
+    var result = false;
+    var fs = require('fs');
+    //try {
+    var stream = fs.createReadStream(filename);
+    stream.on('error', console.log);
+
+    var result = me.axios
+      .put(url, filename, {
+        headers: headers,
+        jar: me.cookies,
+        withCredentials: true
+      })
+      .then(function(response) {
+        me.log('CognosRequest : Success Putting ');
+        //  me.log(response.data);
+        return response.data;
+      })
+      .catch(function(err) {
+        var errormessage = '';
+        me.error('CognosRequest : Error in put', err);
+        // We have 3 different ways to return an error.
+        if (typeof err.response !== 'undefined') {
+          if (typeof err.response.data.messages !== 'undefined') {
+            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+          } else {
+            errormessage = err.response.data
+              ? err.response.data
+              : err.response.statusText; // It will probably be 'Forbidden'
+          }
+        } else {
+          errormessage = err.message; // This is axios saying 'Network Error'
+        }
+        me.error(errormessage);
+        /*
+       *  This happens when you didnt logout properly. It seems harmless.
+       */
+        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+          throw errormessage;
+        }
+      });
+
+    return result;
+  }
+
+  uploadfilepartFinish(path) {
+    var me = this;
+    if (Utils.isStandardBrowserEnv()) {
+      console.log(
+        'The uploadfile function is not implemented for browser environments'
+      );
+      return false;
+    }
+    var headers = {};
+    if (me.token) {
+      me.log('Token: ' + me.token);
+      headers['X-XSRF-TOKEN'] = me.token;
+      // This is a very tricky extra bonus that you only have to add when using PUT
+      headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
+    }
+
+    headers['X-Requested-With'] = 'XMLHttpRequest';
+    headers['Content-Type'] = 'application/json';
+    headers['Content-Length'] = 0;
+
+    var url = me.url + path;
+    me.log('About to upload data file');
+
+    me.log('To:', url);
+    var result = false;
+
+    var result = me.axios
+      .put(url, false, {
+        headers: headers,
+        jar: me.cookies,
+        withCredentials: true
+      })
+      .then(function(response) {
+        me.log('CognosRequest : Success Putting ');
+        me.log(response.data);
+        return response.data;
+      })
+      .catch(function(err) {
+        var errormessage = '';
+        me.error('CognosRequest : Error in uploadfilepartFinish', err);
+        // We have 3 different ways to return an error.
+        if (typeof err.response !== 'undefined') {
+          if (typeof err.response.data.messages !== 'undefined') {
+            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+          } else {
+            errormessage = err.response.data
+              ? err.response.data
+              : err.response.statusText; // It will probably be 'Forbidden'
+          }
+        } else {
+          errormessage = err.message; // This is axios saying 'Network Error'
+        }
+        me.error(errormessage);
+        /*
+       *  This happens when you didnt logout properly. It seems harmless.
+       */
+        if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
+          throw errormessage;
+        }
+      });
+
+    return result;
+  }
 }
 
 function getCognosRequest(url, debug, reset = false) {

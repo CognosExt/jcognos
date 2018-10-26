@@ -465,10 +465,10 @@ class Cognos {
     // Cognos 11
     // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/atom/cm/id/iD9D1A99B207B40D6AB25DB476C476E33?json=
     // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/rds/reportData/report/i821EB6721EDB41A29E0361BC83393C56?fmt=DataSet&rowLimit=2000
-    var promptString = '&';
+    var promptString = '';
     var keys = Object.keys(prompts);
     keys.forEach(function(key) {
-      promptString += 'p_' + key + '=' + prompts[key];
+      promptString += '&p_' + key + '=' + prompts[key];
     });
 
     var result = me.requester
@@ -521,6 +521,49 @@ class Cognos {
       })
       .catch(function(err) {
         me.error('CognosRequest : Error in uploadExtension', err);
+        throw err;
+      });
+    return result;
+  }
+
+  upLoadDataFile(filename) {
+    // First check what the max upload size is
+    //  https://srv06.gologic.eu/ibmcognos/bi/v1/configuration/keys/DatasetService.maxUploadSizeMBytes
+    var me = this;
+    //you can add //&async=true for async, not sure what that does (it uploads in a second http connection)
+    var file = 'countries.csv'; // the file bit of the full filename
+    var path = 'bi/v1/metadata/files?filename=' + file; //+ "&async=true";
+    // The reading of the file and the actual put have to be in the same function. So not much to see here.
+    var result = this.requester
+      .uploadfile(path, filename)
+      .then(function(response) {
+        me.log('New extension id =' + response);
+
+        if (response) {
+          path = 'bi/v1/metadata/files/segment/' + response + '?index=1';
+          me.requester
+            .uploadfilepart(path, filename)
+            .then(function(response) {
+              me.log('New extension id =' + response);
+              path = 'bi/v1/metadata/files/segment/' + response + '?index=-1';
+              me.requester
+                .uploadfilepartFinish(path)
+                .then(function(response) {
+                  me.log('New extension id =' + response);
+                })
+                .catch(function(err) {
+                  me.error('CognosRequest : Error in uploadDataFile Part', err);
+                  throw err;
+                });
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in uploadDataFile Part', err);
+              throw err;
+            });
+        }
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in uploadDataFile', err);
         throw err;
       });
     return result;

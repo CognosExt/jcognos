@@ -3,11 +3,9 @@
     "rollup": {
       "presets": [
         [
-          "env", {
+          "@babel/preset-env",
+          {
             "modules": false,
-            "plugins": [
-              "external-helpers"
-            ]
           }
         ]
       ],
@@ -16,7 +14,8 @@
     "test": {
       "presets": [
         [
-          "env", {
+          "@babel/preset-env",
+          {
             "targets": {
               "node": "current"
             }
