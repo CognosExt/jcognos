@@ -87,8 +87,8 @@ export default {
     globals(),
 
     babel({
-      exclude: 'node_modules/**',
-      plugins: ['external-helpers']
+      exclude: 'node_modules/**' //,
+      //      plugins: ['@babel/plugin-external-helpers']
     }),
     sourcemaps(),
     filesize()

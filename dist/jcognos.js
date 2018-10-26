@@ -17,6 +17,28 @@
 })(this, function(exports) {
   'use strict';
 
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError('Cannot call a class as a function');
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ('value' in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
   var bind = function bind(fn, thisArg) {
     return function wrap() {
       var args = new Array(arguments.length);
@@ -1711,6 +1733,7 @@
       ) {
         return false;
       }
+
       return typeof window !== 'undefined' && typeof document !== 'undefined';
     },
     isNode: function isNode() {
@@ -1724,11 +1747,7 @@
 
   var noop$1 = noopEnableCookieJarSupport;
 
-  var empty = {};
-
-  var empty$1 = /*#__PURE__*/ Object.freeze({
-    default: empty
-  });
+  var net = {};
 
   /*! https://mths.be/punycode v1.4.1 by @mathias */
 
@@ -2209,16 +2228,6 @@
     encode: encode$1,
     decode: decode
   };
-
-  var punycode$1 = /*#__PURE__*/ Object.freeze({
-    decode: decode,
-    encode: encode$1,
-    toUnicode: toUnicode,
-    toASCII: toASCII,
-    version: version$1,
-    ucs2: ucs2,
-    default: punycode
-  });
 
   var lookup = [];
   var revLookup = [];
@@ -5003,32 +5012,6 @@
     debuglog: debuglog
   };
 
-  var util$1 = /*#__PURE__*/ Object.freeze({
-    format: format,
-    deprecate: deprecate,
-    debuglog: debuglog,
-    inspect: inspect,
-    isArray: isArray$2,
-    isBoolean: isBoolean,
-    isNull: isNull,
-    isNullOrUndefined: isNullOrUndefined,
-    isNumber: isNumber$1,
-    isString: isString$1,
-    isSymbol: isSymbol,
-    isUndefined: isUndefined$1,
-    isRegExp: isRegExp,
-    isObject: isObject$1,
-    isDate: isDate$1,
-    isError: isError,
-    isFunction: isFunction$1,
-    isPrimitive: isPrimitive,
-    isBuffer: isBuffer$2,
-    log: log,
-    inherits: inherits$1,
-    _extend: _extend,
-    default: util
-  });
-
   // Copyright Joyent, Inc. and other Node contributors.
   //
   // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5178,7 +5161,7 @@
   }
 
   // Copyright Joyent, Inc. and other Node contributors.
-  var url = {
+  var require$$0 = {
     parse: urlParse,
     resolve: urlResolve,
     resolveObject: urlResolveObject,
@@ -5907,22 +5890,15 @@
     if (host) self.hostname = host;
   }
 
-  var url$1 = /*#__PURE__*/ Object.freeze({
-    parse: urlParse,
-    resolve: urlResolve,
-    resolveObject: urlResolveObject,
-    format: urlFormat,
-    default: url,
-    Url: Url
-  });
-
   function createCommonjsModule(fn, module) {
     return (
       (module = { exports: {} }), fn(module, module.exports), module.exports
     );
   }
 
-  var punycode$2 = (punycode$1 && punycode) || punycode$1;
+  function getCjsExportFromNamespace(n) {
+    return (n && n.default) || n;
+  }
 
   var pubsuffix = createCommonjsModule(function(module) {
     module.exports.getPublicSuffix = function getPublicSuffix(domain) {
@@ -5962,7 +5938,7 @@
       if (domain.match(/^\./)) {
         return null;
       }
-      var asciiDomain = punycode$2.toASCII(domain);
+      var asciiDomain = punycode.toASCII(domain);
       var converted = false;
       if (asciiDomain !== domain) {
         domain = asciiDomain;
@@ -6008,7 +5984,7 @@
           .slice(0, suffixLen + 1)
           .reverse()
           .join('.');
-        return converted ? punycode$2.toUnicode(publicSuffix) : publicSuffix;
+        return converted ? punycode.toUnicode(publicSuffix) : publicSuffix;
       }
 
       return null;
@@ -14640,8 +14616,6 @@
     pathMatch: pathMatch_2
   };
 
-  var util$2 = (util$1 && util) || util$1;
-
   var Store$1 = store.Store;
   var permuteDomain$1 = permuteDomain_1.permuteDomain;
   var pathMatch$1 = pathMatch_1.pathMatch;
@@ -14650,7 +14624,7 @@
     Store$1.call(this);
     this.idx = {};
   }
-  util$2.inherits(MemoryCookieStore, Store$1);
+  util.inherits(MemoryCookieStore, Store$1);
   var MemoryCookieStore_1 = MemoryCookieStore;
   MemoryCookieStore.prototype.idx = null;
 
@@ -14659,7 +14633,7 @@
 
   // force a default depth:
   MemoryCookieStore.prototype.inspect = function() {
-    return '{ idx: ' + util$2.inspect(this.idx, false, 2) + ' }';
+    return '{ idx: ' + util.inspect(this.idx, false, 2) + ' }';
   };
 
   MemoryCookieStore.prototype.findCookie = function(domain, path, key, cb) {
@@ -14795,7 +14769,6 @@
   var _args = [
     ['tough-cookie@2.3.4', '/var/www/gologic/Cognos11/Tools/jcognos']
   ];
-  var _development = true;
   var _from = 'tough-cookie@2.3.4';
   var _id = 'tough-cookie@2.3.4';
   var _inBundle = false;
@@ -14813,7 +14786,7 @@
     saveSpec: null,
     fetchSpec: '2.3.4'
   };
-  var _requiredBy = ['/request'];
+  var _requiredBy = ['/axios-cookiejar-support', '/request'];
   var _resolved =
     'https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.4.tgz';
   var _spec = '2.3.4';
@@ -14822,23 +14795,41 @@
     name: 'Jeremy Stashewsky',
     email: 'jstashewsky@salesforce.com'
   };
-  var bugs = { url: 'https://github.com/salesforce/tough-cookie/issues' };
+  var bugs = {
+    url: 'https://github.com/salesforce/tough-cookie/issues'
+  };
   var contributors = [
-    { name: 'Alexander Savin' },
-    { name: 'Ian Livingstone' },
-    { name: 'Ivan Nikulin' },
-    { name: 'Lalit Kapoor' },
-    { name: 'Sam Thompson' },
-    { name: 'Sebastian Mayr' }
+    {
+      name: 'Alexander Savin'
+    },
+    {
+      name: 'Ian Livingstone'
+    },
+    {
+      name: 'Ivan Nikulin'
+    },
+    {
+      name: 'Lalit Kapoor'
+    },
+    {
+      name: 'Sam Thompson'
+    },
+    {
+      name: 'Sebastian Mayr'
+    }
   ];
-  var dependencies = { punycode: '^1.4.1' };
+  var dependencies = {
+    punycode: '^1.4.1'
+  };
   var description = 'RFC6265 Cookies and Cookie Jar for node.js';
   var devDependencies = {
     async: '^1.4.2',
     'string.prototype.repeat': '^0.2.0',
     vows: '^0.8.1'
   };
-  var engines = { node: '>=0.8' };
+  var engines = {
+    node: '>=0.8'
+  };
   var files = ['lib'];
   var homepage = 'https://github.com/salesforce/tough-cookie';
   var keywords = [
@@ -14866,7 +14857,6 @@
   var version$2 = '2.3.4';
   var _package = {
     _args: _args,
-    _development: _development,
     _from: _from,
     _id: _id,
     _inBundle: _inBundle,
@@ -14898,7 +14888,6 @@
 
   var _package$1 = /*#__PURE__*/ Object.freeze({
     _args: _args,
-    _development: _development,
     _from: _from,
     _id: _id,
     _inBundle: _inBundle,
@@ -14929,11 +14918,7 @@
     default: _package
   });
 
-  var net = (empty$1 && empty) || empty$1;
-
-  var require$$0 = (url$1 && url) || url$1;
-
-  var require$$4 = (_package$1 && _package) || _package$1;
+  var require$$4 = getCjsExportFromNamespace(_package$1);
 
   var urlParse$1 = require$$0.parse;
 
@@ -14942,9 +14927,9 @@
   var pathMatch$2 = pathMatch_1.pathMatch;
   var VERSION = require$$4.version;
 
-  var punycode$3;
+  var punycode$1;
   try {
-    punycode$3 = punycode$2;
+    punycode$1 = punycode;
   } catch (e) {
     console.warn(
       "cookie: can't load punycode; won't use punycode for domain normalization"
@@ -15239,8 +15224,8 @@
     str = str.trim().replace(/^\./, ''); // S4.1.2.3 & S5.2.3: ignore leading .
 
     // convert to IDN if any non-ASCII characters
-    if (punycode$3 && /[^\u0001-\u007f]/.test(str)) {
-      str = punycode$3.toASCII(str);
+    if (punycode$1 && /[^\u0001-\u007f]/.test(str)) {
+      str = punycode$1.toASCII(str);
     }
 
     return str.toLowerCase();
@@ -16417,39 +16402,16 @@
     canonicalDomain: canonicalDomain
   };
 
-  var classCallCheck = function(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function');
-    }
-  };
-
-  var createClass = (function() {
-    function defineProperties(target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i];
-        descriptor.enumerable = descriptor.enumerable || false;
-        descriptor.configurable = true;
-        if ('value' in descriptor) descriptor.writable = true;
-        Object.defineProperty(target, descriptor.key, descriptor);
-      }
-    }
-
-    return function(Constructor, protoProps, staticProps) {
-      if (protoProps) defineProperties(Constructor.prototype, protoProps);
-      if (staticProps) defineProperties(Constructor, staticProps);
-      return Constructor;
-    };
-  })();
-
   var cRequest;
 
   var CognosRequest = (function() {
     function CognosRequest(url, debug) {
-      classCallCheck(this, CognosRequest);
+      _classCallCheck(this, CognosRequest);
 
       if (url.substr(-1) !== '/') {
         url = url + '/';
       }
+
       this.url = url;
       this.debug = debug;
       this.token = '';
@@ -16458,7 +16420,7 @@
       this.namespaces = [];
     }
 
-    createClass(CognosRequest, [
+    _createClass(CognosRequest, [
       {
         key: 'log',
         value: function log(text, object) {
@@ -16490,22 +16452,19 @@
             arguments.length > 0 && arguments[0] !== undefined
               ? arguments[0]
               : false;
-
           var me = this;
           var cookieJar = false;
           var firstheaders = {};
           this.axios = axios$1.create({
             timeout: 60000,
-
             maxRedirects: 10,
-
             maxContentLength: 50 * 1000 * 1000
           });
+
           if (Utils.isNode()) {
             noop$1(this.axios);
             var cookieJar = new cookie.CookieJar();
             me.cookies = cookieJar;
-
             me.log('CookieJar is set', cookieJar);
           } else {
             if (me.token == '') {
@@ -16513,6 +16472,7 @@
               var goon = true;
               rawcookies.forEach(function(rawcookie) {
                 var cookie$$1 = cookie.parse(rawcookie);
+
                 if (typeof cookie$$1 != 'undefined') {
                   if (
                     cookie$$1.key == 'X-XSRF-TOKEN' ||
@@ -16526,11 +16486,11 @@
                     }
                   } else {
                     me.log('deleting cookie' + cookie$$1.key);
-
                     goon = loggedout;
                   }
                 }
               });
+
               if (!goon) {
                 result = this.delete('bi/v1/login').then(function() {
                   me.loggedin = false;
@@ -16539,6 +16499,7 @@
                 return result;
               }
             }
+
             if (me.token) {
               firstheaders = {
                 'X-XSRF-TOKEN': me.token,
@@ -16569,15 +16530,14 @@
                 me.log('Unexpected Error in initialise', err);
                 throw err.message;
               }
+
               me.log('Expected Error in initialise');
 
               if (Utils.isNode() && typeof cookieJar !== 'undefined') {
                 me.log('Cookiejar', cookieJar);
-
                 var cookieurl = me.url + 'bi';
                 cookieurl = me.url + 'bi';
                 me.log('cookie url: ' + cookieurl);
-
                 var cookies = cookieJar.getCookies(
                   cookieurl,
                   {
@@ -16587,6 +16547,7 @@
                     cookies.forEach(function(cook) {
                       me.log('cook: ', cook);
                       me.log('cookie key: ' + cook.key);
+
                       if (cook.key.toUpperCase() == 'XSRF-TOKEN') {
                         me.log('cookie value: ', cook.value);
                         me.token = cook.value;
@@ -16629,6 +16590,7 @@
                       me.log('Default Namespace Name: ' + displayName);
                     }
                   });
+
                   if (displayName) {
                     me.namespaces.push({
                       isDefault: true,
@@ -16636,15 +16598,18 @@
                       value: displayName
                     });
                   }
+
                   if (!me.namespace) {
                     err.response.data.promptInfo.displayObjects[0].promptOptions.forEach(
                       function(item) {
                         if (item.isDefault) {
                           me.namespace = item.id;
                         }
+
                         me.namespaces.push(item);
                       }
                     );
+
                     if (!me.namespace) {
                       me.namespace = me.namespaces[0].id;
                     }
@@ -16655,6 +16620,7 @@
               } catch (error) {
                 me.error(error);
               }
+
               return me;
             });
           return result;
@@ -16662,10 +16628,11 @@
       },
       {
         key: 'get',
-        value: function get$$1(path) {
+        value: function get(path) {
           var me = this;
           var headers = {};
           me.log('get URL:    ' + me.url + path);
+
           if (!Utils.isNode) {
             document.cookie = 'XSRF-TOKEN=' + me.token;
           } else if (me.token) {
@@ -16674,7 +16641,6 @@
 
           headers['X-Requested-With'] = 'XMLHttpRequest';
           headers['Content-Type'] = 'application/json; charset=UTF-8';
-
           var result = this.axios
             .get(me.url + path, {
               headers: headers,
@@ -16686,9 +16652,9 @@
                 me.log('Get Response Data', response.data);
                 return response.data;
               }
+
               return '';
             });
-
           return result;
         }
       },
@@ -16699,7 +16665,6 @@
           var paramsJSON = JSON.stringify(params);
           var result = {};
           var headers = {};
-
           me.log('params: ' + paramsJSON);
           me.log('token: ' + me.token);
           me.log('cookies: ', me.cookies);
@@ -16712,12 +16677,10 @@
 
           headers['X-Requested-With'] = 'XMLHttpRequest';
           headers['Content-Type'] = 'application/json; charset=UTF-8';
-
           var result = this.axios
             .post(me.url + path, paramsJSON, {
               headers: headers,
               jar: me.cookies,
-
               withCredentials: true
             })
             .then(function(response) {
@@ -16728,6 +16691,7 @@
               } else {
                 result = response.data;
               }
+
               return response;
             })
             .catch(function(err) {
@@ -16766,11 +16730,11 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : false;
-
           var me = this;
           var headers = {};
           var paramsJSON = JSON.stringify(params);
           var result = {};
+
           if (!Utils.isNode) {
             document.cookie = 'XSRF-TOKEN=' + me.token;
           } else if (me.token) {
@@ -16779,7 +16743,6 @@
 
           headers['X-Requested-With'] = 'XMLHttpRequest';
           headers['Content-Type'] = 'application/json; charset=UTF-8';
-
           me.log('params: ' + paramsJSON);
           var result = this.axios
             .delete(me.url + path, {
@@ -16803,6 +16766,7 @@
                   result = response;
                 }
               }
+
               return result;
             })
             .catch(function(err) {
@@ -16834,17 +16798,19 @@
         key: 'put',
         value: function put(path, filename) {
           var me = this;
+
           if (Utils.isStandardBrowserEnv()) {
             console.log(
               'The put function is not implemented for browser environments'
             );
             return false;
           }
+
           var headers = {};
+
           if (me.token) {
             me.log('Token: ' + me.token);
             headers['X-XSRF-TOKEN'] = me.token;
-
             headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
           }
 
@@ -16852,16 +16818,17 @@
           headers['Content-Type'] = 'application/zip';
 
           var fs = require('fs');
+
           var url = me.url + path;
           me.log('About to upload extension');
           me.log('File: ' + filename);
           me.log('To:', url);
           var result = false;
+
           var fs = require('fs');
 
           var stream = fs.createReadStream(filename);
           stream.on('error', console.log);
-
           var result = me
             .axios({
               method: 'PUT',
@@ -16890,6 +16857,7 @@
               } else {
                 errormessage = err.message;
               }
+
               me.error(errormessage);
 
               if (
@@ -16898,7 +16866,6 @@
                 throw errormessage;
               }
             });
-
           return result;
         }
       },
@@ -16906,17 +16873,19 @@
         key: 'uploadfilepart',
         value: function uploadfilepart(path, filename) {
           var me = this;
+
           if (Utils.isStandardBrowserEnv()) {
             console.log(
               'The uploadfile function is not implemented for browser environments'
             );
             return false;
           }
+
           var headers = {};
+
           if (me.token) {
             me.log('Token: ' + me.token);
             headers['X-XSRF-TOKEN'] = me.token;
-
             headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
           }
 
@@ -16924,16 +16893,17 @@
           headers['Content-Type'] = 'text/csv';
 
           var fs = require('fs');
+
           var url = me.url + path;
           me.log('About to upload data file');
           me.log('File: ' + filename);
           me.log('To:', url);
           var result = false;
+
           var fs = require('fs');
 
           var stream = fs.createReadStream(filename);
           stream.on('error', console.log);
-
           var result = me.axios
             .put(url, filename, {
               headers: headers,
@@ -16942,7 +16912,6 @@
             })
             .then(function(response) {
               me.log('CognosRequest : Success Putting ');
-
               return response.data;
             })
             .catch(function(err) {
@@ -16960,6 +16929,7 @@
               } else {
                 errormessage = err.message;
               }
+
               me.error(errormessage);
 
               if (
@@ -16968,7 +16938,6 @@
                 throw errormessage;
               }
             });
-
           return result;
         }
       },
@@ -16976,30 +16945,29 @@
         key: 'uploadfilepartFinish',
         value: function uploadfilepartFinish(path) {
           var me = this;
+
           if (Utils.isStandardBrowserEnv()) {
             console.log(
               'The uploadfile function is not implemented for browser environments'
             );
             return false;
           }
+
           var headers = {};
+
           if (me.token) {
             me.log('Token: ' + me.token);
             headers['X-XSRF-TOKEN'] = me.token;
-
             headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
           }
 
           headers['X-Requested-With'] = 'XMLHttpRequest';
           headers['Content-Type'] = 'application/json';
           headers['Content-Length'] = 0;
-
           var url = me.url + path;
           me.log('About to upload data file');
-
           me.log('To:', url);
           var result = false;
-
           var result = me.axios
             .put(url, false, {
               headers: headers,
@@ -17026,6 +16994,7 @@
               } else {
                 errormessage = err.message;
               }
+
               me.error(errormessage);
 
               if (
@@ -17034,11 +17003,11 @@
                 throw errormessage;
               }
             });
-
           return result;
         }
       }
     ]);
+
     return CognosRequest;
   })();
 
@@ -17049,13 +17018,16 @@
     if (reset) {
       cRequest = undefined;
     }
+
     var result;
+
     if (typeof cRequest == 'undefined' || reset) {
       cRequest = new CognosRequest(url, debug);
       result = cRequest.initialise();
     } else {
       result = Promise.resolve(cRequest);
     }
+
     return result;
   }
 
@@ -17267,7 +17239,7 @@
   function extname(path) {
     return splitPath(path)[3];
   }
-  var path = {
+  var require$$0$1 = {
     extname: extname,
     basename: basename,
     dirname: dirname,
@@ -17298,20 +17270,6 @@
           if (start < 0) start = str.length + start;
           return str.substr(start, len);
         };
-
-  var path$1 = /*#__PURE__*/ Object.freeze({
-    resolve: resolve,
-    normalize: normalize,
-    isAbsolute: isAbsolute,
-    join: join,
-    relative: relative,
-    sep: sep,
-    delimiter: delimiter$1,
-    dirname: dirname,
-    basename: basename,
-    extname: extname,
-    default: path
-  });
 
   var concatMap = function(xs, fn) {
     var res = [];
@@ -17582,14 +17540,12 @@
     return expansions;
   }
 
-  var require$$0$1 = (path$1 && path) || path$1;
-
   var minimatch_1 = minimatch;
   minimatch.Minimatch = Minimatch;
 
-  var path$2 = { sep: '/' };
+  var path = { sep: '/' };
   try {
-    path$2 = require$$0$1;
+    path = require$$0$1;
   } catch (er) {}
 
   var GLOBSTAR = (minimatch.GLOBSTAR = Minimatch.GLOBSTAR = {});
@@ -17705,8 +17661,8 @@
     pattern = pattern.trim();
 
     // windows support: need to use /, not \
-    if (path$2.sep !== '/') {
-      pattern = pattern.split(path$2.sep).join('/');
+    if (path.sep !== '/') {
+      pattern = pattern.split(path.sep).join('/');
     }
 
     this.options = options;
@@ -18303,8 +18259,8 @@
     var options = this.options;
 
     // windows: need to use /, not \
-    if (path$2.sep !== '/') {
-      f = f.split(path$2.sep).join('/');
+    if (path.sep !== '/') {
+      f = f.split(path.sep).join('/');
     }
 
     // treat the test path as a set of pathparts.
@@ -18522,29 +18478,26 @@
   }
 
   var jCognos;
-
   var cognosUrl;
 
   var Cognos = (function() {
     function Cognos(debug) {
-      classCallCheck(this, Cognos);
+      _classCallCheck(this, Cognos);
 
       this.loggedin = false;
       this.url = '';
       this.debug = debug;
       this.username = '';
       this.password = '';
-
       this.defaultNamespace = '';
       this.namespace = '';
-
       this.namespaces = '';
       this.retrycount = 0;
       this.loginrequest = false;
       this.resetting = false;
     }
 
-    createClass(Cognos, [
+    _createClass(Cognos, [
       {
         key: 'log',
         value: function log(text, object) {
@@ -18576,9 +18529,9 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : '';
-
           var me = this;
           me.log('login: Starting to login');
+
           if (me.loginrequest !== false) {
             me.log(
               'login: Already logging in, returning loginrequest promise',
@@ -18590,6 +18543,7 @@
           if (namespace == '') {
             namespace = me.defaultNamespace;
           }
+
           if (!namespace) {
             throw 'Namespace not known.';
           }
@@ -18614,7 +18568,6 @@
               }
             ]
           };
-
           this.loginrequest = me.requester
             .post('bi/v1/login', params)
             .then(function(body) {
@@ -18631,9 +18584,7 @@
               me.loginrequest = false;
               throw err;
             });
-
           this.log('login: returning login promise', this.loginrequest);
-
           return this.loginrequest;
         }
       },
@@ -18641,7 +18592,6 @@
         key: 'logoff',
         value: function logoff() {
           var me = this;
-
           var result = me.requester
             .delete('bi/v1/login')
             .then(function(body) {
@@ -18703,9 +18653,9 @@
           if (this.retrycount > 2) {
             return Promise.reject();
           }
+
           this.requester = undefined;
           me.log('going to reset the cognos request');
-
           this.resetting = getCognosRequest(this.url, this.debug, true)
             .then(function(cRequest) {
               me.requester = cRequest;
@@ -18720,9 +18670,11 @@
             })
             .catch(function(err) {
               me.error('Error resetting', err);
+
               if (me.retrycount < 3) {
                 return me.reset();
               }
+
               throw err;
             });
           me.log('Returning a promise to reset', this.resetting);
@@ -18734,11 +18686,11 @@
         value: function listRootFolder() {
           var me = this;
           var rootfolders = [];
-
           var result = me.requester
             .get('bi/v1/objects/.my_folders?fields=permissions')
             .then(function(folders) {
               me.log('Got the Private Folders');
+
               if (typeof folders !== 'undefined') {
                 rootfolders.push({
                   id: folders.data[0].id,
@@ -18751,18 +18703,19 @@
                 .get('bi/v1/objects/.public_folders?fields=permissions')
                 .then(function(folders) {
                   me.log('Got the Public Folders');
+
                   if (typeof folders !== 'undefined') {
                     rootfolders.push({
                       id: folders.data[0].id,
                       name: 'Team Content'
                     });
                   }
+
                   return rootfolders;
                 });
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in listRootFolder', err);
-
               me.handleError(err)
                 .then(function() {
                   me.log('We have been reset, list the root folder again');
@@ -18780,18 +18733,17 @@
         key: 'listPublicFolders',
         value: function listPublicFolders() {
           var me = this;
-
           var result = me.requester
             .get('bi/v1/objects/.public_folders?fields=permissions')
             .then(function(folders) {
               if (typeof folders !== 'undefined') {
                 return me.listFolderById(folders.data[0].id);
               }
+
               return {};
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in listPublicFolders', err);
-
               me.handleError(err)
                 .then(function() {
                   me.log('We have been reset, list the public folders again');
@@ -18802,7 +18754,6 @@
                   throw err;
                 });
             });
-
           return result;
         }
       },
@@ -18817,7 +18768,6 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : ['folder'];
-
           var me = this;
           var result = me.requester
             .get(
@@ -18830,6 +18780,7 @@
               folders.data.forEach(function(folder) {
                 if (minimatch_1(folder.defaultName, pattern)) {
                   me.log('folder ', folder.defaultName);
+
                   try {
                     if (types.indexOf(folder.type) > -1) {
                       var tpFolder = {
@@ -18849,7 +18800,6 @@
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in listFolderById', err);
-
               return me
                 .handleError(err)
                 .then(function() {
@@ -18872,7 +18822,6 @@
             defaultName: name,
             type: 'folder'
           };
-
           var result = me.requester
             .post('bi/v1/objects/' + parentid + '/items', params, true)
             .then(function(response) {
@@ -18883,6 +18832,7 @@
               } else {
                 var id = response.data.data[0].id;
               }
+
               return {
                 name: name,
                 id: id
@@ -18890,7 +18840,6 @@
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in addFolder', err);
-
               return me
                 .handleError(err)
                 .then(function() {
@@ -18902,7 +18851,6 @@
                   throw err;
                 });
             });
-
           me.log('Maybe going to create folder');
           return result;
         }
@@ -18918,13 +18866,11 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : true;
-
           var me = this;
           var params = {
             force: force,
             recursive: recursive
           };
-
           var result = me.requester
             .delete('bi/v1/objects/' + id, params, true)
             .then(function(response) {
@@ -18933,7 +18879,6 @@
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in deleteFolder', err);
-
               return me
                 .handleError(err)
                 .then(function() {
@@ -18959,15 +18904,12 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : 2000;
-
           var me = this;
-
           var promptString = '';
           var keys = Object.keys(prompts);
           keys.forEach(function(key) {
             promptString += '&p_' + key + '=' + prompts[key];
           });
-
           var result = me.requester
             .get(
               'bi/v1/disp/rds/reportData/report/' +
@@ -18982,7 +18924,6 @@
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in getReportData', err);
-
               return me
                 .handleError(err)
                 .then(function() {
@@ -18994,7 +18935,6 @@
                   throw err;
                 });
             });
-
           return result;
         }
       },
@@ -19005,10 +18945,8 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : 'extensions';
-
           var me = this;
           var path = 'bi/v1/plugins/' + type + '/' + name;
-
           var result = this.requester
             .put(path, filename)
             .then(function(response) {
@@ -19025,7 +18963,6 @@
         key: 'upLoadDataFile',
         value: function upLoadDataFile(filename) {
           var me = this;
-
           var file = 'countries.csv';
           var path = 'bi/v1/metadata/files?filename=' + file;
           var result = this.requester
@@ -19071,6 +19008,7 @@
         }
       }
     ]);
+
     return Cognos;
   })();
 
@@ -19079,12 +19017,13 @@
       arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var debug =
       arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
     var reset = false;
+
     if (url && url !== cognosUrl) {
       jCognos = undefined;
       reset = true;
     }
+
     if (typeof jCognos == 'undefined' && url) {
       var myRequest = getCognosRequest(url, debug, reset)
         .then(function(cRequest) {
