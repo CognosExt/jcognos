@@ -14786,7 +14786,7 @@
     saveSpec: null,
     fetchSpec: '2.3.4'
   };
-  var _requiredBy = ['/axios-cookiejar-support', '/request'];
+  var _requiredBy = ['/request'];
   var _resolved =
     'https://registry.npmjs.org/tough-cookie/-/tough-cookie-2.3.4.tgz';
   var _spec = '2.3.4';

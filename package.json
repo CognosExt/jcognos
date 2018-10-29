@@ -68,13 +68,7 @@
     "webdriverio": "^4.14.0"
   },
   "dependencies": {
-    "@babel/plugin-external-helpers": "^7.0.0",
     "axios": "^0.18.0",
-    "axios-cookiejar-support": "^0.3.6",
-    "babel-upgrade": "0.0.24",
-    "fs-utils": "^0.7.0",
-    "http": "0.0.0",
-    "https": "^1.0.0",
-    "minimatch": "^3.0.4"
+    "axios-cookiejar-support": "^0.4.1"
   }
 }
