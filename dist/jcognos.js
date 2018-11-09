@@ -16405,7 +16405,7 @@
   var cRequest;
 
   var CognosRequest = (function() {
-    function CognosRequest(url, debug) {
+    function CognosRequest(url, debug, timeout) {
       _classCallCheck(this, CognosRequest);
 
       if (url.substr(-1) !== '/') {
@@ -16418,6 +16418,7 @@
       this.loggedin = false;
       this.namespace = '';
       this.namespaces = [];
+      this.timeout = timeout;
     }
 
     _createClass(CognosRequest, [
@@ -16456,7 +16457,7 @@
           var cookieJar = false;
           var firstheaders = {};
           this.axios = axios$1.create({
-            timeout: 60000,
+            timeout: me.timeout,
             maxRedirects: 10,
             maxContentLength: 50 * 1000 * 1000
           });
@@ -17014,6 +17015,7 @@
   function getCognosRequest(url, debug) {
     var reset =
       arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    var timeout = arguments.length > 3 ? arguments[3] : undefined;
 
     if (reset) {
       cRequest = undefined;
@@ -17022,7 +17024,7 @@
     var result;
 
     if (typeof cRequest == 'undefined' || reset) {
-      cRequest = new CognosRequest(url, debug);
+      cRequest = new CognosRequest(url, debug, timeout);
       result = cRequest.initialise();
     } else {
       result = Promise.resolve(cRequest);
@@ -18481,7 +18483,7 @@
   var cognosUrl;
 
   var Cognos = (function() {
-    function Cognos(debug) {
+    function Cognos(debug, timeout) {
       _classCallCheck(this, Cognos);
 
       this.loggedin = false;
@@ -18489,6 +18491,7 @@
       this.debug = debug;
       this.username = '';
       this.password = '';
+      this.timeout = timeout;
       this.defaultNamespace = '';
       this.namespace = '';
       this.namespaces = '';
@@ -18611,6 +18614,10 @@
           var me = this;
           var errormessage = '';
 
+          if (err.code === 'ECONNABORTED' || err.message === 'Network Error') {
+            throw err;
+          }
+
           if (err.response.status == 441 || err.response.status == 403) {
             me.log('going to reset');
             var result = me.reset();
@@ -18656,7 +18663,12 @@
 
           this.requester = undefined;
           me.log('going to reset the cognos request');
-          this.resetting = getCognosRequest(this.url, this.debug, true)
+          this.resetting = getCognosRequest(
+            this.url,
+            this.debug,
+            true,
+            this.timeout
+          )
             .then(function(cRequest) {
               me.requester = cRequest;
               me.log('going to login again');
@@ -19017,6 +19029,8 @@
       arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var debug =
       arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var timeout =
+      arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 60000;
     var reset = false;
 
     if (url && url !== cognosUrl) {
@@ -19025,9 +19039,9 @@
     }
 
     if (typeof jCognos == 'undefined' && url) {
-      var myRequest = getCognosRequest(url, debug, reset)
+      var myRequest = getCognosRequest(url, debug, reset, timeout)
         .then(function(cRequest) {
-          jCognos = new Cognos(debug);
+          jCognos = new Cognos(debug, timeout);
           jCognos.requester = cRequest;
           jCognos.url = url;
           jCognos.defaultNamespace = cRequest.namespace;

@@ -11,7 +11,7 @@ import tough from 'tough-cookie';
 var cRequest;
 
 class CognosRequest {
-  constructor(url, debug) {
+  constructor(url, debug, timeout) {
     if (url.substr(-1) !== '/') {
       url = url + '/';
     }
@@ -21,6 +21,7 @@ class CognosRequest {
     this.loggedin = false;
     this.namespace = '';
     this.namespaces = [];
+    this.timeout = timeout;
   }
 
   log(text, object) {
@@ -48,7 +49,7 @@ class CognosRequest {
     var cookieJar = false;
     var firstheaders = {};
     this.axios = axios.create({
-      timeout: 60000,
+      timeout: me.timeout,
 
       //follow up to 10 HTTP 3xx redirects
       maxRedirects: 10,
@@ -580,13 +581,13 @@ class CognosRequest {
   }
 }
 
-function getCognosRequest(url, debug, reset = false) {
+function getCognosRequest(url, debug, reset = false, timeout) {
   if (reset) {
     cRequest = undefined;
   }
   var result;
   if (typeof cRequest == 'undefined' || reset) {
-    cRequest = new CognosRequest(url, debug);
+    cRequest = new CognosRequest(url, debug, timeout);
     result = cRequest.initialise();
   } else {
     result = Promise.resolve(cRequest);

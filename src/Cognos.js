@@ -20,7 +20,7 @@ class Cognos {
    * @constructs
    * @private
    */
-  constructor(debug) {
+  constructor(debug, timeout) {
     /**
      * Check to see of user is loggedin or not
      * @type {Boolean}
@@ -31,6 +31,7 @@ class Cognos {
     this.debug = debug;
     this.username = '';
     this.password = '';
+    this.timeout = timeout;
     /**
      *  defaultNamespace - returns the default namespace that jCognos will login to
      *
@@ -162,6 +163,11 @@ class Cognos {
     var me = this;
     var errormessage = '';
 
+    if (err.code === 'ECONNABORTED' || err.message === 'Network Error') {
+      // We can not recuparate from network errors.
+      throw err;
+    }
+
     if (err.response.status == 441 || err.response.status == 403) {
       me.log('going to reset');
       let result = me.reset();
@@ -214,7 +220,7 @@ class Cognos {
     this.requester = undefined;
     me.log('going to reset the cognos request');
 
-    this.resetting = getCognosRequest(this.url, this.debug, true)
+    this.resetting = getCognosRequest(this.url, this.debug, true, this.timeout)
       .then(function(cRequest) {
         me.requester = cRequest;
         me.log('going to login again');
@@ -578,16 +584,16 @@ class Cognos {
  * @param  {Boolean} debug If true, starts debugging into the console
  * @return {Promise}  a promise that will return the jCognos object
  */
-function getCognos(url = false, debug = false) {
+function getCognos(url = false, debug = false, timeout = 60000) {
   var reset = false;
   if (url && url !== cognosUrl) {
     jCognos = undefined;
     reset = true;
   }
   if (typeof jCognos == 'undefined' && url) {
-    var myRequest = getCognosRequest(url, debug, reset)
+    var myRequest = getCognosRequest(url, debug, reset, timeout)
       .then(function(cRequest) {
-        jCognos = new Cognos(debug);
+        jCognos = new Cognos(debug, timeout);
         jCognos.requester = cRequest;
         jCognos.url = url;
         jCognos.defaultNamespace = cRequest.namespace;
