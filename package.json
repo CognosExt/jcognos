@@ -22,12 +22,7 @@
     "*.js": [
       "node_modules/.bin/prettier --write --single-quote",
       "git add"
-    ],
-    "*.vue": [
-      "node_modules/.bin/prettier --write --single-quote",
-      "git add"
     ]
-
   },
   "repository": {
     "type": "git",
