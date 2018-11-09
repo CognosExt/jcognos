@@ -12,8 +12,8 @@
   typeof exports === 'object' && typeof module !== 'undefined'
     ? factory(exports)
     : typeof define === 'function' && define.amd
-      ? define(['exports'], factory)
-      : factory((global.jcognos = {}));
+    ? define(['exports'], factory)
+    : factory((global.jcognos = {}));
 })(this, function(exports) {
   'use strict';
 
@@ -386,10 +386,10 @@
     typeof global !== 'undefined'
       ? global
       : typeof self !== 'undefined'
-        ? self
-        : typeof window !== 'undefined'
-          ? window
-          : {};
+      ? self
+      : typeof window !== 'undefined'
+      ? window
+      : {};
 
   // shim for using process in browser
   // based off https://github.com/defunctzombie/node-process/blob/master/browser.js
@@ -5833,8 +5833,8 @@
       result.hostname = result.host = isAbsolute
         ? ''
         : srcPath.length
-          ? srcPath.shift()
-          : '';
+        ? srcPath.shift()
+        : '';
       //occationaly the auth can get stuck only in host
       //this especially happens in cases like
       //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
@@ -5903,35 +5903,35 @@
   var pubsuffix = createCommonjsModule(function(module) {
     module.exports.getPublicSuffix = function getPublicSuffix(domain) {
       /*!
-     * Copyright (c) 2015, Salesforce.com, Inc.
-     * All rights reserved.
-     *
-     * Redistribution and use in source and binary forms, with or without
-     * modification, are permitted provided that the following conditions are met:
-     *
-     * 1. Redistributions of source code must retain the above copyright notice,
-     * this list of conditions and the following disclaimer.
-     *
-     * 2. Redistributions in binary form must reproduce the above copyright notice,
-     * this list of conditions and the following disclaimer in the documentation
-     * and/or other materials provided with the distribution.
-     *
-     * 3. Neither the name of Salesforce.com nor the names of its contributors may
-     * be used to endorse or promote products derived from this software without
-     * specific prior written permission.
-     *
-     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-     * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-     * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-     * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-     * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-     * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-     * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-     * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-     * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-     * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-     * POSSIBILITY OF SUCH DAMAGE.
-     */
+       * Copyright (c) 2015, Salesforce.com, Inc.
+       * All rights reserved.
+       *
+       * Redistribution and use in source and binary forms, with or without
+       * modification, are permitted provided that the following conditions are met:
+       *
+       * 1. Redistributions of source code must retain the above copyright notice,
+       * this list of conditions and the following disclaimer.
+       *
+       * 2. Redistributions in binary form must reproduce the above copyright notice,
+       * this list of conditions and the following disclaimer in the documentation
+       * and/or other materials provided with the distribution.
+       *
+       * 3. Neither the name of Salesforce.com nor the names of its contributors may
+       * be used to endorse or promote products derived from this software without
+       * specific prior written permission.
+       *
+       * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+       * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+       * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+       * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+       * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+       * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+       * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+       * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+       * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+       * POSSIBILITY OF SUCH DAMAGE.
+       */
       if (!domain) {
         return null;
       }
@@ -15271,7 +15271,7 @@
     }
 
     /* "* The last character of the string that is not included in the domain
-    * string is a %x2E (".") character." */
+     * string is a %x2E (".") character." */
     if (str.substr(idx - 1, 1) !== '.') {
       return false;
     }
@@ -15463,24 +15463,24 @@
 
         case 'path': // S5.2.4
           /*
-         * "If the attribute-value is empty or if the first character of the
-         * attribute-value is not %x2F ("/"):
-         *   Let cookie-path be the default-path.
-         * Otherwise:
-         *   Let cookie-path be the attribute-value."
-         *
-         * We'll represent the default-path as null since it depends on the
-         * context of the parsing.
-         */
+           * "If the attribute-value is empty or if the first character of the
+           * attribute-value is not %x2F ("/"):
+           *   Let cookie-path be the default-path.
+           * Otherwise:
+           *   Let cookie-path be the attribute-value."
+           *
+           * We'll represent the default-path as null since it depends on the
+           * context of the parsing.
+           */
           c.path = av_value && av_value[0] === '/' ? av_value : null;
           break;
 
         case 'secure': // S5.2.5
           /*
-         * "If the attribute-name case-insensitively matches the string "Secure",
-         * the user agent MUST append an attribute to the cookie-attribute-list
-         * with an attribute-name of Secure and an empty attribute-value."
-         */
+           * "If the attribute-name case-insensitively matches the string "Secure",
+           * the user agent MUST append an attribute to the cookie-attribute-list
+           * with an attribute-name of Secure and an empty attribute-value."
+           */
           c.secure = true;
           break;
 
@@ -17838,9 +17838,9 @@
       pattern.charAt(0) === '.'
         ? '' // anything
         : // not (start or / followed by . or .. followed by / or end)
-          options.dot
-          ? '(?!(?:^|\\/)\\.{1,2}(?:$|\\/))'
-          : '(?!\\.)';
+        options.dot
+        ? '(?!(?:^|\\/)\\.{1,2}(?:$|\\/))'
+        : '(?!\\.)';
     var self = this;
 
     function clearStateChar() {
@@ -18203,8 +18203,8 @@
     var twoStar = options.noglobstar
       ? star
       : options.dot
-        ? twoStarDot
-        : twoStarNoDot;
+      ? twoStarDot
+      : twoStarNoDot;
     var flags = options.nocase ? 'i' : '';
 
     var re = set
@@ -18214,8 +18214,8 @@
             return p === GLOBSTAR
               ? twoStar
               : typeof p === 'string'
-                ? regExpEscape(p)
-                : p._src;
+              ? regExpEscape(p)
+              : p._src;
           })
           .join('\\/');
       })

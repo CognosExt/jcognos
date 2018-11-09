@@ -188,8 +188,8 @@ class Cognos {
 
     me.error(err);
     /*
-   *  This happens when you didnt logout properly. It seems harmless.
-   */
+     *  This happens when you didnt logout properly. It seems harmless.
+     */
     if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
       throw errormessage;
     }
@@ -582,6 +582,7 @@ class Cognos {
  *
  * @param  {String} url The URL of your Cognos installation. If empty, this function becomes static and a Promise for the current jCognos object is returned.
  * @param  {Boolean} debug If true, starts debugging into the console
+ * @param  {Number} Timeout value for http(s) connections. In milliseconds. Default is 60000.
  * @return {Promise}  a promise that will return the jCognos object
  */
 function getCognos(url = false, debug = false, timeout = 60000) {
