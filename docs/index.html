@@ -2,19 +2,20 @@
 <html>
 <head>
   <meta charset='utf-8' />
-  <title>jcognos 1.5.0 | Documentation</title>
+  <title>jcognos 1.5.1 | Documentation</title>
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <link href='assets/bass.css' type='text/css' rel='stylesheet' />
   <link href='assets/style.css' type='text/css' rel='stylesheet' />
   <link href='assets/github.css' type='text/css' rel='stylesheet' />
   <link href='assets/split.css' type='text/css' rel='stylesheet' />
+  <meta name='description' content='Javascript Library that simplifies working with IBM Cognos'>
 </head>
 <body class='documentation m0'>
     <div class='flex'>
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>jcognos</h3>
-          <div class='mb1'><code>1.5.0</code></div>
+          <div class='mb1'><code>1.5.1</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -204,7 +205,7 @@ retrieve the Cognos instance.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new Cognos(debug: any)</div>
+    <div class='pre p1 fill-light mt0'>new Cognos(debug: any, timeout: any)</div>
    
   
   
@@ -223,6 +224,14 @@ retrieve the Cognos instance.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>debug</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>timeout</span> <code class='quiet'>(any)</code>
 	    
           </div>
           
@@ -717,7 +726,7 @@ retrieve the Cognos instance.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>pattern</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>
-            = <code>&quot;*&quot;</code>)</code>
+            = <code>&#39;*&#39;</code>)</code>
 	    = '
 <em>' Pattern like you would use when listing folders in your filesystem. eg. 'Sales</em>
 '
@@ -729,11 +738,9 @@ retrieve the Cognos instance.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>types</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>
-            = <code>[&quot;folder&quot;]</code>)</code>
+            = <code>[&#39;folder&#39;]</code>)</code>
 	    = '
-[
-'folder'
-]
+['folder']
 ' Types of Cognos objects to list. defaults to folders only. Other values could be 'report'
 
           </div>
@@ -992,7 +999,7 @@ This function is only supported by Node.js. In the browser this function returns
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>type</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>
-            = <code>&quot;extensions&quot;</code>)</code>
+            = <code>&#39;extensions&#39;</code>)</code>
 	    type of upload. Default is 'extensions', for themes use 'themes'.
 
           </div>
@@ -1055,7 +1062,7 @@ at any time.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>getCognos(url: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, debug: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>getCognos(url: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, debug: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>, timeout: any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
    
   
   
@@ -1087,6 +1094,15 @@ at any time.</p>
             = <code>false</code>)</code>
 	    If true, starts debugging into the console
 
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>timeout</span> <code class='quiet'>(any
+            = <code>60000</code>)</code>
+	    
           </div>
           
         </div>
