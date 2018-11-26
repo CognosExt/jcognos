@@ -37,6 +37,17 @@ describe('Logon Logoff with success', function() {
         }
       })
       .then(function(mycognos) {
+        assert.isObject(cognos.preferences, 'User has preferences');
+        assert.isArray(
+          cognos.capabilities.userCapabilities,
+          'User has capabilities and userCapabilities'
+        );
+        assert.isObject(mycognos.preferences, 'User has preferences');
+        assert.isObject(mycognos.capabilities, 'User has capabilities');
+        assert.isArray(
+          mycognos.capabilities.userCapabilities,
+          'User has capabilities and userCapabilities'
+        );
         assert.isOk(true, 'Succesfully logged in');
       })
       .catch(function(err) {

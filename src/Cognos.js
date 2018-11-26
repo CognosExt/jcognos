@@ -33,6 +33,18 @@ class Cognos {
     this.password = '';
     this.timeout = timeout;
     /**
+     *  capabilities - returns the Cognos User Capabilities object
+     *
+     * @return {Object} Object with Capabilities
+     */
+    this.capabilities = {};
+    /**
+     *  preferences - returns the Cognos User Preferences, eg. timezone, skin, accessibiltity settings etc.
+     *
+     * @return {Object} Object with Preferences
+     */
+    this.preferences = {};
+    /**
      *  defaultNamespace - returns the default namespace that jCognos will login to
      *
      * @return {String} id of the default namespace
@@ -125,8 +137,25 @@ class Cognos {
         me.password = password;
         me.namespace = namespace;
         me.loginrequest = false;
+        var capabilities = me.requester
+          .get('bi/v1/users/~/capabilities')
+          .then(function(caps) {
+            me.capabilities = caps;
+            return caps;
+          });
+        var preferences = me.requester
+          .get('bi/v1/users/~/preferences')
+          .then(function(prefs) {
+            me.preferences = prefs;
+            return prefs;
+          });
+
         me.log('Successfully logged in');
+        return Promise.all([capabilities, preferences]);
         return body;
+      })
+      .then(function() {
+        return me;
       })
       .catch(function(err) {
         me.log('Cognos: Error when logging in.');

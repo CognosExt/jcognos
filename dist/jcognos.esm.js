@@ -692,6 +692,8 @@ var Cognos = (function() {
     this.username = '';
     this.password = '';
     this.timeout = timeout;
+    this.capabilities = {};
+    this.preferences = {};
     this.defaultNamespace = '';
     this.namespace = '';
     this.namespaces = '';
@@ -779,8 +781,24 @@ var Cognos = (function() {
             me.password = password;
             me.namespace = namespace;
             me.loginrequest = false;
+            var capabilities = me.requester
+              .get('bi/v1/users/~/capabilities')
+              .then(function(caps) {
+                me.capabilities = caps;
+                return caps;
+              });
+            var preferences = me.requester
+              .get('bi/v1/users/~/preferences')
+              .then(function(prefs) {
+                me.preferences = prefs;
+                return prefs;
+              });
             me.log('Successfully logged in');
+            return Promise.all([capabilities, preferences]);
             return body;
+          })
+          .then(function() {
+            return me;
           })
           .catch(function(err) {
             me.log('Cognos: Error when logging in.');
