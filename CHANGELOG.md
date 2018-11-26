@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/CognosExt/jcognos/compare/v1.5.1...v1.7.0) (2018-11-26)
+
+
+### Features
+
+* Expose user preferences and capabilities ([ba0254a](https://github.com/CognosExt/jcognos/commit/ba0254a))
+* New option for getCognos: timeout. See documentation. ([5ca108b](https://github.com/CognosExt/jcognos/commit/5ca108b))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/CognosExt/jcognos/compare/v1.5.1...v1.6.0) (2018-11-09)
 
