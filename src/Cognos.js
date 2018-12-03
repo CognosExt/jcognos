@@ -1,5 +1,4 @@
 import { getCognosRequest } from './CognosRequest';
-import { Utils } from './Utils';
 
 import minimatch from 'minimatch';
 
@@ -131,7 +130,7 @@ class Cognos {
 
     this.loginrequest = me.requester
       .post('bi/v1/login', params)
-      .then(function(body) {
+      .then(function() {
         me.loggedin = true;
         me.username = user;
         me.password = password;
@@ -152,7 +151,6 @@ class Cognos {
 
         me.log('Successfully logged in');
         return Promise.all([capabilities, preferences]);
-        return body;
       })
       .then(function() {
         return me;
@@ -183,7 +181,7 @@ class Cognos {
         return body;
       })
       .catch(function(err) {
-        me.log('Cognos: Error when logging off.');
+        me.log('Cognos: Error when logging off.', err);
       });
     return result;
   }
@@ -315,7 +313,7 @@ class Cognos {
             me.resetting = false;
             return me.listRootFolder();
           })
-          .catch(function(rejecterr) {
+          .catch(function() {
             throw err;
           });
       });
@@ -345,7 +343,7 @@ class Cognos {
             me.resetting = false;
             return me.listPublicFolders();
           })
-          .catch(function(rejecterr) {
+          .catch(function() {
             throw err;
           });
       });
@@ -402,7 +400,7 @@ class Cognos {
             me.resetting = false;
             return me.listFolderById(id, pattern, types);
           })
-          .catch(function(rejecterr) {
+          .catch(function() {
             throw err;
           });
       });
@@ -427,7 +425,6 @@ class Cognos {
       .post('bi/v1/objects/' + parentid + '/items', params, true)
       .then(function(response) {
         me.log('created folder');
-        //    if (Utils.isStandardBrowserEnv()) did not work per-se
         if (response.headers && response.headers.location) {
           var id = response.headers.location.split('/').pop();
         } else {
@@ -448,7 +445,7 @@ class Cognos {
             me.resetting = false;
             return me.addFolder(parentid, name);
           })
-          .catch(function(rejecterr) {
+          .catch(function() {
             throw err;
           });
       });
@@ -474,7 +471,7 @@ class Cognos {
 
     var result = me.requester
       .delete('bi/v1/objects/' + id, params, true)
-      .then(function(response) {
+      .then(function() {
         me.log('deleted folder');
         return true;
       })
@@ -488,7 +485,7 @@ class Cognos {
             me.resetting = false;
             return me.deleteFolder(id, force, recursive);
           })
-          .catch(function(rejecterr) {
+          .catch(function() {
             throw err;
           });
       });
@@ -528,7 +525,7 @@ class Cognos {
             me.resetting = false;
             return me.getReportData(id, prompts, limit);
           })
-          .catch(function(rejecterr) {
+          .catch(function() {
             throw err;
           });
       });

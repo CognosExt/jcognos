@@ -111,7 +111,7 @@ class CognosRequest {
         withCredentials: false, // If true, send cookie stored in jar
         headers: firstheaders
       })
-      .then(function(body) {
+      .then(function() {
         me.log('Unexpected success');
         return me;
         // This will never happen, the first call to Cognos will always return a 401
@@ -241,8 +241,6 @@ class CognosRequest {
         }
         return '';
       });
-    //      .catch(function(err) {
-    //      });
 
     return result;
   }
@@ -270,7 +268,6 @@ class CognosRequest {
       .post(me.url + path, paramsJSON, {
         headers: headers,
         jar: me.cookies,
-        //resolveWithFullResponse: fullResponse,
         withCredentials: true
       })
       .then(function(response) {
@@ -404,7 +401,6 @@ class CognosRequest {
     me.log('To:', url);
     var result = false;
     var fs = require('fs');
-    //try {
     var stream = fs.createReadStream(filename);
     stream.on('error', console.log);
 
@@ -474,7 +470,6 @@ class CognosRequest {
     me.log('To:', url);
     var result = false;
     var fs = require('fs');
-    //try {
     var stream = fs.createReadStream(filename);
     stream.on('error', console.log);
 
@@ -486,7 +481,6 @@ class CognosRequest {
       })
       .then(function(response) {
         me.log('CognosRequest : Success Putting ');
-        //  me.log(response.data);
         return response.data;
       })
       .catch(function(err) {
@@ -506,8 +500,8 @@ class CognosRequest {
         }
         me.error(errormessage);
         /*
-       *  This happens when you didnt logout properly. It seems harmless.
-       */
+         *  This happens when you didnt logout properly. It seems harmless.
+         */
         if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
           throw errormessage;
         }
@@ -570,8 +564,8 @@ class CognosRequest {
         }
         me.error(errormessage);
         /*
-       *  This happens when you didnt logout properly. It seems harmless.
-       */
+         *  This happens when you didnt logout properly. It seems harmless.
+         */
         if (errormessage != 'AAA-AUT-0011 Invalid namespace was selected.') {
           throw errormessage;
         }
