@@ -151,11 +151,11 @@ class CognosRequest {
                   cookieJar.setCookie(
                     'XSRF-TOKEN=' + me.token,
                     cookieurl,
-                    function(err, cookje) {
+                    function() {
                       cookieJar.setCookie(
                         'X-XSRF-TOKEN=' + me.token,
                         cookieurl,
-                        function(err, cookje) {
+                        function() {
                           me.cookies = cookieJar;
                         }
                       );
@@ -352,11 +352,19 @@ class CognosRequest {
       })
       .catch(function(err) {
         var errormessage = '';
-        me.error('CognosRequest : Error in delete', err);
         // We have 3 different ways to return an error.
         if (typeof err.response !== 'undefined') {
+          if (err.response.status === 441) {
+            errormessage = 'Access Denied';
+          }
           if (typeof err.response.data.messages !== 'undefined') {
-            errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+            if (err.response.data.messages.length > 0) {
+              errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
+            } else {
+              if (err.response.data.errorCodeString) {
+                errormessage = err.response.data.errorCodeString;
+              }
+            }
           } else {
             errormessage = err.response.data; // It will probably be 'Forbidden'
           }
