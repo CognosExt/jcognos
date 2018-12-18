@@ -31,6 +31,7 @@ class Cognos {
     this.username = '';
     this.password = '';
     this.timeout = timeout;
+    this.productVersion = '';
     /**
      *  capabilities - returns the Cognos User Capabilities object
      *
@@ -195,15 +196,15 @@ class Cognos {
       throw err;
     }
 
-    if (err.response.status == 441 || err.response.status == 403) {
-      me.log('going to reset');
-      let result = me.reset();
-      me.log('in handleError, returning promise', result);
-      return result;
-    }
-
     // We have 3 different ways to return an error.
     if (typeof err.response !== 'undefined') {
+      if (err.response.status == 441 || err.response.status == 403) {
+        me.log('going to reset');
+        let result = me.reset();
+        me.log('in handleError, returning promise', result);
+        return result;
+      }
+
       if (typeof err.response.data.messages !== 'undefined') {
         errormessage = err.response.data.messages[0].messageString; // This is a real Cognos error
       } else {
@@ -271,6 +272,65 @@ class Cognos {
   }
 
   /**
+   * getCognosVersion - Fetches Cognos Product Version
+   *
+   * @return {Promise}  The promise resolves to a string that holds the version number
+   */
+  getCognosVersion() {
+    var me = this;
+    if (this.productVersion !== '') {
+      return Promise.resolve(this.productVersion);
+    }
+    var url = 'bi/v1/configuration/keys/Glass.productVersion';
+    var result = me.requester
+      .get(url)
+      .then(function(version) {
+        this.productVersion = version['Glass.productVersion'];
+        return this.productVersion;
+      })
+      .catch(function(err) {
+        me.error('Error while fetching Cognos Version.', err);
+        throw err;
+      });
+    return result;
+  }
+
+  /**
+   * _getPublicFolderId - Internal function to retrieve the ObjectId of the public folders
+   *
+   * @return {Promise} Promise that results in an id as {String}.
+   */
+  _getPublicFolderId() {
+    var me = this;
+    var url = '';
+
+    return this.getCognosVersion().then(function(version) {
+      if (version.substr(0, 4) == '11.1') {
+        // Cognos 10 & 11 (but might be depricated)
+        // the dojo= is added to make the result json. the alternative is xml.
+        url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
+        me.log('We are version 11. Going to fetch: ' + url);
+      } else {
+        url = 'bi/v1/objects/.public_folders?fields=permissions';
+      }
+      var result = me.requester.get(url).then(function(folders) {
+        var id;
+        if (version.substr(0, 4) == '11.1') {
+          // This is pure evil. It is only there because JSON.parse breaks on the json returned
+          // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
+          //JSON.parse(folders);
+          folders = eval('(' + folders + ')');
+          id = folders.items[0].entry[2].cm$storeID;
+        } else {
+          id = folders.data[0].id;
+        }
+        return id;
+      });
+      return result;
+    });
+  }
+
+  /**
    * listRootFolder - Returns the Public Folders and the My Content
    *
    * @return {CognosObject[]}  Array of CognosObjects
@@ -278,7 +338,6 @@ class Cognos {
   listRootFolder() {
     var me = this;
     var rootfolders = [];
-    // Cognos 11
     var result = me.requester
       .get('bi/v1/objects/.my_folders?fields=permissions')
       .then(function(folders) {
@@ -291,22 +350,19 @@ class Cognos {
         }
       })
       .then(function() {
-        return me.requester
-          .get('bi/v1/objects/.public_folders?fields=permissions')
-          .then(function(folders) {
-            me.log('Got the Public Folders');
-            if (typeof folders !== 'undefined') {
-              rootfolders.push({
-                id: folders.data[0].id,
-                name: 'Team Content'
-              });
-            }
-            return rootfolders;
-          });
+        return me._getPublicFolderId().then(function(id) {
+          me.log('Got the Public Folders');
+          if (typeof id !== 'undefined') {
+            rootfolders.push({
+              id: id,
+              name: 'Team Content'
+            });
+          }
+          return rootfolders;
+        });
       })
       .catch(function(err) {
         me.error('CognosRequest : Error in listRootFolder', err);
-
         me.handleError(err)
           .then(function() {
             me.log('We have been reset, list the root folder again');
@@ -322,15 +378,10 @@ class Cognos {
 
   listPublicFolders() {
     var me = this;
-    // Cognos 11
-    var result = me.requester
-      .get('bi/v1/objects/.public_folders?fields=permissions')
-      // Cognos 10 & 11 (but might be depricated)
-      // the dojo= is added to make the result json. the alternative is xml.
-      //var result = me.requester.get('bi/v1/disp/icd/feeds/cm/?dojo=')
-      .then(function(folders) {
-        if (typeof folders !== 'undefined') {
-          return me.listFolderById(folders.data[0].id);
+    result = _getPublicFolderId()
+      .then(function(id) {
+        if (typeof id !== 'undefined') {
+          return me.listFolderById(id);
         }
         return {};
       })
@@ -472,7 +523,7 @@ class Cognos {
     var result = me.requester
       .delete('bi/v1/objects/' + id, params, true)
       .then(function() {
-        me.log('deleted folder');
+        me.log('Deleted folder');
         return true;
       })
       .catch(function(err) {
@@ -489,6 +540,7 @@ class Cognos {
             throw err;
           });
       });
+    me.log('Returning Delete Promise');
     return result;
   }
 
