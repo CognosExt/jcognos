@@ -35,9 +35,13 @@ describe('jcognos Reset Tests', function() {
     return result;
   });
   afterEach(function() {
-    return cognos.logoff().then(function(folder) {
-      assert.equal(cognos.loggedin, false, 'Logged off');
-    });
+    try {
+      return cognos.logoff().then(function(folder) {
+        assert.equal(cognos.loggedin, false, 'Logged off');
+      });
+    } catch (err) {
+      console.error('There was an error logging off. ', err);
+    }
   });
   it('Should be able to fetch root folders', done => {
     cognos
@@ -72,22 +76,24 @@ describe('jcognos Reset Tests', function() {
         })
         .then(function(folders) {
           var foldername = uuidv4();
-          cognos.addFolder(folders[0].id, foldername).then(function(folder) {
-            assert.equal(foldername, folder.name, 'New Folder Exists');
-            cognos
-              .deleteFolder(folder.id)
-              .then(function(folder) {
-                assert.equal(folder, true, 'New Folder Deleted');
-              })
-              .catch(function(err) {
-                console.log('Three was an error deleting a folder', err);
-                assert.fail(true, true, err);
-              })
-              .then(done, done);
-          });
+          cognos
+            .addFolder(folders[0].id, foldername)
+            .then(function(folder) {
+              assert.equal(foldername, folder.name, 'New Folder Exists');
+              cognos
+                .deleteFolder(folder.id)
+                .then(function(folder) {
+                  assert.equal(folder, true, 'New Folder Deleted');
+                })
+                .catch(function(err) {
+                  assert.fail(true, true, 'Error Deleting the folder' + err);
+                });
+            })
+            .then(done, done);
         })
         .catch(function(err) {
           console.log('There was an error listing the root folder', err);
+          assert.fail(true, true, 'Error listing root folder' + err);
         });
     }),
     it('getCognos should return same object', done => {

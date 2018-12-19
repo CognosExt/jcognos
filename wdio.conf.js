@@ -10,7 +10,9 @@ exports.config = {
   specs: [
     './test/1_API.js',
     './test/2_loginlogoff.js',
-    './test/3_loginlogofffailures.js'
+    './test/3_loginlogofffailures.js',
+    './test/4_Reset.js',
+    './test/5_NameSpaces.js'
   ],
   exclude: [],
   maxInstances: 2,
@@ -26,6 +28,6 @@ exports.config = {
     ui: 'bdd',
     timeout: 30000,
     // We wrote the tests in ES-2016 so we need to transpile
-    compilers: ['js:babel-register']
+    compilers: ['js:@babel/register']
   }
 };

@@ -54,11 +54,18 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
 
 -   [Cognos](#cognos)
     -   [Parameters](#parameters)
+    -   [capabilities](#capabilities)
+    -   [preferences](#preferences)
+    -   [defaultNamespace](#defaultnamespace)
+    -   [namespaces](#namespaces)
     -   [login](#login)
         -   [Parameters](#parameters-1)
     -   [logoff](#logoff)
     -   [reset](#reset)
+    -   [getCognosVersion](#getcognosversion)
+    -   [\_getPublicFolderId](#_getpublicfolderid)
     -   [listRootFolder](#listrootfolder)
+    -   [listPublicFolders](#listpublicfolders)
     -   [listFolderById](#listfolderbyid)
         -   [Parameters](#parameters-2)
     -   [addFolder](#addfolder)
@@ -72,6 +79,8 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
     -   [Parameters](#parameters-6)
 -   [CognosObject](#cognosobject)
     -   [Properties](#properties)
+-   [NameSpace](#namespace)
+    -   [Properties](#properties-1)
 -   [cRequest](#crequest)
 -   [isStandardBrowserEnv](#isstandardbrowserenv)
 -   [isNode](#isnode)
@@ -84,6 +93,31 @@ retrieve the Cognos instance.
 ### Parameters
 
 -   `debug`  
+-   `timeout`  
+
+### capabilities
+
+capabilities - returns the Cognos User Capabilities object
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Object with Capabilities
+
+### preferences
+
+preferences - returns the Cognos User Preferences, eg. timezone, skin, accessibiltity settings etc.
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Object with Preferences
+
+### defaultNamespace
+
+defaultNamespace - returns the default namespace that jCognos will login to
+
+Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** id of the default namespace
+
+### namespaces
+
+namespaces - returns a list of possible namespaces, also when there is only 1
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[NameSpace](#namespace)>** An array of objects describing the namespaces
 
 ### login
 
@@ -93,6 +127,7 @@ login - Logs into Cognos.
 
 -   `user` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos username
 -   `password` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Password
+-   `namespace` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Namespace (optional, default `CognosDefaultnamespaceorthenamespacethatistheonlynamespace`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** returns a promise.
 
@@ -108,11 +143,29 @@ reset - Create a new connection
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** When resolved we are logged in
 
+### getCognosVersion
+
+getCognosVersion - Fetches Cognos Product Version
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the version number
+
+### \_getPublicFolderId
+
+\_getPublicFolderId - Internal function to retrieve the ObjectId of the public folders
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Promise that results in an id as {String}.
+
 ### listRootFolder
 
 listRootFolder - Returns the Public Folders and the My Content
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[CognosObject](#cognosobject)>** Array of CognosObjects
+
+### listPublicFolders
+
+listPublicFolders - List content of the Public Folders
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[CognosObject](#cognosobject)>** List of sub-folders
 
 ### listFolderById
 
@@ -156,10 +209,11 @@ This function is only supported by Node.js. In the browser this function returns
 
 #### Parameters
 
--   `path` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
+-   `filename` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the module (as found in the spec.json)
+-   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `'extensions'`)
 
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Whatever JSON Cognos returns
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Promise that resolves to a string.
 
 ### loggedin
 
@@ -174,10 +228,12 @@ at any time.
 
 ### Parameters
 
--   `url` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The URL of your Cognos installation
--   `debug`   (optional, default `false`)
+-   `url` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The URL of your Cognos installation. If empty, this function becomes static and a Promise for the current jCognos object is returned. (optional, default `false`)
+-   `debug` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** If true, starts debugging into the console (optional, default `false`)
+-   `timeout`   (optional, default `60000`)
+-   `Timeout` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** value for http(s) connections. In milliseconds. Default is 60000.
 
-Returns **[Cognos](#cognos)** The Cognos object
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** a promise that will return the jCognos object
 
 ## CognosObject
 
@@ -187,6 +243,16 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object Id
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of object.
+
+## NameSpace
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+### Properties
+
+-   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The id of the namespace
+-   `value` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Displayname of the NameSpace
+-   `isDefault` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Set to true if this is the default namespace
 
 ## cRequest
 

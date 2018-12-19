@@ -19,6 +19,7 @@ describe('jcognos NameSpaces Tests', function() {
     var result = getCognos(url, debug).then(function(lcognos) {
       assert.isOk(lcognos, 'Succesfully created Cognos');
       cognos = lcognos;
+      return lcognos;
     });
     return result;
   });
@@ -33,6 +34,9 @@ describe('jcognos NameSpaces Tests', function() {
     } else {
       assert.fail(true, true, 'Default namespace is not listed.');
     }
-    done();
+    // in mocha this is true, in wdio it is false
+    if (typeof done === 'function') {
+      done();
+    }
   });
 });

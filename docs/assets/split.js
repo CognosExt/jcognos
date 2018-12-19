@@ -6,8 +6,8 @@
   typeof exports === 'object' && typeof module !== 'undefined'
     ? (module.exports = factory())
     : typeof define === 'function' && define.amd
-      ? define(factory)
-      : (global.Split = factory());
+    ? define(factory)
+    : (global.Split = factory());
 })(this, function() {
   'use strict';
   // The programming goals of Split.js are to deliver readable, understandable and
@@ -219,8 +219,8 @@
       var b = elements[this.b];
       var percentage = a.size + b.size;
 
-      a.size = offset / this.size * percentage;
-      b.size = percentage - offset / this.size * percentage;
+      a.size = (offset / this.size) * percentage;
+      b.size = percentage - (offset / this.size) * percentage;
 
       setElementSize(a.element, a.size, this.aGutterSize);
       setElementSize(b.element, b.size, this.bGutterSize);

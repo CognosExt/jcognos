@@ -150,7 +150,6 @@ class Cognos {
             return prefs;
           });
 
-        me.log('Successfully logged in');
         return Promise.all([capabilities, preferences]);
       })
       .then(function() {
@@ -178,7 +177,6 @@ class Cognos {
       .delete('bi/v1/login')
       .then(function(body) {
         me.loggedin = false;
-        me.log('Successfully logged off');
         return body;
       })
       .catch(function(err) {
@@ -279,14 +277,14 @@ class Cognos {
   getCognosVersion() {
     var me = this;
     if (this.productVersion !== '') {
-      return Promise.resolve(this.productVersion);
+      return Promise.resolve(me.productVersion);
     }
     var url = 'bi/v1/configuration/keys/Glass.productVersion';
     var result = me.requester
       .get(url)
       .then(function(version) {
-        this.productVersion = version['Glass.productVersion'];
-        return this.productVersion;
+        me.productVersion = version['Glass.productVersion'];
+        return me.productVersion;
       })
       .catch(function(err) {
         me.error('Error while fetching Cognos Version.', err);
@@ -313,20 +311,25 @@ class Cognos {
       } else {
         url = 'bi/v1/objects/.public_folders?fields=permissions';
       }
-      var result = me.requester.get(url).then(function(folders) {
-        var id;
-        if (version.substr(0, 4) == '11.1') {
-          // This is pure evil. It is only there because JSON.parse breaks on the json returned
-          // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
-          //JSON.parse(folders);
-          folders = eval('(' + folders + ')');
-          id = folders.items[0].entry[2].cm$storeID;
-        } else {
-          id = folders.data[0].id;
-        }
-        return id;
-      });
-      return result;
+      return me.requester
+        .get(url)
+        .then(function(folders) {
+          var id;
+          if (version.substr(0, 4) == '11.1') {
+            // This is pure evil. It is only there because JSON.parse breaks on the json returned
+            // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
+            //JSON.parse(folders);
+            folders = eval('(' + folders + ')');
+            id = folders.items[0].entry[2].cm$storeID;
+          } else {
+            id = folders.data[0].id;
+          }
+          return id;
+        })
+        .catch(function(err) {
+          me.error('There was an error fetching the folder id', err);
+          throw err;
+        });
     });
   }
 
@@ -338,7 +341,7 @@ class Cognos {
   listRootFolder() {
     var me = this;
     var rootfolders = [];
-    var result = me.requester
+    return me.requester
       .get('bi/v1/objects/.my_folders?fields=permissions')
       .then(function(folders) {
         me.log('Got the Private Folders');
@@ -373,12 +376,17 @@ class Cognos {
             throw err;
           });
       });
-    return result;
   }
 
+  /**
+   * listPublicFolders - List content of the Public Folders
+   *
+   * @return {CognosObject[]}  List of sub-folders
+   */
   listPublicFolders() {
     var me = this;
-    result = _getPublicFolderId()
+    var result = me
+      ._getPublicFolderId()
       .then(function(id) {
         if (typeof id !== 'undefined') {
           return me.listFolderById(id);

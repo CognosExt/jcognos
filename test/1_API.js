@@ -25,12 +25,12 @@ describe('jcognos API Tests', function() {
         if (!cognos.loggedin) {
           return lcognos.login(user, password, namespace);
         }
+        return Promise.resolve();
       })
       .then(function(mycognos) {
         assert.isOk(true, 'Succesfully logged in');
       })
       .catch(function(err) {
-        console.log('here', err);
         assert.fail(true, true, 'Can not login');
       });
     return result;
@@ -62,19 +62,20 @@ describe('jcognos API Tests', function() {
     it('Should be able to create folders and delete them', done => {
       cognos.listRootFolder().then(function(folders) {
         var foldername = uuidv4();
-        cognos.addFolder(folders[0].id, foldername).then(function(folder) {
-          assert.equal(foldername, folder.name, 'New Folder Exists');
-          cognos
-            .deleteFolder(folder.id)
-            .then(function(folder) {
-              assert.equal(folder, true, 'New Folder Deleted');
-            })
-            .catch(function(err) {
-              console.log(err);
-              assert.fail(true, true, err);
-            })
-            .then(done, done);
-        });
+        cognos
+          .addFolder(folders[0].id, foldername)
+          .then(function(folder) {
+            assert.equal(foldername, folder.name, 'New Folder Exists');
+            cognos
+              .deleteFolder(folder.id)
+              .then(function(folder) {
+                assert.equal(folder, true, 'New Folder Deleted');
+              })
+              .catch(function(err) {
+                assert.fail(true, true, err);
+              });
+          })
+          .then(done, done);
       });
     });
 });
