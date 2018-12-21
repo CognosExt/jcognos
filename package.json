@@ -64,7 +64,7 @@
     "wdio-mocha-framework": "^0.6.4",
     "wdio-phantomjs-service": "^0.2.2",
     "wdio-spec-reporter": "^0.1.5",
-    "webdriverio": "^4.14.1"
+    "webdriverio": "^5.0.0"
   },
   "dependencies": {
     "axios": "^0.18.0",
