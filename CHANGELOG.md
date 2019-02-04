@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.0"></a>
+# [1.9.0](https://github.com/CognosExt/jcognos/compare/v1.8.0...v1.9.0) (2019-02-04)
+
+
+### Features
+
+* Added getFolderDetails function for raw folder details ([7016b39](https://github.com/CognosExt/jcognos/commit/7016b39))
+
+
+
 <a name="1.8.0"></a>
 # [1.8.0](https://github.com/CognosExt/jcognos/compare/v1.7.0...v1.8.0) (2018-12-19)
 
