@@ -68,18 +68,20 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
     -   [listPublicFolders](#listpublicfolders)
     -   [listFolderById](#listfolderbyid)
         -   [Parameters](#parameters-2)
-    -   [addFolder](#addfolder)
+    -   [getFolderDetails](#getfolderdetails)
         -   [Parameters](#parameters-3)
-    -   [deleteFolder](#deletefolder)
+    -   [addFolder](#addfolder)
         -   [Parameters](#parameters-4)
-    -   [uploadExtension](#uploadextension)
+    -   [deleteFolder](#deletefolder)
         -   [Parameters](#parameters-5)
+    -   [uploadExtension](#uploadextension)
+        -   [Parameters](#parameters-6)
     -   [loggedin](#loggedin)
 -   [getCognos](#getcognos)
-    -   [Parameters](#parameters-6)
--   [CognosObject](#cognosobject)
-    -   [Properties](#properties)
+    -   [Parameters](#parameters-7)
 -   [NameSpace](#namespace)
+    -   [Properties](#properties)
+-   [CognosObject](#cognosobject)
     -   [Properties](#properties-1)
 -   [cRequest](#crequest)
 -   [isStandardBrowserEnv](#isstandardbrowserenv)
@@ -174,10 +176,20 @@ listFolderById - Lists the folder content by id
 #### Parameters
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object id of the folder
--   `pattern` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** = '_' Pattern like you would use when listing folders in your filesystem. eg. 'Sales_' (optional, default `'*'`)
--   `types` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** = '['folder']' Types of Cognos objects to list. defaults to folders only. Other values could be 'report' (optional, default `['folder']`)
+-   `pattern` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** = '_' Pattern like you would use when listing folders in your filesystem. eg. 'Sales_' (optional, default `"*"`)
+-   `types` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** = '['folder']' Types of Cognos objects to list. defaults to folders only. Other values could be 'report' (optional, default `["folder"]`)
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[CognosObject](#cognosobject)>** List of sub-folders
+
+### getFolderDetails
+
+getFolderDetails - Gets the raw Cognos details of a folder
+
+#### Parameters
+
+-   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** objectId
+
+Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Full object as returned by Cognos
 
 ### addFolder
 
@@ -211,7 +223,7 @@ This function is only supported by Node.js. In the browser this function returns
 
 -   `filename` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the module (as found in the spec.json)
--   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `'extensions'`)
+-   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `"extensions"`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Promise that resolves to a string.
 
@@ -235,15 +247,6 @@ at any time.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** a promise that will return the jCognos object
 
-## CognosObject
-
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
-
-### Properties
-
--   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object Id
--   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of object.
-
 ## NameSpace
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
@@ -253,6 +256,15 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The id of the namespace
 -   `value` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Displayname of the NameSpace
 -   `isDefault` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Set to true if this is the default namespace
+
+## CognosObject
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+### Properties
+
+-   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object Id
+-   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of object.
 
 ## cRequest
 

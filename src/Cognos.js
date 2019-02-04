@@ -467,6 +467,38 @@ class Cognos {
   }
 
   /**
+   * getFolderDetails - Gets the raw Cognos details of a folder
+   *
+   * @param  {String} id objectId
+   * @return {Object}    Full object as returned by Cognos
+   */
+  getFolderDetails(id) {
+    var me = this;
+    var url =
+      'bi/v1/objects/' +
+      id +
+      '?fields=id,defaultName,owner.defaultName,ancestors,defaultDescription,modificationTime,creationTime,contact,type,disabled,hidden,name.locale,permissions,tenantID,searchPath,repositoryRules';
+    return me.requester
+      .get(url)
+      .then(function(details) {
+        me.log('Got Folder Details', details);
+        return details;
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in getFolderDetails', err);
+        me.handleError(err)
+          .then(function() {
+            me.log('We have been reset, getFolderDetails again');
+            me.resetting = false;
+            return me.getFolderDetails(id);
+          })
+          .catch(function() {
+            throw err;
+          });
+      });
+  }
+
+  /**
    * addFolder - Creates a new folder
    *
    * @param  {String} parentid Id of the parent folder of the new folder.
