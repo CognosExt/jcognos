@@ -13,8 +13,8 @@
     ? factory(exports)
     : typeof define === 'function' && define.amd
     ? define(['exports'], factory)
-    : factory((global.jcognos = {}));
-})(typeof self !== 'undefined' ? self : this, function(exports) {
+    : ((global = global || self), factory((global.jcognos = {})));
+})(this, function(exports) {
   'use strict';
 
   function _classCallCheck(instance, Constructor) {
@@ -18602,11 +18602,9 @@
                   me.preferences = prefs;
                   return prefs;
                 });
-              console.log('Successfully logged in');
               return Promise.all([capabilities, preferences]);
             })
             .then(function() {
-              console.log('surely logged in');
               return me;
             })
             .catch(function(err) {
@@ -18626,7 +18624,6 @@
             .delete('bi/v1/login')
             .then(function(body) {
               me.loggedin = false;
-              console.log('Successfully logged off');
               return body;
             })
             .catch(function(err) {
@@ -18734,7 +18731,6 @@
             .get(url)
             .then(function(version) {
               me.productVersion = version['Glass.productVersion'];
-              console.log('version ' + me.productVersion);
               return me.productVersion;
             })
             .catch(function(err) {
@@ -18757,8 +18753,7 @@
               url = 'bi/v1/objects/.public_folders?fields=permissions';
             }
 
-            console.log(url);
-            var result = me.requester
+            return me.requester
               .get(url)
               .then(function(folders) {
                 var id;
@@ -18773,9 +18768,9 @@
                 return id;
               })
               .catch(function(err) {
-                console.error('There was an error fetching the folder id', err);
+                me.error('There was an error fetching the folder id', err);
+                throw err;
               });
-            return result;
           });
         }
       },
@@ -18909,6 +18904,34 @@
                 });
             });
           return result;
+        }
+      },
+      {
+        key: 'getFolderDetails',
+        value: function getFolderDetails(id) {
+          var me = this;
+          var url =
+            'bi/v1/objects/' +
+            id +
+            '?fields=id,defaultName,owner.defaultName,ancestors,defaultDescription,modificationTime,creationTime,contact,type,disabled,hidden,name.locale,permissions,tenantID,searchPath,repositoryRules';
+          return me.requester
+            .get(url)
+            .then(function(details) {
+              me.log('Got Folder Details', details);
+              return details;
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in getFolderDetails', err);
+              me.handleError(err)
+                .then(function() {
+                  me.log('We have been reset, getFolderDetails again');
+                  me.resetting = false;
+                  return me.getFolderDetails(id);
+                })
+                .catch(function() {
+                  throw err;
+                });
+            });
         }
       },
       {

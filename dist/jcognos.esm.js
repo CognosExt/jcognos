@@ -803,11 +803,9 @@ var Cognos = (function() {
                 me.preferences = prefs;
                 return prefs;
               });
-            console.log('Successfully logged in');
             return Promise.all([capabilities, preferences]);
           })
           .then(function() {
-            console.log('surely logged in');
             return me;
           })
           .catch(function(err) {
@@ -827,7 +825,6 @@ var Cognos = (function() {
           .delete('bi/v1/login')
           .then(function(body) {
             me.loggedin = false;
-            console.log('Successfully logged off');
             return body;
           })
           .catch(function(err) {
@@ -935,7 +932,6 @@ var Cognos = (function() {
           .get(url)
           .then(function(version) {
             me.productVersion = version['Glass.productVersion'];
-            console.log('version ' + me.productVersion);
             return me.productVersion;
           })
           .catch(function(err) {
@@ -958,8 +954,7 @@ var Cognos = (function() {
             url = 'bi/v1/objects/.public_folders?fields=permissions';
           }
 
-          console.log(url);
-          var result = me.requester
+          return me.requester
             .get(url)
             .then(function(folders) {
               var id;
@@ -974,9 +969,9 @@ var Cognos = (function() {
               return id;
             })
             .catch(function(err) {
-              console.error('There was an error fetching the folder id', err);
+              me.error('There was an error fetching the folder id', err);
+              throw err;
             });
-          return result;
         });
       }
     },
@@ -1110,6 +1105,34 @@ var Cognos = (function() {
               });
           });
         return result;
+      }
+    },
+    {
+      key: 'getFolderDetails',
+      value: function getFolderDetails(id) {
+        var me = this;
+        var url =
+          'bi/v1/objects/' +
+          id +
+          '?fields=id,defaultName,owner.defaultName,ancestors,defaultDescription,modificationTime,creationTime,contact,type,disabled,hidden,name.locale,permissions,tenantID,searchPath,repositoryRules';
+        return me.requester
+          .get(url)
+          .then(function(details) {
+            me.log('Got Folder Details', details);
+            return details;
+          })
+          .catch(function(err) {
+            me.error('CognosRequest : Error in getFolderDetails', err);
+            me.handleError(err)
+              .then(function() {
+                me.log('We have been reset, getFolderDetails again');
+                me.resetting = false;
+                return me.getFolderDetails(id);
+              })
+              .catch(function() {
+                throw err;
+              });
+          });
       }
     },
     {
