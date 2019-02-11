@@ -35,7 +35,7 @@ jcognos
   });
 ```
 
-If you want to run this module in your browser, his version does not support XSRF headers. It is (temporarily) broken. To use the module against Cognos Analytics 11.0.7 or later, follow these steps:
+If you want to run this module in your browser, this version does not support XSRF headers. It is (temporarily) broken. To use the module against Cognos Analytics 11.0.7 or later, follow these steps:
 
 1.  Open the Windows Services window and stop the IBM Cognos service.
 2.  Open the file installation_location\\wlp\\usr\\servers\\cognosserver\\bootstrap.properties.
