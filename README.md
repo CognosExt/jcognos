@@ -16,26 +16,26 @@ npm install jcognos
 Once the jcognos has been installed, you can include it in your projects as a CommonJS module
 
 ```javascript
-require('jcognos');
+require("jcognos");
 ```
 
 or as an ES2016 module
 
 ```javascript
-import getCognos from 'jcognos'
+import getCognos from "jcognos";
 ```
 
 Then get going like:
 
 ```javascript
-jcognos.getCognos('https://srv06.gologic.eu/ibmcognos/', true)
+jcognos
+  .getCognos("https://cognos.example.com/ibmcognos/", true)
   .then(function(lcognos) {
-    lcognos.login('username', 'password'); // Which also returns a promise
-});
+    lcognos.login("username", "password"); // Which also returns a promise
+  });
 ```
 
-This version does not support XSRF headers. It is (temporarily) broken. To use the
-module against Cognos Analytics 11.0.7 or later, follow these steps:
+If you want to run this module in your browser, his version does not support XSRF headers. It is (temporarily) broken. To use the module against Cognos Analytics 11.0.7 or later, follow these steps:
 
 1.  Open the Windows Services window and stop the IBM Cognos service.
 2.  Open the file installation_location\\wlp\\usr\\servers\\cognosserver\\bootstrap.properties.
@@ -45,6 +45,8 @@ module against Cognos Analytics 11.0.7 or later, follow these steps:
 
 4.  Save the file.
 5.  Restart the IBM Cognos service
+
+You do not need to do this if you use jcognos in nodejs or in cordova.
 
 # Usage
 
@@ -176,8 +178,8 @@ listFolderById - Lists the folder content by id
 #### Parameters
 
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object id of the folder
--   `pattern` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** = '_' Pattern like you would use when listing folders in your filesystem. eg. 'Sales_' (optional, default `'*'`)
--   `types` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** = '['folder']' Types of Cognos objects to list. defaults to folders only. Other values could be 'report' (optional, default `['folder']`)
+-   `pattern` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** = '_' Pattern like you would use when listing folders in your filesystem. eg. 'Sales_' (optional, default `"*"`)
+-   `types` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** = '['folder']' Types of Cognos objects to list. defaults to folders only. Other values could be 'report' (optional, default `["folder"]`)
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[CognosObject](#cognosobject)>** List of sub-folders
 
@@ -223,7 +225,7 @@ This function is only supported by Node.js. In the browser this function returns
 
 -   `filename` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the module (as found in the spec.json)
--   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `'extensions'`)
+-   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `"extensions"`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Promise that resolves to a string.
 
