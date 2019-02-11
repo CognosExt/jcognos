@@ -98,7 +98,7 @@ class Cognos {
         'login: Already logging in, returning loginrequest promise',
         me.loginrequest
       );
-      return me.loginrequest;
+      return Promise.resolve(me.loginrequest);
     }
 
     if (namespace == '') {
@@ -137,20 +137,20 @@ class Cognos {
         me.password = password;
         me.namespace = namespace;
         me.loginrequest = false;
-        var capabilities = me.requester
-          .get('bi/v1/users/~/capabilities')
-          .then(function(caps) {
+        var capabilities = Promise.resolve(
+          me.requester.get('bi/v1/users/~/capabilities').then(function(caps) {
             me.capabilities = caps;
             return caps;
-          });
-        var preferences = me.requester
-          .get('bi/v1/users/~/preferences')
-          .then(function(prefs) {
+          })
+        );
+        var preferences = Promise.resolve(
+          me.requester.get('bi/v1/users/~/preferences').then(function(prefs) {
             me.preferences = prefs;
             return prefs;
-          });
+          })
+        );
 
-        return Promise.all([capabilities, preferences]);
+        return Promise.resolve(Promise.all([capabilities, preferences]));
       })
       .then(function() {
         return me;
@@ -252,7 +252,7 @@ class Cognos {
         me.log('going to login again');
         let result = me.login(me.username, me.password, me.namespace);
         me.log('login promise', result);
-        return result;
+        return Promise.resolve(result);
       })
       .then(function() {
         me.log('Done logging in');
@@ -311,25 +311,27 @@ class Cognos {
       } else {
         url = 'bi/v1/objects/.public_folders?fields=permissions';
       }
-      return me.requester
-        .get(url)
-        .then(function(folders) {
-          var id;
-          if (version.substr(0, 4) == '11.1') {
-            // This is pure evil. It is only there because JSON.parse breaks on the json returned
-            // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
-            //JSON.parse(folders);
-            folders = eval('(' + folders + ')');
-            id = folders.items[0].entry[2].cm$storeID;
-          } else {
-            id = folders.data[0].id;
-          }
-          return id;
-        })
-        .catch(function(err) {
-          me.error('There was an error fetching the folder id', err);
-          throw err;
-        });
+      return Promise.resolve(
+        me.requester
+          .get(url)
+          .then(function(folders) {
+            var id;
+            if (version.substr(0, 4) == '11.1') {
+              // This is pure evil. It is only there because JSON.parse breaks on the json returned
+              // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
+              //JSON.parse(folders);
+              folders = eval('(' + folders + ')');
+              id = folders.items[0].entry[2].cm$storeID;
+            } else {
+              id = folders.data[0].id;
+            }
+            return id;
+          })
+          .catch(function(err) {
+            me.error('There was an error fetching the folder id', err);
+            throw err;
+          })
+      );
     });
   }
 
@@ -353,16 +355,18 @@ class Cognos {
         }
       })
       .then(function() {
-        return me._getPublicFolderId().then(function(id) {
-          me.log('Got the Public Folders');
-          if (typeof id !== 'undefined') {
-            rootfolders.push({
-              id: id,
-              name: 'Team Content'
-            });
-          }
-          return rootfolders;
-        });
+        return Promise.resolve(
+          me._getPublicFolderId().then(function(id) {
+            me.log('Got the Public Folders');
+            if (typeof id !== 'undefined') {
+              rootfolders.push({
+                id: id,
+                name: 'Team Content'
+              });
+            }
+            return rootfolders;
+          })
+        );
       })
       .catch(function(err) {
         me.error('CognosRequest : Error in listRootFolder', err);
@@ -389,7 +393,7 @@ class Cognos {
       ._getPublicFolderId()
       .then(function(id) {
         if (typeof id !== 'undefined') {
-          return me.listFolderById(id);
+          return Promise.resolve(me.listFolderById(id));
         }
         return {};
       })
@@ -576,8 +580,8 @@ class Cognos {
             me.resetting = false;
             return me.deleteFolder(id, force, recursive);
           })
-          .catch(function() {
-            throw err;
+          .catch(function(errtwo) {
+            throw errtwo;
           });
       });
     me.log('Returning Delete Promise');
