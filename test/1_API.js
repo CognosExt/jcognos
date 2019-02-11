@@ -60,22 +60,27 @@ describe('jcognos API Tests', function() {
       .then(done, done);
   }),
     it('Should be able to create folders and delete them', done => {
-      cognos.listRootFolder().then(function(folders) {
-        var foldername = uuidv4();
-        cognos
-          .addFolder(folders[0].id, foldername)
-          .then(function(folder) {
-            assert.equal(foldername, folder.name, 'New Folder Exists');
-            cognos
-              .deleteFolder(folder.id)
-              .then(function(folder) {
-                assert.equal(folder, true, 'New Folder Deleted');
-              })
-              .catch(function(err) {
-                assert.fail(true, true, err);
-              });
-          })
-          .then(done, done);
-      });
+      cognos
+        .listRootFolder()
+        .then(function(folders) {
+          var foldername = uuidv4();
+          return Promise.resolve(
+            cognos.addFolder(folders[0].id, foldername).then(function(folder) {
+              assert.equal(foldername, folder.name, 'New Folder Exists');
+              return Promise.resolve(
+                cognos
+                  .deleteFolder(folder.id)
+                  .then(function(folder) {
+                    assert.equal(folder, true, 'New Folder Deleted');
+                  })
+                  .catch(function(err) {
+                    console.log('Error Deleting Folder: ', err);
+                    assert.fail(true, true, err);
+                  })
+              );
+            })
+          );
+        })
+        .then(done, done);
     });
 });

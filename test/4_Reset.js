@@ -76,21 +76,28 @@ describe('jcognos Reset Tests', function() {
         })
         .then(function(folders) {
           var foldername = uuidv4();
-          cognos
-            .addFolder(folders[0].id, foldername)
-            .then(function(folder) {
+          return Promise.resolve(
+            cognos.addFolder(folders[0].id, foldername).then(function(folder) {
               assert.equal(foldername, folder.name, 'New Folder Exists');
-              cognos
-                .deleteFolder(folder.id)
-                .then(function(folder) {
-                  assert.equal(folder, true, 'New Folder Deleted');
-                })
-                .catch(function(err) {
-                  assert.fail(true, true, 'Error Deleting the folder' + err);
-                });
+              return Promise.resolve(
+                cognos
+                  .deleteFolder(folder.id)
+                  .then(function(folder) {
+                    assert.equal(folder, true, 'New Folder Deleted');
+                  })
+                  .catch(function(err) {
+                    console.log('Error deleting folder: ', err);
+                    assert.fail(
+                      true,
+                      true,
+                      'Error Deleting the folder: ' + err
+                    );
+                  })
+              );
             })
-            .then(done, done);
+          );
         })
+        .then(done, done)
         .catch(function(err) {
           console.log('There was an error listing the root folder', err);
           assert.fail(true, true, 'Error listing root folder' + err);
