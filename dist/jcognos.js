@@ -18551,7 +18551,7 @@
               'login: Already logging in, returning loginrequest promise',
               me.loginrequest
             );
-            return me.loginrequest;
+            return Promise.resolve(me.loginrequest);
           }
 
           if (namespace == '') {
@@ -18590,19 +18590,23 @@
               me.password = password;
               me.namespace = namespace;
               me.loginrequest = false;
-              var capabilities = me.requester
-                .get('bi/v1/users/~/capabilities')
-                .then(function(caps) {
-                  me.capabilities = caps;
-                  return caps;
-                });
-              var preferences = me.requester
-                .get('bi/v1/users/~/preferences')
-                .then(function(prefs) {
-                  me.preferences = prefs;
-                  return prefs;
-                });
-              return Promise.all([capabilities, preferences]);
+              var capabilities = Promise.resolve(
+                me.requester
+                  .get('bi/v1/users/~/capabilities')
+                  .then(function(caps) {
+                    me.capabilities = caps;
+                    return caps;
+                  })
+              );
+              var preferences = Promise.resolve(
+                me.requester
+                  .get('bi/v1/users/~/preferences')
+                  .then(function(prefs) {
+                    me.preferences = prefs;
+                    return prefs;
+                  })
+              );
+              return Promise.resolve(Promise.all([capabilities, preferences]));
             })
             .then(function() {
               return me;
@@ -18698,7 +18702,7 @@
               me.log('going to login again');
               var result = me.login(me.username, me.password, me.namespace);
               me.log('login promise', result);
-              return result;
+              return Promise.resolve(result);
             })
             .then(function() {
               me.log('Done logging in');
@@ -18753,24 +18757,26 @@
               url = 'bi/v1/objects/.public_folders?fields=permissions';
             }
 
-            return me.requester
-              .get(url)
-              .then(function(folders) {
-                var id;
+            return Promise.resolve(
+              me.requester
+                .get(url)
+                .then(function(folders) {
+                  var id;
 
-                if (version.substr(0, 4) == '11.1') {
-                  folders = eval('(' + folders + ')');
-                  id = folders.items[0].entry[2].cm$storeID;
-                } else {
-                  id = folders.data[0].id;
-                }
+                  if (version.substr(0, 4) == '11.1') {
+                    folders = eval('(' + folders + ')');
+                    id = folders.items[0].entry[2].cm$storeID;
+                  } else {
+                    id = folders.data[0].id;
+                  }
 
-                return id;
-              })
-              .catch(function(err) {
-                me.error('There was an error fetching the folder id', err);
-                throw err;
-              });
+                  return id;
+                })
+                .catch(function(err) {
+                  me.error('There was an error fetching the folder id', err);
+                  throw err;
+                })
+            );
           });
         }
       },
@@ -18792,18 +18798,20 @@
               }
             })
             .then(function() {
-              return me._getPublicFolderId().then(function(id) {
-                me.log('Got the Public Folders');
+              return Promise.resolve(
+                me._getPublicFolderId().then(function(id) {
+                  me.log('Got the Public Folders');
 
-                if (typeof id !== 'undefined') {
-                  rootfolders.push({
-                    id: id,
-                    name: 'Team Content'
-                  });
-                }
+                  if (typeof id !== 'undefined') {
+                    rootfolders.push({
+                      id: id,
+                      name: 'Team Content'
+                    });
+                  }
 
-                return rootfolders;
-              });
+                  return rootfolders;
+                })
+              );
             })
             .catch(function(err) {
               me.error('CognosRequest : Error in listRootFolder', err);
@@ -18828,7 +18836,7 @@
             ._getPublicFolderId()
             .then(function(id) {
               if (typeof id !== 'undefined') {
-                return me.listFolderById(id);
+                return Promise.resolve(me.listFolderById(id));
               }
 
               return {};
@@ -19006,8 +19014,8 @@
                   me.resetting = false;
                   return me.deleteFolder(id, force, recursive);
                 })
-                .catch(function() {
-                  throw err;
+                .catch(function(errtwo) {
+                  throw errtwo;
                 });
             });
           me.log('Returning Delete Promise');
