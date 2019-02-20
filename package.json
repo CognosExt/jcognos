@@ -71,7 +71,7 @@
     "@wdio/spec-reporter": "^5.4.15",
     "axios": "^0.18.0",
     "axios-cookiejar-support": "^0.4.1",
-    "wdio": "^3.0.0"
+    "wdio": "^3.0.2"
   },
   "husky": {
     "hooks": {
