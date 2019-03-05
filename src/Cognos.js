@@ -270,6 +270,26 @@ class Cognos {
   }
 
   /**
+   * getCurrentThemeSettings - Fetches current theme settings
+   *
+   * @return {Promise}  The promise resolves to an object that holds the spec.json of the current theme. It has attributes such as brandTextSmall etc.
+   */
+  getCurrentThemeSettings() {
+    var me = this;
+    var url = 'bi/v1/plugins/themes/current/spec.json';
+    var result = me.requester
+      .get(url)
+      .then(function(themesettings) {
+        return themesettings;
+      })
+      .catch(function(err) {
+        me.error('Error while fetching Cognos Current Theme Settings.', err);
+        throw err;
+      });
+    return result;
+  }
+
+  /**
    * getCognosVersion - Fetches Cognos Product Version
    *
    * @return {Promise}  The promise resolves to a string that holds the version number
