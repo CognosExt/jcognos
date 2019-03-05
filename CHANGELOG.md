@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.10.0"></a>
+# [1.10.0](https://github.com/CognosExt/jcognos/compare/v1.9.0...v1.10.0) (2019-03-05)
+
+
+### Bug Fixes
+
+* Added resolves to nested promises to make async requests work more reliable ([9f28869](https://github.com/CognosExt/jcognos/commit/9f28869))
+
+
+### Features
+
+* Add new function getCurrentThemeSettings ([0e42342](https://github.com/CognosExt/jcognos/commit/0e42342))
+* Added function to the builds as well ([22809c1](https://github.com/CognosExt/jcognos/commit/22809c1))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://github.com/CognosExt/jcognos/compare/v1.8.0...v1.9.0) (2019-02-04)
 
