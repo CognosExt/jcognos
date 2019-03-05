@@ -71,8 +71,7 @@
     "@wdio/mocha-framework": "^5.7.0",
     "@wdio/spec-reporter": "^5.7.0",
     "axios": "^0.18.0",
-    "axios-cookiejar-support": "^0.4.1",
-    "wdio": "^3.0.3"
+    "axios-cookiejar-support": "^0.4.1"
   },
   "husky": {
     "hooks": {
