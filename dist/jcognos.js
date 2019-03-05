@@ -1004,10 +1004,10 @@
       window.btoa.bind(window)) ||
     btoa_1;
 
-  var xhr = function xhrAdapter(config$$1) {
+  var xhr = function xhrAdapter(config) {
     return new Promise(function dispatchXhrRequest(resolve, reject) {
-      var requestData = config$$1.data;
-      var requestHeaders = config$$1.headers;
+      var requestData = config.data;
+      var requestHeaders = config.headers;
 
       if (utils.isFormData(requestData)) {
         delete requestHeaders['Content-Type']; // Let the browser set it
@@ -1024,7 +1024,7 @@
         typeof window !== 'undefined' &&
         window.XDomainRequest &&
         !('withCredentials' in request) &&
-        !isURLSameOrigin(config$$1.url)
+        !isURLSameOrigin(config.url)
       ) {
         request = new window.XDomainRequest();
         loadEvent = 'onload';
@@ -1034,21 +1034,21 @@
       }
 
       // HTTP basic authentication
-      if (config$$1.auth) {
-        var username = config$$1.auth.username || '';
-        var password = config$$1.auth.password || '';
+      if (config.auth) {
+        var username = config.auth.username || '';
+        var password = config.auth.password || '';
         requestHeaders.Authorization =
           'Basic ' + btoa$1(username + ':' + password);
       }
 
       request.open(
-        config$$1.method.toUpperCase(),
-        buildURL(config$$1.url, config$$1.params, config$$1.paramsSerializer),
+        config.method.toUpperCase(),
+        buildURL(config.url, config.params, config.paramsSerializer),
         true
       );
 
       // Set the request timeout in MS
-      request.timeout = config$$1.timeout;
+      request.timeout = config.timeout;
 
       // Listen for ready state
       request[loadEvent] = function handleLoad() {
@@ -1073,7 +1073,7 @@
             ? parseHeaders(request.getAllResponseHeaders())
             : null;
         var responseData =
-          !config$$1.responseType || config$$1.responseType === 'text'
+          !config.responseType || config.responseType === 'text'
             ? request.responseText
             : request.response;
         var response = {
@@ -1083,7 +1083,7 @@
           statusText:
             request.status === 1223 ? 'No Content' : request.statusText,
           headers: responseHeaders,
-          config: config$$1,
+          config: config,
           request: request
         };
 
@@ -1097,7 +1097,7 @@
       request.onerror = function handleError() {
         // Real errors are hidden from us by the browser
         // onerror should only fire if it's a network error
-        reject(createError('Network Error', config$$1, null, request));
+        reject(createError('Network Error', config, null, request));
 
         // Clean up request
         request = null;
@@ -1107,8 +1107,8 @@
       request.ontimeout = function handleTimeout() {
         reject(
           createError(
-            'timeout of ' + config$$1.timeout + 'ms exceeded',
-            config$$1,
+            'timeout of ' + config.timeout + 'ms exceeded',
+            config,
             'ECONNABORTED',
             request
           )
@@ -1122,17 +1122,17 @@
       // This is only done if running in a standard browser environment.
       // Specifically not if we're in a web worker, or react-native.
       if (utils.isStandardBrowserEnv()) {
-        var cookies$$1 = cookies;
+        var cookies$1 = cookies;
 
         // Add xsrf header
         var xsrfValue =
-          (config$$1.withCredentials || isURLSameOrigin(config$$1.url)) &&
-          config$$1.xsrfCookieName
-            ? cookies$$1.read(config$$1.xsrfCookieName)
+          (config.withCredentials || isURLSameOrigin(config.url)) &&
+          config.xsrfCookieName
+            ? cookies$1.read(config.xsrfCookieName)
             : undefined;
 
         if (xsrfValue) {
-          requestHeaders[config$$1.xsrfHeaderName] = xsrfValue;
+          requestHeaders[config.xsrfHeaderName] = xsrfValue;
         }
       }
 
@@ -1153,36 +1153,36 @@
       }
 
       // Add withCredentials to request if needed
-      if (config$$1.withCredentials) {
+      if (config.withCredentials) {
         request.withCredentials = true;
       }
 
       // Add responseType to request if needed
-      if (config$$1.responseType) {
+      if (config.responseType) {
         try {
-          request.responseType = config$$1.responseType;
+          request.responseType = config.responseType;
         } catch (e) {
           // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
           // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
-          if (config$$1.responseType !== 'json') {
+          if (config.responseType !== 'json') {
             throw e;
           }
         }
       }
 
       // Handle progress if needed
-      if (typeof config$$1.onDownloadProgress === 'function') {
-        request.addEventListener('progress', config$$1.onDownloadProgress);
+      if (typeof config.onDownloadProgress === 'function') {
+        request.addEventListener('progress', config.onDownloadProgress);
       }
 
       // Not all browsers support upload events
-      if (typeof config$$1.onUploadProgress === 'function' && request.upload) {
-        request.upload.addEventListener('progress', config$$1.onUploadProgress);
+      if (typeof config.onUploadProgress === 'function' && request.upload) {
+        request.upload.addEventListener('progress', config.onUploadProgress);
       }
 
-      if (config$$1.cancelToken) {
+      if (config.cancelToken) {
         // Handle cancellation
-        config$$1.cancelToken.promise.then(function onCanceled(cancel) {
+        config.cancelToken.promise.then(function onCanceled(cancel) {
           if (!request) {
             return;
           }
@@ -3178,7 +3178,7 @@
       }
     }
 
-    function read$$1(buf, i) {
+    function read(buf, i) {
       if (indexSize === 1) {
         return buf[i];
       } else {
@@ -3191,8 +3191,7 @@
       var foundIndex = -1;
       for (i = byteOffset; i < arrLength; i++) {
         if (
-          read$$1(arr, i) ===
-          read$$1(val, foundIndex === -1 ? 0 : i - foundIndex)
+          read(arr, i) === read(val, foundIndex === -1 ? 0 : i - foundIndex)
         ) {
           if (foundIndex === -1) foundIndex = i;
           if (i - foundIndex + 1 === valLength) return foundIndex * indexSize;
@@ -3207,7 +3206,7 @@
       for (i = byteOffset; i >= 0; i--) {
         var found = true;
         for (var j = 0; j < valLength; j++) {
-          if (read$$1(arr, i + j) !== read$$1(val, j)) {
+          if (read(arr, i + j) !== read(val, j)) {
             found = false;
             break;
           }
@@ -3292,7 +3291,7 @@
     );
   }
 
-  Buffer.prototype.write = function write$$1(string, offset, length, encoding) {
+  Buffer.prototype.write = function write(string, offset, length, encoding) {
     // Buffer#write(string)
     if (offset === undefined) {
       encoding = 'utf8';
@@ -15913,7 +15912,7 @@
     return canonicalDomain(this.domain);
   };
 
-  function CookieJar(store$$1, options) {
+  function CookieJar(store, options) {
     if (typeof options === 'boolean') {
       options = { rejectPublicSuffixes: options };
     } else if (options == null) {
@@ -15926,10 +15925,10 @@
       this.enableLooseMode = options.looseMode;
     }
 
-    if (!store$$1) {
-      store$$1 = new MemoryCookieStore$1();
+    if (!store) {
+      store = new MemoryCookieStore$1();
     }
-    this.store = store$$1;
+    this.store = store;
   }
   CookieJar.prototype.store = null;
   CookieJar.prototype.rejectPublicSuffixes = true;
@@ -16015,10 +16014,10 @@
       return cb(options.ignoreError ? null : err);
     }
 
-    var store$$1 = this.store;
+    var store = this.store;
 
-    if (!store$$1.updateCookie) {
-      store$$1.updateCookie = function(oldCookie, newCookie, cb) {
+    if (!store.updateCookie) {
+      store.updateCookie = function(oldCookie, newCookie, cb) {
         this.putCookie(newCookie, cb);
       };
     }
@@ -16048,14 +16047,14 @@
         cookie.creationIndex = oldCookie.creationIndex; // preserve tie-breaker
         cookie.lastAccessed = now;
         // Step 11.4 (delete cookie) is implied by just setting the new one:
-        store$$1.updateCookie(oldCookie, cookie, next); // step 12
+        store.updateCookie(oldCookie, cookie, next); // step 12
       } else {
         cookie.creation = cookie.lastAccessed = now;
-        store$$1.putCookie(cookie, next); // step 12
+        store.putCookie(cookie, next); // step 12
       }
     }
 
-    store$$1.findCookie(cookie.domain, cookie.path, cookie.key, withCookie);
+    store.findCookie(cookie.domain, cookie.path, cookie.key, withCookie);
   };
 
   // RFC6365 S5.4
@@ -16087,7 +16086,7 @@
     var now = options.now || Date.now();
     var expireCheck = options.expire !== false;
     var allPaths = !!options.allPaths;
-    var store$$1 = this.store;
+    var store = this.store;
 
     function matchingCookie(c) {
       // "Either:
@@ -16126,14 +16125,14 @@
       // deferred from S5.3
       // non-RFC: allow retention of expired cookies by choice
       if (expireCheck && c.expiryTime() <= now) {
-        store$$1.removeCookie(c.domain, c.path, c.key, function() {}); // result ignored
+        store.removeCookie(c.domain, c.path, c.key, function() {}); // result ignored
         return false;
       }
 
       return true;
     }
 
-    store$$1.findCookies(host, allPaths ? null : path, function(err, cookies) {
+    store.findCookies(host, allPaths ? null : path, function(err, cookies) {
       if (err) {
         return cb(err);
       }
@@ -16296,11 +16295,11 @@
     putNext();
   };
 
-  CookieJar.deserialize = function(strOrObj, store$$1, cb) {
+  CookieJar.deserialize = function(strOrObj, store, cb) {
     if (arguments.length !== 3) {
       // store is optional
-      cb = store$$1;
-      store$$1 = null;
+      cb = store;
+      store = null;
     }
 
     var serialized;
@@ -16313,7 +16312,7 @@
       serialized = strOrObj;
     }
 
-    var jar = new CookieJar(store$$1, serialized.rejectPublicSuffixes);
+    var jar = new CookieJar(store, serialized.rejectPublicSuffixes);
     jar._importCookies(serialized, function(err) {
       if (err) {
         return cb(err);
@@ -16322,10 +16321,10 @@
     });
   };
 
-  CookieJar.deserializeSync = function(strOrObj, store$$1) {
+  CookieJar.deserializeSync = function(strOrObj, store) {
     var serialized =
       typeof strOrObj === 'string' ? JSON.parse(strOrObj) : strOrObj;
-    var jar = new CookieJar(store$$1, serialized.rejectPublicSuffixes);
+    var jar = new CookieJar(store, serialized.rejectPublicSuffixes);
 
     // catch this mistake early:
     if (!jar.store.synchronous) {
@@ -16472,21 +16471,18 @@
               var rawcookies = document.cookie.split(';');
               var goon = true;
               rawcookies.forEach(function(rawcookie) {
-                var cookie$$1 = cookie.parse(rawcookie);
+                var cookie$1 = cookie.parse(rawcookie);
 
-                if (typeof cookie$$1 != 'undefined') {
+                if (typeof cookie$1 != 'undefined') {
                   if (
-                    cookie$$1.key == 'X-XSRF-TOKEN' ||
-                    cookie$$1.key == 'XSRF-TOKEN'
+                    cookie$1.key == 'X-XSRF-TOKEN' ||
+                    cookie$1.key == 'XSRF-TOKEN'
                   ) {
-                    if (
-                      cookie$$1.value != 'undefined' ||
-                      cookie$$1.value != ''
-                    ) {
-                      me.token = cookie$$1.value;
+                    if (cookie$1.value != 'undefined' || cookie$1.value != '') {
+                      me.token = cookie$1.value;
                     }
                   } else {
-                    me.log('deleting cookie' + cookie$$1.key);
+                    me.log('deleting cookie' + cookie$1.key);
                     goon = loggedout;
                   }
                 }
@@ -18719,6 +18715,26 @@
             });
           me.log('Returning a promise to reset', this.resetting);
           return this.resetting;
+        }
+      },
+      {
+        key: 'getCurrentThemeSettings',
+        value: function getCurrentThemeSettings() {
+          var me = this;
+          var url = 'bi/v1/plugins/themes/current/spec.json';
+          var result = me.requester
+            .get(url)
+            .then(function(themesettings) {
+              return themesettings;
+            })
+            .catch(function(err) {
+              me.error(
+                'Error while fetching Cognos Current Theme Settings.',
+                err
+              );
+              throw err;
+            });
+          return result;
         }
       },
       {

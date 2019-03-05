@@ -931,6 +931,26 @@ var Cognos = (function() {
       }
     },
     {
+      key: 'getCurrentThemeSettings',
+      value: function getCurrentThemeSettings() {
+        var me = this;
+        var url = 'bi/v1/plugins/themes/current/spec.json';
+        var result = me.requester
+          .get(url)
+          .then(function(themesettings) {
+            return themesettings;
+          })
+          .catch(function(err) {
+            me.error(
+              'Error while fetching Cognos Current Theme Settings.',
+              err
+            );
+            throw err;
+          });
+        return result;
+      }
+    },
+    {
       key: 'getCognosVersion',
       value: function getCognosVersion() {
         var me = this;
