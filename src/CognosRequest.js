@@ -383,8 +383,9 @@ class CognosRequest {
     return result;
   }
 
-  put(path, filename) {
+  put(path, filename = false, data = {}) {
     var me = this;
+    var stream;
     if (Utils.isStandardBrowserEnv()) {
       console.log(
         'The put function is not implemented for browser environments'
@@ -400,18 +401,22 @@ class CognosRequest {
     }
 
     headers['X-Requested-With'] = 'XMLHttpRequest';
-    headers['Content-Type'] = 'application/zip';
-
-    var fs = require('fs');
     var url = me.url + path;
-    me.log('About to upload extension');
-    me.log('File: ' + filename);
-    me.log('To:', url);
-    var result = false;
-    var fs = require('fs');
-    var stream = fs.createReadStream(filename);
-    stream.on('error', console.log);
+    if (filename) {
+      headers['Content-Type'] = 'application/zip';
 
+      var fs = require('fs');
+      me.log('About to upload extension');
+      me.log('File: ' + filename);
+      me.log('To:', url);
+      var result = false;
+      var fs = require('fs');
+      stream = fs.createReadStream(filename);
+      stream.on('error', console.log);
+    } else {
+      headers['Content-Type'] = 'application/json';
+      stream = data;
+    }
     var result = me
       .axios({
         method: 'PUT',

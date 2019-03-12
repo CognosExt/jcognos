@@ -679,7 +679,6 @@ class Cognos {
     //  https://srv06.gologic.eu/ibmcognos/bi/v1/configuration/keys/DatasetService.maxUploadSizeMBytes
     var me = this;
     //you can add //&async=true for async, not sure what that does (it uploads in a second http connection)
-    var file = 'countries.csv'; // the file bit of the full filename
     var path = 'bi/v1/metadata/files?filename=' + file; //+ "&async=true";
     // The reading of the file and the actual put have to be in the same function. So not much to see here.
     var result = this.requester
@@ -714,6 +713,81 @@ class Cognos {
         me.error('CognosRequest : Error in uploadDataFile', err);
         throw err;
       });
+    return result;
+  }
+
+  getPalettes() {
+    var me = this;
+    var result = me.requester
+      .get('bi/v1/palettes/public')
+      .then(function(data) {
+        me.log('retrieved the data', data);
+        return data;
+      })
+      .catch(function(err) {
+        me.error('CognosRequest : Error in getPalettes', err);
+
+        return me
+          .handleError(err)
+          .then(function() {
+            me.log('We have been reset, getPalettes again');
+            me.resetting = false;
+            return me.getPalettes();
+          })
+          .catch(function() {
+            throw err;
+          });
+      });
+
+    return result;
+  }
+
+  savePalette(palette, id = false) {
+    var me = this;
+    var result;
+    if (id) {
+      result = me.requester
+        .put('bi/v1/palettes/' + id, false, palette)
+        .then(function(data) {
+          me.log('saved palette ' + id);
+          return id;
+        })
+        .catch(function(err) {
+          me.error('CognosRequest : Error in savePalette', err);
+          if (err == 'Not Found') {
+            throw 'Palette with id ' + id + ' is not found';
+          }
+          return me
+            .handleError(err)
+            .then(function() {
+              me.log('We have been reset, savePalette again');
+              me.resetting = false;
+              return me.savePalettes(id, palette);
+            })
+            .catch(function() {
+              throw err;
+            });
+        });
+    } else {
+      result = me.requester
+        .post('bi/v1/palettes/my', palette, true)
+        .then(function(data) {
+          me.log('saved palette');
+        })
+        .catch(function(err) {
+          me.error('CognosRequest : Error in savePalette', err);
+          return me
+            .handleError(err)
+            .then(function() {
+              me.log('We have been reset, savePalette again');
+              me.resetting = false;
+              return me.savePalettes(palette, id);
+            })
+            .catch(function() {
+              throw err;
+            });
+        });
+    }
     return result;
   }
 }
