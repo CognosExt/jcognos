@@ -452,8 +452,17 @@ var CognosRequest = (function() {
     },
     {
       key: 'put',
-      value: function put(path, filename) {
+      value: function put(path) {
+        var filename =
+          arguments.length > 1 && arguments[1] !== undefined
+            ? arguments[1]
+            : false;
+        var data =
+          arguments.length > 2 && arguments[2] !== undefined
+            ? arguments[2]
+            : {};
         var me = this;
+        var stream;
 
         if (Utils.isStandardBrowserEnv()) {
           console.log(
@@ -471,20 +480,27 @@ var CognosRequest = (function() {
         }
 
         headers['X-Requested-With'] = 'XMLHttpRequest';
-        headers['Content-Type'] = 'application/zip';
-
-        var fs = require('fs');
-
         var url = me.url + path;
-        me.log('About to upload extension');
-        me.log('File: ' + filename);
-        me.log('To:', url);
-        var result = false;
 
-        var fs = require('fs');
+        if (filename) {
+          headers['Content-Type'] = 'application/zip';
 
-        var stream = fs.createReadStream(filename);
-        stream.on('error', console.log);
+          var fs = require('fs');
+
+          me.log('About to upload extension');
+          me.log('File: ' + filename);
+          me.log('To:', url);
+          var result = false;
+
+          var fs = require('fs');
+
+          stream = fs.createReadStream(filename);
+          stream.on('error', console.log);
+        } else {
+          headers['Content-Type'] = 'application/json';
+          stream = data;
+        }
+
         var result = me
           .axios({
             method: 'PUT',
@@ -1313,7 +1329,6 @@ var Cognos = (function() {
       key: 'upLoadDataFile',
       value: function upLoadDataFile(filename) {
         var me = this;
-        var file = 'countries.csv';
         var path = 'bi/v1/metadata/files?filename=' + file;
         var result = this.requester
           .uploadfile(path, filename)
@@ -1351,6 +1366,91 @@ var Cognos = (function() {
             me.error('CognosRequest : Error in uploadDataFile', err);
             throw err;
           });
+        return result;
+      }
+    },
+    {
+      key: 'getPalettes',
+      value: function getPalettes() {
+        var me = this;
+        var result = me.requester
+          .get('bi/v1/palettes/public')
+          .then(function(data) {
+            me.log('retrieved the data', data);
+            return data;
+          })
+          .catch(function(err) {
+            me.error('CognosRequest : Error in getPalettes', err);
+            return me
+              .handleError(err)
+              .then(function() {
+                me.log('We have been reset, getPalettes again');
+                me.resetting = false;
+                return me.getPalettes();
+              })
+              .catch(function() {
+                throw err;
+              });
+          });
+        return result;
+      }
+    },
+    {
+      key: 'savePalette',
+      value: function savePalette(palette) {
+        var id =
+          arguments.length > 1 && arguments[1] !== undefined
+            ? arguments[1]
+            : false;
+        var me = this;
+        var result;
+
+        if (id) {
+          result = me.requester
+            .put('bi/v1/palettes/' + id, false, palette)
+            .then(function(data) {
+              me.log('saved palette ' + id);
+              return id;
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in savePalette', err);
+
+              if (err == 'Not Found') {
+                throw 'Palette with id ' + id + ' is not found';
+              }
+
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, savePalette again');
+                  me.resetting = false;
+                  return me.savePalettes(id, palette);
+                })
+                .catch(function() {
+                  throw err;
+                });
+            });
+        } else {
+          result = me.requester
+            .post('bi/v1/palettes/my', palette, true)
+            .then(function(data) {
+              me.log('saved palette');
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in savePalette', err);
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, savePalette again');
+                  me.resetting = false;
+                  return me.savePalettes(palette, id);
+                })
+                .catch(function() {
+                  throw err;
+                });
+            });
+        }
+
         return result;
       }
     }
