@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.11.0"></a>
+# [1.11.0](https://github.com/CognosExt/jcognos/compare/v1.10.1...v1.11.0) (2019-03-12)
+
+
+### Features
+
+* Allow for export and import of Palettes ([ef33ac3](https://github.com/CognosExt/jcognos/commit/ef33ac3))
+
+
+
 <a name="1.10.1"></a>
 ## [1.10.1](https://github.com/CognosExt/jcognos/compare/v1.10.0...v1.10.1) (2019-03-05)
 
