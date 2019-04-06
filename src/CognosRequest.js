@@ -340,9 +340,7 @@ class CognosRequest {
           result = response;
         } else {
           try {
-            result = response.replace(/=\\'/g, "='");
-            result = result.replace(/\\']/g, "']");
-            result = JSON.parse(result);
+            result = response.data;
           } catch (err) {
             me.log('No valid JSON returned from delete request. ' + path);
             result = response;
