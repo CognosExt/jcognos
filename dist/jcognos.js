@@ -17050,9 +17050,7 @@
                 result = response;
               } else {
                 try {
-                  result = response.replace(/=\\'/g, "='");
-                  result = result.replace(/\\']/g, "']");
-                  result = JSON.parse(result);
+                  result = response.data;
                 } catch (err) {
                   me.log('No valid JSON returned from delete request. ' + path);
                   result = response;
@@ -19501,7 +19499,7 @@
           if (id) {
             result = me.requester
               .put('bi/v1/palettes/' + id, false, palette)
-              .then(function(data) {
+              .then(function() {
                 me.log('saved palette ' + id);
                 return id;
               })
@@ -19517,7 +19515,7 @@
                   .then(function() {
                     me.log('We have been reset, savePalette again');
                     me.resetting = false;
-                    return me.savePalettes(id, palette);
+                    return me.savePalette(id, palette);
                   })
                   .catch(function() {
                     throw err;
@@ -19526,7 +19524,7 @@
           } else {
             result = me.requester
               .post('bi/v1/palettes/my', palette, true)
-              .then(function(data) {
+              .then(function() {
                 me.log('saved palette');
               })
               .catch(function(err) {
@@ -19536,7 +19534,7 @@
                   .then(function() {
                     me.log('We have been reset, savePalette again');
                     me.resetting = false;
-                    return me.savePalettes(palette, id);
+                    return me.savePalette(palette, id);
                   })
                   .catch(function() {
                     throw err;
@@ -19544,6 +19542,40 @@
               });
           }
 
+          return result;
+        }
+      },
+      {
+        key: 'deletePalette',
+        value: function deletePalette(id) {
+          var me = this;
+          var params = {
+            force: 'true'
+          };
+          var result = me.requester
+            .delete('bi/v1/palettes/' + id, params, false)
+            .then(function() {
+              me.log('deleted palette ' + id);
+              return id;
+            })
+            .catch(function(err) {
+              me.error('CognosRequest : Error in deletePalette', err);
+
+              if (err == 'Not Found') {
+                throw 'Palette with id ' + id + ' is not found';
+              }
+
+              return me
+                .handleError(err)
+                .then(function() {
+                  me.log('We have been reset, deletePalette again');
+                  me.resetting = false;
+                  return me.deletePalette(id);
+                })
+                .catch(function() {
+                  throw err;
+                });
+            });
           return result;
         }
       }
