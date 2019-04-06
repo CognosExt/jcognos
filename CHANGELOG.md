@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.12.0"></a>
+# [1.12.0](https://github.com/CognosExt/jcognos/compare/v1.11.0...v1.12.0) (2019-04-06)
+
+
+### Bug Fixes
+
+* Made http delete request return better information ([7e6b4cf](https://github.com/CognosExt/jcognos/commit/7e6b4cf))
+
+
+### Features
+
+* Added deletePalette function ([e732f2b](https://github.com/CognosExt/jcognos/commit/e732f2b))
+* Release compiled versions ([6e54922](https://github.com/CognosExt/jcognos/commit/6e54922))
+
+
+
 <a name="1.11.0"></a>
 # [1.11.0](https://github.com/CognosExt/jcognos/compare/v1.10.1...v1.11.0) (2019-03-12)
 
