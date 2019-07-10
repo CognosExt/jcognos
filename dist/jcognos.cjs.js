@@ -17,6 +17,7 @@ function _interopDefault(ex) {
 }
 
 var axios = _interopDefault(require('axios'));
+var https = _interopDefault(require('https'));
 var axiosCookieJarSupport = _interopDefault(require('axios-cookiejar-support'));
 var tough = _interopDefault(require('tough-cookie'));
 var minimatch = _interopDefault(require('minimatch'));
@@ -488,7 +489,7 @@ var CognosRequest = (function() {
         var options = arguments.length > 3 ? arguments[3] : undefined;
         var me = this;
         var stream;
-        var checkssl = options.checkssl ? option.checkssl : false;
+        var checkssl = options.checkssl ? options.checkssl : false;
 
         if (Utils.isStandardBrowserEnv()) {
           console.log(

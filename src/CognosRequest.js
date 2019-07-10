@@ -1,4 +1,5 @@
 import axios from 'axios';
+import https from 'https';
 import { Utils } from './Utils';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 

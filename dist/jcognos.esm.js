@@ -9,6 +9,7 @@
  */
 
 import axios from 'axios';
+import https from 'https';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
 import minimatch from 'minimatch';
@@ -480,7 +481,7 @@ var CognosRequest = (function() {
         var options = arguments.length > 3 ? arguments[3] : undefined;
         var me = this;
         var stream;
-        var checkssl = options.checkssl ? option.checkssl : false;
+        var checkssl = options.checkssl ? options.checkssl : false;
 
         if (Utils.isStandardBrowserEnv()) {
           console.log(
