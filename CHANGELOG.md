@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.2](https://github.com/CognosExt/jcognos/compare/v1.13.1...v1.13.2) (2019-07-10)
+
+
+### Bug Fixes
+
+* Fixed about everything about the new feature. this does not throw errors anymore. ([c9a5404](https://github.com/CognosExt/jcognos/commit/c9a5404))
+
+
+
 ## [1.13.1](https://github.com/CognosExt/jcognos/compare/v1.13.0...v1.13.1) (2019-07-10)
 
 
