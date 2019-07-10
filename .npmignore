@@ -1,3 +1,8 @@
 .gitignore
 .circleci
+.prettierrc
 test
+docs
+rollup*
+wdio*
+intern*
