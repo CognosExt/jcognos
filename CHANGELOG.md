@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.13.0](https://github.com/CognosExt/jcognos/compare/v1.12.0...v1.13.0) (2019-07-10)
+
+
+### Features
+
+* Upload extetion function now allows for disabling ssl certificate check ([a5688ad](https://github.com/CognosExt/jcognos/commit/a5688ad))
+
+
+
 <a name="1.12.0"></a>
 # [1.12.0](https://github.com/CognosExt/jcognos/compare/v1.11.0...v1.12.0) (2019-04-06)
 
