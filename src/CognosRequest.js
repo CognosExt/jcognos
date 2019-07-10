@@ -384,7 +384,7 @@ class CognosRequest {
   put(path, filename = false, data = {}, options) {
     var me = this;
     var stream;
-    var checkssl = options.checkssl ? option.checkssl : false;
+    var checkssl = options.checkssl ? options.checkssl : false;
     if (Utils.isStandardBrowserEnv()) {
       console.log(
         'The put function is not implemented for browser environments'
