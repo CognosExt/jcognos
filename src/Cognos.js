@@ -172,17 +172,21 @@ class Cognos {
    */
   logoff() {
     var me = this;
-
-    var result = me.requester
-      .delete('bi/v1/login')
-      .then(function(body) {
-        me.loggedin = false;
-        return body;
-      })
-      .catch(function(err) {
-        me.log('Cognos: Error when logging off.', err);
-      });
-    return result;
+    if (typeof me.requester !== undefined) {
+      var result = me.requester
+        .delete('bi/v1/login')
+        .then(function(body) {
+          me.loggedin = false;
+          return body;
+        })
+        .catch(function(err) {
+          me.log('Cognos: Error when logging off.', err);
+        });
+      return result;
+    } else {
+      me.loggedin = false;
+      return Promise.resolve(true);
+    }
   }
 
   handleError(err) {
@@ -373,6 +377,7 @@ class Cognos {
             name: 'My Content'
           });
         }
+        return rootfolders;
       })
       .then(function() {
         return Promise.resolve(
@@ -656,14 +661,15 @@ class Cognos {
    * @param  {String} filename Path to the .zip file
    * @param  {String} name name of the module (as found in the spec.json)
    * @param  {String} type type of upload. Default is 'extensions', for themes use 'themes'.
+   * @param  {Object} options Object with additional options. sslcheck = true/false checks valid certificates or not.
    * @return {Promise} Promise that resolves to a string.
    */
-  uploadExtension(filename, name, type = 'extensions') {
+  uploadExtension(filename, name, type = 'extensions', options = {}) {
     var me = this;
     var path = 'bi/v1/plugins/' + type + '/' + name;
     // The reading of the file and the actual put have to be in the same function. So not much to see here.
     var result = this.requester
-      .put(path, filename)
+      .put(path, filename, false, options)
       .then(function(response) {
         me.log('New extension id =' + response.id);
       })

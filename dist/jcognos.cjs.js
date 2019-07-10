@@ -21,6 +21,25 @@ var axiosCookieJarSupport = _interopDefault(require('axios-cookiejar-support'));
 var tough = _interopDefault(require('tough-cookie'));
 var minimatch = _interopDefault(require('minimatch'));
 
+function _typeof(obj) {
+  if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+    _typeof = function(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function(obj) {
+      return obj &&
+        typeof Symbol === 'function' &&
+        obj.constructor === Symbol &&
+        obj !== Symbol.prototype
+        ? 'symbol'
+        : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError('Cannot call a class as a function');
@@ -466,8 +485,10 @@ var CognosRequest = (function() {
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : {};
+        var options = arguments.length > 3 ? arguments[3] : undefined;
         var me = this;
         var stream;
+        var checkssl = options.checkssl ? option.checkssl : false;
 
         if (Utils.isStandardBrowserEnv()) {
           console.log(
@@ -506,15 +527,23 @@ var CognosRequest = (function() {
           stream = data;
         }
 
+        var axiosparams = {
+          method: 'PUT',
+          url: url,
+          headers: headers,
+          jar: me.cookies,
+          withCredentials: true,
+          data: stream
+        };
+
+        if (checkssl) {
+          axiosparams.httpsAgent = new https.Agent({
+            rejectUnauthorized: false
+          });
+        }
+
         var result = me
-          .axios({
-            method: 'PUT',
-            url: url,
-            headers: headers,
-            jar: me.cookies,
-            withCredentials: true,
-            data: stream
-          })
+          .axios(axiosparams)
           .then(function(response) {
             me.log('CognosRequest : Success Putting ');
             return response.data;
@@ -846,15 +875,21 @@ var Cognos = (function() {
       key: 'logoff',
       value: function logoff() {
         var me = this;
-        var result = me.requester['delete']('bi/v1/login')
-          .then(function(body) {
-            me.loggedin = false;
-            return body;
-          })
-          ['catch'](function(err) {
-            me.log('Cognos: Error when logging off.', err);
-          });
-        return result;
+
+        if (_typeof(me.requester) !== undefined) {
+          var result = me.requester['delete']('bi/v1/login')
+            .then(function(body) {
+              me.loggedin = false;
+              return body;
+            })
+            ['catch'](function(err) {
+              me.log('Cognos: Error when logging off.', err);
+            });
+          return result;
+        } else {
+          me.loggedin = false;
+          return Promise.resolve(true);
+        }
       }
     },
     {
@@ -1037,6 +1072,8 @@ var Cognos = (function() {
                 name: 'My Content'
               });
             }
+
+            return rootfolders;
           })
           .then(function() {
             return Promise.resolve(
@@ -1314,10 +1351,14 @@ var Cognos = (function() {
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : 'extensions';
+        var options =
+          arguments.length > 3 && arguments[3] !== undefined
+            ? arguments[3]
+            : {};
         var me = this;
         var path = 'bi/v1/plugins/' + type + '/' + name;
         var result = this.requester
-          .put(path, filename)
+          .put(path, filename, false, options)
           .then(function(response) {
             me.log('New extension id =' + response.id);
           })

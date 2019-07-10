@@ -381,9 +381,10 @@ class CognosRequest {
     return result;
   }
 
-  put(path, filename = false, data = {}) {
+  put(path, filename = false, data = {}, options) {
     var me = this;
     var stream;
+    var checkssl = options.checkssl ? option.checkssl : false;
     if (Utils.isStandardBrowserEnv()) {
       console.log(
         'The put function is not implemented for browser environments'
@@ -415,15 +416,24 @@ class CognosRequest {
       headers['Content-Type'] = 'application/json';
       stream = data;
     }
+
+    var axiosparams = {
+      method: 'PUT',
+      url: url,
+      headers: headers,
+      jar: me.cookies,
+      withCredentials: true,
+      data: stream
+    };
+
+    if (checkssl) {
+      axiosparams.httpsAgent = new https.Agent({
+        rejectUnauthorized: false
+      });
+    }
+
     var result = me
-      .axios({
-        method: 'PUT',
-        url: url,
-        headers: headers,
-        jar: me.cookies,
-        withCredentials: true,
-        data: stream
-      })
+      .axios(axiosparams)
       .then(function(response) {
         me.log('CognosRequest : Success Putting ');
         return response.data;

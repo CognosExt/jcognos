@@ -233,6 +233,7 @@ This function is only supported by Node.js. In the browser this function returns
 -   `filename` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the module (as found in the spec.json)
 -   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `'extensions'`)
+-   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Object with additional options. sslcheck = true/false checks valid certificates or not. (optional, default `{}`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Promise that resolves to a string.
 

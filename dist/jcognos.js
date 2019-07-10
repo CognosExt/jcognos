@@ -17,6 +17,25 @@
 })(this, function(exports) {
   'use strict';
 
+  function _typeof(obj) {
+    if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
+      _typeof = function(obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function(obj) {
+        return obj &&
+          typeof Symbol === 'function' &&
+          obj.constructor === Symbol &&
+          obj !== Symbol.prototype
+          ? 'symbol'
+          : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError('Cannot call a class as a function');
@@ -56,30 +75,14 @@
    * @license  MIT
    */
 
-  // The _isBuffer check is for Safari 5-7 support, because it's missing
-  // Object.prototype.constructor. Remove this eventually
-  var isBuffer_1 = function(obj) {
+  var isBuffer = function isBuffer(obj) {
     return (
-      obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
-    );
-  };
-
-  function isBuffer(obj) {
-    return (
-      !!obj.constructor &&
+      obj != null &&
+      obj.constructor != null &&
       typeof obj.constructor.isBuffer === 'function' &&
       obj.constructor.isBuffer(obj)
     );
-  }
-
-  // For Node v0.10 support. Remove this eventually.
-  function isSlowBuffer(obj) {
-    return (
-      typeof obj.readFloatLE === 'function' &&
-      typeof obj.slice === 'function' &&
-      isBuffer(obj.slice(0, 0))
-    );
-  }
+  };
 
   /*global toString:true*/
 
@@ -362,7 +365,7 @@
   var utils = {
     isArray: isArray,
     isArrayBuffer: isArrayBuffer,
-    isBuffer: isBuffer_1,
+    isBuffer: isBuffer,
     isFormData: isFormData,
     isArrayBufferView: isArrayBufferView,
     isString: isString,
@@ -912,42 +915,6 @@
         };
       })();
 
-  // btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
-
-  var chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-  function E() {
-    this.message = 'String contains an invalid character';
-  }
-  E.prototype = new Error();
-  E.prototype.code = 5;
-  E.prototype.name = 'InvalidCharacterError';
-
-  function btoa(input) {
-    var str = String(input);
-    var output = '';
-    for (
-      // initialize result and counter
-      var block, charCode, idx = 0, map = chars;
-      // if the next str index does not exist:
-      //   change the mapping table to "="
-      //   check if d has no fractional digits
-      str.charAt(idx | 0) || ((map = '='), idx % 1);
-      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-      output += map.charAt(63 & (block >> (8 - (idx % 1) * 8)))
-    ) {
-      charCode = str.charCodeAt((idx += 3 / 4));
-      if (charCode > 0xff) {
-        throw new E();
-      }
-      block = (block << 8) | charCode;
-    }
-    return output;
-  }
-
-  var btoa_1 = btoa;
-
   var cookies = utils.isStandardBrowserEnv()
     ? // Standard browser envs support document.cookie
       (function standardBrowserEnv() {
@@ -998,12 +965,6 @@
         };
       })();
 
-  var btoa$1 =
-    (typeof window !== 'undefined' &&
-      window.btoa &&
-      window.btoa.bind(window)) ||
-    btoa_1;
-
   var xhr = function xhrAdapter(config) {
     return new Promise(function dispatchXhrRequest(resolve, reject) {
       var requestData = config.data;
@@ -1014,31 +975,13 @@
       }
 
       var request = new XMLHttpRequest();
-      var loadEvent = 'onreadystatechange';
-      var xDomain = false;
-
-      // For IE 8/9 CORS support
-      // Only supports POST and GET calls and doesn't returns the response headers.
-      // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-      if (
-        typeof window !== 'undefined' &&
-        window.XDomainRequest &&
-        !('withCredentials' in request) &&
-        !isURLSameOrigin(config.url)
-      ) {
-        request = new window.XDomainRequest();
-        loadEvent = 'onload';
-        xDomain = true;
-        request.onprogress = function handleProgress() {};
-        request.ontimeout = function handleTimeout() {};
-      }
 
       // HTTP basic authentication
       if (config.auth) {
         var username = config.auth.username || '';
         var password = config.auth.password || '';
         requestHeaders.Authorization =
-          'Basic ' + btoa$1(username + ':' + password);
+          'Basic ' + btoa(username + ':' + password);
       }
 
       request.open(
@@ -1051,8 +994,8 @@
       request.timeout = config.timeout;
 
       // Listen for ready state
-      request[loadEvent] = function handleLoad() {
-        if (!request || (request.readyState !== 4 && !xDomain)) {
+      request.onreadystatechange = function handleLoad() {
+        if (!request || request.readyState !== 4) {
           return;
         }
 
@@ -1078,10 +1021,8 @@
             : request.response;
         var response = {
           data: responseData,
-          // IE sends 1223 instead of 204 (https://github.com/axios/axios/issues/201)
-          status: request.status === 1223 ? 204 : request.status,
-          statusText:
-            request.status === 1223 ? 'No Content' : request.statusText,
+          status: request.status,
+          statusText: request.statusText,
           headers: responseHeaders,
           config: config,
           request: request
@@ -4052,14 +3993,7 @@
 
   function writeFloat(buf, value, offset, littleEndian, noAssert) {
     if (!noAssert) {
-      checkIEEE754(
-        buf,
-        value,
-        offset,
-        4,
-        3.4028234663852886e38,
-        -3.4028234663852886e38
-      );
+      checkIEEE754(buf, value, offset, 4);
     }
     write(buf, value, offset, littleEndian, 23, 4);
     return offset + 4;
@@ -4083,14 +4017,7 @@
 
   function writeDouble(buf, value, offset, littleEndian, noAssert) {
     if (!noAssert) {
-      checkIEEE754(
-        buf,
-        value,
-        offset,
-        8,
-        1.7976931348623157e308,
-        -1.7976931348623157e308
-      );
+      checkIEEE754(buf, value, offset, 8);
     }
     write(buf, value, offset, littleEndian, 52, 8);
     return offset + 8;
@@ -4376,8 +4303,7 @@
   // Object.prototype.constructor. Remove this eventually
   function isBuffer$1(obj) {
     return (
-      obj != null &&
-      (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer$1(obj))
+      obj != null && (!!obj._isBuffer || isFastBuffer(obj) || isSlowBuffer(obj))
     );
   }
 
@@ -4390,7 +4316,7 @@
   }
 
   // For Node v0.10 support. Remove this eventually.
-  function isSlowBuffer$1(obj) {
+  function isSlowBuffer(obj) {
     return (
       typeof obj.readFloatLE === 'function' &&
       typeof obj.slice === 'function' &&
@@ -17102,8 +17028,10 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : {};
+          var options = arguments.length > 3 ? arguments[3] : undefined;
           var me = this;
           var stream;
+          var checkssl = options.checkssl ? option.checkssl : false;
 
           if (Utils.isStandardBrowserEnv()) {
             console.log(
@@ -17142,15 +17070,23 @@
             stream = data;
           }
 
+          var axiosparams = {
+            method: 'PUT',
+            url: url,
+            headers: headers,
+            jar: me.cookies,
+            withCredentials: true,
+            data: stream
+          };
+
+          if (checkssl) {
+            axiosparams.httpsAgent = new https.Agent({
+              rejectUnauthorized: false
+            });
+          }
+
           var result = me
-            .axios({
-              method: 'PUT',
-              url: url,
-              headers: headers,
-              jar: me.cookies,
-              withCredentials: true,
-              data: stream
-            })
+            .axios(axiosparams)
             .then(function(response) {
               me.log('CognosRequest : Success Putting ');
               return response.data;
@@ -18323,6 +18259,7 @@
             // to do safely.  For now, this is safe and works.
             var cs = pattern.substring(classStart + 1, i);
             try {
+              RegExp('[' + cs + ']');
             } catch (er) {
               // not a valid class!
               var sp = this.parse(cs, SUBPARSE);
@@ -18927,15 +18864,21 @@
         key: 'logoff',
         value: function logoff() {
           var me = this;
-          var result = me.requester['delete']('bi/v1/login')
-            .then(function(body) {
-              me.loggedin = false;
-              return body;
-            })
-            ['catch'](function(err) {
-              me.log('Cognos: Error when logging off.', err);
-            });
-          return result;
+
+          if (_typeof(me.requester) !== undefined) {
+            var result = me.requester['delete']('bi/v1/login')
+              .then(function(body) {
+                me.loggedin = false;
+                return body;
+              })
+              ['catch'](function(err) {
+                me.log('Cognos: Error when logging off.', err);
+              });
+            return result;
+          } else {
+            me.loggedin = false;
+            return Promise.resolve(true);
+          }
         }
       },
       {
@@ -19118,6 +19061,8 @@
                   name: 'My Content'
                 });
               }
+
+              return rootfolders;
             })
             .then(function() {
               return Promise.resolve(
@@ -19399,10 +19344,14 @@
             arguments.length > 2 && arguments[2] !== undefined
               ? arguments[2]
               : 'extensions';
+          var options =
+            arguments.length > 3 && arguments[3] !== undefined
+              ? arguments[3]
+              : {};
           var me = this;
           var path = 'bi/v1/plugins/' + type + '/' + name;
           var result = this.requester
-            .put(path, filename)
+            .put(path, filename, false, options)
             .then(function(response) {
               me.log('New extension id =' + response.id);
             })
