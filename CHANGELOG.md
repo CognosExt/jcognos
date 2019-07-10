@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.1](https://github.com/CognosExt/jcognos/compare/v1.13.0...v1.13.1) (2019-07-10)
+
+
+### Bug Fixes
+
+* typo ([4b7f4db](https://github.com/CognosExt/jcognos/commit/4b7f4db))
+
+
+
 # [1.13.0](https://github.com/CognosExt/jcognos/compare/v1.12.0...v1.13.0) (2019-07-10)
 
 
