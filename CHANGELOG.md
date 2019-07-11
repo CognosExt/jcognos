@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [2.0.0](https://github.com/CognosExt/jcognos/compare/v1.13.2...v2.0.0) (2019-07-11)
+
+
+### Features
+
+* Added additional option to getCognos: ignoreInvalidCertificates ([4c21b2f](https://github.com/CognosExt/jcognos/commit/4c21b2f))
+
+
+### BREAKING CHANGES
+
+* Removed options parameter from uploadExtension
+
+
+
 ## [1.13.2](https://github.com/CognosExt/jcognos/compare/v1.13.1...v1.13.2) (2019-07-10)
 
 
