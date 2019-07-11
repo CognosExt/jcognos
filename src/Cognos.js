@@ -19,7 +19,7 @@ class Cognos {
    * @constructs
    * @private
    */
-  constructor(debug, timeout) {
+  constructor(debug, timeout, ignoreInvalidCertificates) {
     /**
      * Check to see of user is loggedin or not
      * @type {Boolean}
@@ -32,6 +32,8 @@ class Cognos {
     this.password = '';
     this.timeout = timeout;
     this.productVersion = '';
+    this.ignoreInvalidCertificates;
+
     /**
      *  capabilities - returns the Cognos User Capabilities object
      *
@@ -250,7 +252,13 @@ class Cognos {
     this.requester = undefined;
     me.log('going to reset the cognos request');
 
-    this.resetting = getCognosRequest(this.url, this.debug, true, this.timeout)
+    this.resetting = getCognosRequest(
+      this.url,
+      this.debug,
+      true,
+      this.timeout,
+      this.ignoreInvalidCertificates
+    )
       .then(function(cRequest) {
         me.requester = cRequest;
         me.log('going to login again');
@@ -661,15 +669,14 @@ class Cognos {
    * @param  {String} filename Path to the .zip file
    * @param  {String} name name of the module (as found in the spec.json)
    * @param  {String} type type of upload. Default is 'extensions', for themes use 'themes'.
-   * @param  {Object} options Object with additional options. sslcheck = true/false checks valid certificates or not.
    * @return {Promise} Promise that resolves to a string.
    */
-  uploadExtension(filename, name, type = 'extensions', options = {}) {
+  uploadExtension(filename, name, type = 'extensions') {
     var me = this;
     var path = 'bi/v1/plugins/' + type + '/' + name;
     // The reading of the file and the actual put have to be in the same function. So not much to see here.
     var result = this.requester
-      .put(path, filename, false, options)
+      .put(path, filename, false)
       .then(function(response) {
         me.log('New extension id =' + response.id);
       })
@@ -836,18 +843,30 @@ class Cognos {
  * @param  {String} url The URL of your Cognos installation. If empty, this function becomes static and a Promise for the current jCognos object is returned.
  * @param  {Boolean} debug If true, starts debugging into the console
  * @param  {Number} Timeout value for http(s) connections. In milliseconds. Default is 60000.
+ * @param {Boolean} ignoreinvalidcertificates Should invalid certificates over ssl be ignored. Default = false
  * @return {Promise}  a promise that will return the jCognos object
  */
-function getCognos(url = false, debug = false, timeout = 60000) {
+function getCognos(
+  url = false,
+  debug = false,
+  timeout = 60000,
+  ignoreInvalidCertificates = false
+) {
   var reset = false;
   if (url && url !== cognosUrl) {
     jCognos = undefined;
     reset = true;
   }
   if (typeof jCognos == 'undefined' && url) {
-    var myRequest = getCognosRequest(url, debug, reset, timeout)
+    var myRequest = getCognosRequest(
+      url,
+      debug,
+      reset,
+      timeout,
+      ignoreInvalidCertificates
+    )
       .then(function(cRequest) {
-        jCognos = new Cognos(debug, timeout);
+        jCognos = new Cognos(debug, timeout, ignoreInvalidCertificates);
         jCognos.requester = cRequest;
         jCognos.url = url;
         jCognos.defaultNamespace = cRequest.namespace;

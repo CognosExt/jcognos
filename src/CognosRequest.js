@@ -12,7 +12,7 @@ import tough from 'tough-cookie';
 var cRequest;
 
 class CognosRequest {
-  constructor(url, debug, timeout) {
+  constructor(url, debug, timeout, ignoreinvalidcertificates) {
     if (url.substr(-1) !== '/') {
       url = url + '/';
     }
@@ -23,6 +23,7 @@ class CognosRequest {
     this.namespace = '';
     this.namespaces = [];
     this.timeout = timeout;
+    this.ignoreinvalidcertificates = ignoreinvalidcertificates;
   }
 
   log(text, object) {
@@ -49,7 +50,7 @@ class CognosRequest {
     var me = this;
     var cookieJar = false;
     var firstheaders = {};
-    this.axios = axios.create({
+    var axiosparams = {
       timeout: me.timeout,
 
       //follow up to 10 HTTP 3xx redirects
@@ -57,7 +58,14 @@ class CognosRequest {
 
       //cap the maximum content length we'll accept to 50MBs, just in case
       maxContentLength: 50 * 1000 * 1000
-    });
+    };
+    if (this.ignoreinvalidcertificates) {
+      axiosparams.httpsAgent = new https.Agent({
+        rejectUnauthorized: false
+      });
+    }
+    this.axios = axios.create(axiosparams);
+
     if (Utils.isNode()) {
       axiosCookieJarSupport(this.axios);
       var cookieJar = new tough.CookieJar();
@@ -382,10 +390,9 @@ class CognosRequest {
     return result;
   }
 
-  put(path, filename = false, data = {}, options) {
+  put(path, filename = false, data = {}) {
     var me = this;
     var stream;
-    var checkssl = options.checkssl ? options.checkssl : false;
     if (Utils.isStandardBrowserEnv()) {
       console.log(
         'The put function is not implemented for browser environments'
@@ -426,12 +433,6 @@ class CognosRequest {
       withCredentials: true,
       data: stream
     };
-
-    if (checkssl) {
-      axiosparams.httpsAgent = new https.Agent({
-        rejectUnauthorized: false
-      });
-    }
 
     var result = me
       .axios(axiosparams)
@@ -597,13 +598,24 @@ class CognosRequest {
   }
 }
 
-function getCognosRequest(url, debug, reset = false, timeout) {
+function getCognosRequest(
+  url,
+  debug,
+  reset = false,
+  timeout,
+  ignoreinvalidcertificates
+) {
   if (reset) {
     cRequest = undefined;
   }
   var result;
   if (typeof cRequest == 'undefined' || reset) {
-    cRequest = new CognosRequest(url, debug, timeout);
+    cRequest = new CognosRequest(
+      url,
+      debug,
+      timeout,
+      ignoreinvalidcertificates
+    );
     result = cRequest.initialise();
   } else {
     result = Promise.resolve(cRequest);

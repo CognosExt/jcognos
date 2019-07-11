@@ -99,6 +99,7 @@ retrieve the Cognos instance.
 
 -   `debug`  
 -   `timeout`  
+-   `ignoreInvalidCertificates`  
 
 ### capabilities
 
@@ -233,7 +234,6 @@ This function is only supported by Node.js. In the browser this function returns
 -   `filename` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Path to the .zip file
 -   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of the module (as found in the spec.json)
 -   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** type of upload. Default is 'extensions', for themes use 'themes'. (optional, default `'extensions'`)
--   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Object with additional options. sslcheck = true/false checks valid certificates or not. (optional, default `{}`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** Promise that resolves to a string.
 
@@ -253,7 +253,9 @@ at any time.
 -   `url` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The URL of your Cognos installation. If empty, this function becomes static and a Promise for the current jCognos object is returned. (optional, default `false`)
 -   `debug` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** If true, starts debugging into the console (optional, default `false`)
 -   `timeout`   (optional, default `60000`)
+-   `ignoreInvalidCertificates`   (optional, default `false`)
 -   `Timeout` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** value for http(s) connections. In milliseconds. Default is 60000.
+-   `ignoreinvalidcertificates` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Should invalid certificates over ssl be ignored. Default = false
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** a promise that will return the jCognos object
 

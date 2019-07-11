@@ -245,7 +245,7 @@
   <p>Class that helps you connect with your inner Cognos. You can not create this class directly, use <a href="#getcognos">getCognos</a> to
 retrieve the Cognos instance.</p>
 
-    <div class='pre p1 fill-light mt0'>new Cognos(debug: any, timeout: any)</div>
+    <div class='pre p1 fill-light mt0'>new Cognos(debug: any, timeout: any, ignoreInvalidCertificates: any)</div>
   
   
 
@@ -271,6 +271,14 @@ retrieve the Cognos instance.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>timeout</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ignoreInvalidCertificates</span> <code class='quiet'>(any)</code>
 	    
           </div>
           
@@ -1377,7 +1385,7 @@ retrieve the Cognos instance.</p>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>uploadExtension(filename, name, type, options)</span>
+            <span class='code strong strong truncate'>uploadExtension(filename, name, type)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -1388,7 +1396,7 @@ retrieve the Cognos instance.</p>
   <p>uploadExtension - Uploads zipfile containing Cognos Extension. Only supports updating an existing module.
 This function is only supported by Node.js. In the browser this function returns false;</p>
 
-    <div class='pre p1 fill-light mt0'>uploadExtension(filename: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, type: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, options: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>uploadExtension(filename: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, type: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
   
   
 
@@ -1426,16 +1434,6 @@ This function is only supported by Node.js. In the browser this function returns
             <span class='code bold'>type</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>
             = <code>&#39;extensions&#39;</code>)</code>
 	    type of upload. Default is 'extensions', for themes use 'themes'.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>options</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-            = <code>{}</code>)</code>
-	    Object with additional options. sslcheck = true/false checks valid certificates or not.
 
           </div>
           
@@ -1500,7 +1498,7 @@ This function is only supported by Node.js. In the browser this function returns
   <p>getCognos - Static function to get the Cognos Object. You can have only 1 Cognos object in your application
 at any time.</p>
 
-    <div class='pre p1 fill-light mt0'>getCognos(url: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, debug: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>, timeout: any, Timeout: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>getCognos(url: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, debug: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>, timeout: any, ignoreInvalidCertificates: any, Timeout: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>, ignoreinvalidcertificates: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
   
   
 
@@ -1546,8 +1544,26 @@ at any time.</p>
       
         <div class='space-bottom0'>
           <div>
+            <span class='code bold'>ignoreInvalidCertificates</span> <code class='quiet'>(any
+            = <code>false</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
             <span class='code bold'>Timeout</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a>)</code>
 	    value for http(s) connections. In milliseconds. Default is 60000.
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>ignoreinvalidcertificates</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>)</code>
+	    Should invalid certificates over ssl be ignored. Default = false
 
           </div>
           

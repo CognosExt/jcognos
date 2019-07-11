@@ -74,7 +74,7 @@ var Utils = {
 var cRequest;
 
 var CognosRequest = (function() {
-  function CognosRequest(url, debug, timeout) {
+  function CognosRequest(url, debug, timeout, ignoreinvalidcertificates) {
     _classCallCheck(this, CognosRequest);
 
     if (url.substr(-1) !== '/') {
@@ -88,6 +88,7 @@ var CognosRequest = (function() {
     this.namespace = '';
     this.namespaces = [];
     this.timeout = timeout;
+    this.ignoreinvalidcertificates = ignoreinvalidcertificates;
   }
 
   _createClass(CognosRequest, [
@@ -125,11 +126,19 @@ var CognosRequest = (function() {
         var me = this;
         var cookieJar = false;
         var firstheaders = {};
-        this.axios = axios.create({
+        var axiosparams = {
           timeout: me.timeout,
           maxRedirects: 10,
           maxContentLength: 50 * 1000 * 1000
-        });
+        };
+
+        if (this.ignoreinvalidcertificates) {
+          axiosparams.httpsAgent = new https.Agent({
+            rejectUnauthorized: false
+          });
+        }
+
+        this.axios = axios.create(axiosparams);
 
         if (Utils.isNode()) {
           axiosCookieJarSupport(this.axios);
@@ -478,10 +487,8 @@ var CognosRequest = (function() {
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : {};
-        var options = arguments.length > 3 ? arguments[3] : undefined;
         var me = this;
         var stream;
-        var checkssl = options.checkssl ? options.checkssl : false;
 
         if (Utils.isStandardBrowserEnv()) {
           console.log(
@@ -528,13 +535,6 @@ var CognosRequest = (function() {
           withCredentials: true,
           data: stream
         };
-
-        if (checkssl) {
-          axiosparams.httpsAgent = new https.Agent({
-            rejectUnauthorized: false
-          });
-        }
-
         var result = me
           .axios(axiosparams)
           .then(function(response) {
@@ -714,6 +714,8 @@ function getCognosRequest(url, debug) {
   var reset =
     arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var timeout = arguments.length > 3 ? arguments[3] : undefined;
+  var ignoreinvalidcertificates =
+    arguments.length > 4 ? arguments[4] : undefined;
 
   if (reset) {
     cRequest = undefined;
@@ -722,7 +724,12 @@ function getCognosRequest(url, debug) {
   var result;
 
   if (typeof cRequest == 'undefined' || reset) {
-    cRequest = new CognosRequest(url, debug, timeout);
+    cRequest = new CognosRequest(
+      url,
+      debug,
+      timeout,
+      ignoreinvalidcertificates
+    );
     result = cRequest.initialise();
   } else {
     result = Promise.resolve(cRequest);
@@ -735,7 +742,7 @@ var jCognos;
 var cognosUrl;
 
 var Cognos = (function() {
-  function Cognos(debug, timeout) {
+  function Cognos(debug, timeout, ignoreInvalidCertificates) {
     _classCallCheck(this, Cognos);
 
     this.loggedin = false;
@@ -745,6 +752,7 @@ var Cognos = (function() {
     this.password = '';
     this.timeout = timeout;
     this.productVersion = '';
+    this.ignoreInvalidCertificates;
     this.capabilities = {};
     this.preferences = {};
     this.defaultNamespace = '';
@@ -944,7 +952,8 @@ var Cognos = (function() {
           this.url,
           this.debug,
           true,
-          this.timeout
+          this.timeout,
+          this.ignoreInvalidCertificates
         )
           .then(function(cRequest) {
             me.requester = cRequest;
@@ -1344,14 +1353,10 @@ var Cognos = (function() {
           arguments.length > 2 && arguments[2] !== undefined
             ? arguments[2]
             : 'extensions';
-        var options =
-          arguments.length > 3 && arguments[3] !== undefined
-            ? arguments[3]
-            : {};
         var me = this;
         var path = 'bi/v1/plugins/' + type + '/' + name;
         var result = this.requester
-          .put(path, filename, false, options)
+          .put(path, filename, false)
           .then(function(response) {
             me.log('New extension id =' + response.id);
           })
@@ -1540,6 +1545,8 @@ function getCognos() {
     arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   var timeout =
     arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 60000;
+  var ignoreInvalidCertificates =
+    arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   var reset = false;
 
   if (url && url !== cognosUrl) {
@@ -1548,9 +1555,15 @@ function getCognos() {
   }
 
   if (typeof jCognos == 'undefined' && url) {
-    var myRequest = getCognosRequest(url, debug, reset, timeout)
+    var myRequest = getCognosRequest(
+      url,
+      debug,
+      reset,
+      timeout,
+      ignoreInvalidCertificates
+    )
       .then(function(cRequest) {
-        jCognos = new Cognos(debug, timeout);
+        jCognos = new Cognos(debug, timeout, ignoreInvalidCertificates);
         jCognos.requester = cRequest;
         jCognos.url = url;
         jCognos.defaultNamespace = cRequest.namespace;
