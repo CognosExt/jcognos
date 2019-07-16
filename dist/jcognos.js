@@ -261,12 +261,16 @@
    *
    * react-native:
    *  navigator.product -> 'ReactNative'
+   * nativescript
+   *  navigator.product -> 'NativeScript' or 'NS'
    */
 
   function isStandardBrowserEnv() {
     if (
       typeof navigator !== 'undefined' &&
-      navigator.product === 'ReactNative'
+      (navigator.product === 'ReactNative' ||
+        navigator.product === 'NativeScript' ||
+        navigator.product === 'NS')
     ) {
       return false;
     }
@@ -348,6 +352,35 @@
     return result;
   }
   /**
+   * Function equal to merge with the difference being that no reference
+   * to original objects is kept.
+   *
+   * @see merge
+   * @param {Object} obj1 Object to merge
+   * @returns {Object} Result of all merge properties
+   */
+
+  function deepMerge() {
+    /* obj1, obj2, obj3, ... */
+    var result = {};
+
+    function assignValue(val, key) {
+      if (typeof result[key] === 'object' && typeof val === 'object') {
+        result[key] = deepMerge(result[key], val);
+      } else if (typeof val === 'object') {
+        result[key] = deepMerge({}, val);
+      } else {
+        result[key] = val;
+      }
+    }
+
+    for (var i = 0, l = arguments.length; i < l; i++) {
+      forEach(arguments[i], assignValue);
+    }
+
+    return result;
+  }
+  /**
    * Extends object a by mutably adding to it the properties of object b.
    *
    * @param {Object} a The object to be extended
@@ -386,8 +419,148 @@
     isStandardBrowserEnv: isStandardBrowserEnv,
     forEach: forEach,
     merge: merge,
+    deepMerge: deepMerge,
     extend: extend,
     trim: trim
+  };
+
+  function encode(val) {
+    return encodeURIComponent(val)
+      .replace(/%40/gi, '@')
+      .replace(/%3A/gi, ':')
+      .replace(/%24/g, '$')
+      .replace(/%2C/gi, ',')
+      .replace(/%20/g, '+')
+      .replace(/%5B/gi, '[')
+      .replace(/%5D/gi, ']');
+  }
+  /**
+   * Build a URL by appending params to the end
+   *
+   * @param {string} url The base of the url (e.g., http://www.google.com)
+   * @param {object} [params] The params to be appended
+   * @returns {string} The formatted url
+   */
+
+  var buildURL = function buildURL(url, params, paramsSerializer) {
+    /*eslint no-param-reassign:0*/
+    if (!params) {
+      return url;
+    }
+
+    var serializedParams;
+
+    if (paramsSerializer) {
+      serializedParams = paramsSerializer(params);
+    } else if (utils.isURLSearchParams(params)) {
+      serializedParams = params.toString();
+    } else {
+      var parts = [];
+      utils.forEach(params, function serialize(val, key) {
+        if (val === null || typeof val === 'undefined') {
+          return;
+        }
+
+        if (utils.isArray(val)) {
+          key = key + '[]';
+        } else {
+          val = [val];
+        }
+
+        utils.forEach(val, function parseValue(v) {
+          if (utils.isDate(v)) {
+            v = v.toISOString();
+          } else if (utils.isObject(v)) {
+            v = JSON.stringify(v);
+          }
+
+          parts.push(encode(key) + '=' + encode(v));
+        });
+      });
+      serializedParams = parts.join('&');
+    }
+
+    if (serializedParams) {
+      var hashmarkIndex = url.indexOf('#');
+
+      if (hashmarkIndex !== -1) {
+        url = url.slice(0, hashmarkIndex);
+      }
+
+      url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+    }
+
+    return url;
+  };
+
+  function InterceptorManager() {
+    this.handlers = [];
+  }
+  /**
+   * Add a new interceptor to the stack
+   *
+   * @param {Function} fulfilled The function to handle `then` for a `Promise`
+   * @param {Function} rejected The function to handle `reject` for a `Promise`
+   *
+   * @return {Number} An ID used to remove interceptor later
+   */
+
+  InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+    this.handlers.push({
+      fulfilled: fulfilled,
+      rejected: rejected
+    });
+    return this.handlers.length - 1;
+  };
+  /**
+   * Remove an interceptor from the stack
+   *
+   * @param {Number} id The ID that was returned by `use`
+   */
+
+  InterceptorManager.prototype.eject = function eject(id) {
+    if (this.handlers[id]) {
+      this.handlers[id] = null;
+    }
+  };
+  /**
+   * Iterate over all the registered interceptors
+   *
+   * This method is particularly useful for skipping over any
+   * interceptors that may have become `null` calling `eject`.
+   *
+   * @param {Function} fn The function to call for each interceptor
+   */
+
+  InterceptorManager.prototype.forEach = function forEach(fn) {
+    utils.forEach(this.handlers, function forEachHandler(h) {
+      if (h !== null) {
+        fn(h);
+      }
+    });
+  };
+
+  var InterceptorManager_1 = InterceptorManager;
+
+  /**
+   * Transform the data for a request or a response
+   *
+   * @param {Object|String} data The data to be transformed
+   * @param {Array} headers The headers for the request or response
+   * @param {Array|Function} fns A single function or Array of functions
+   * @returns {*} The resulting transformed data
+   */
+
+  var transformData = function transformData(data, headers, fns) {
+    /*eslint no-param-reassign:0*/
+    utils.forEach(fns, function transform(fn) {
+      data = fn(data, headers);
+    });
+    return data;
+  };
+
+  var isCancel = function isCancel(value) {
+    return !!(value && value.__CANCEL__);
   };
 
   var global$1 =
@@ -689,6 +862,27 @@
 
     error.request = request;
     error.response = response;
+    error.isAxiosError = true;
+
+    error.toJSON = function() {
+      return {
+        // Standard
+        message: this.message,
+        name: this.name,
+        // Microsoft
+        description: this.description,
+        number: this.number,
+        // Mozilla
+        fileName: this.fileName,
+        lineNumber: this.lineNumber,
+        columnNumber: this.columnNumber,
+        stack: this.stack,
+        // Axios
+        config: this.config,
+        code: this.code
+      };
+    };
+
     return error;
   };
 
@@ -723,13 +917,9 @@
    */
 
   var settle = function settle(resolve, reject, response) {
-    var validateStatus = response.config.validateStatus; // Note: status is not exposed by XDomainRequest
+    var validateStatus = response.config.validateStatus;
 
-    if (
-      !response.status ||
-      !validateStatus ||
-      validateStatus(response.status)
-    ) {
+    if (!validateStatus || validateStatus(response.status)) {
       resolve(response);
     } else {
       reject(
@@ -742,69 +932,6 @@
         )
       );
     }
-  };
-
-  function encode(val) {
-    return encodeURIComponent(val)
-      .replace(/%40/gi, '@')
-      .replace(/%3A/gi, ':')
-      .replace(/%24/g, '$')
-      .replace(/%2C/gi, ',')
-      .replace(/%20/g, '+')
-      .replace(/%5B/gi, '[')
-      .replace(/%5D/gi, ']');
-  }
-  /**
-   * Build a URL by appending params to the end
-   *
-   * @param {string} url The base of the url (e.g., http://www.google.com)
-   * @param {object} [params] The params to be appended
-   * @returns {string} The formatted url
-   */
-
-  var buildURL = function buildURL(url, params, paramsSerializer) {
-    /*eslint no-param-reassign:0*/
-    if (!params) {
-      return url;
-    }
-
-    var serializedParams;
-
-    if (paramsSerializer) {
-      serializedParams = paramsSerializer(params);
-    } else if (utils.isURLSearchParams(params)) {
-      serializedParams = params.toString();
-    } else {
-      var parts = [];
-      utils.forEach(params, function serialize(val, key) {
-        if (val === null || typeof val === 'undefined') {
-          return;
-        }
-
-        if (utils.isArray(val)) {
-          key = key + '[]';
-        } else {
-          val = [val];
-        }
-
-        utils.forEach(val, function parseValue(v) {
-          if (utils.isDate(v)) {
-            v = v.toISOString();
-          } else if (utils.isObject(v)) {
-            v = JSON.stringify(v);
-          }
-
-          parts.push(encode(key) + '=' + encode(v));
-        });
-      });
-      serializedParams = parts.join('&');
-    }
-
-    if (serializedParams) {
-      url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-    }
-
-    return url;
   };
 
   // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -1047,6 +1174,16 @@
         settle(resolve, reject, response); // Clean up request
 
         request = null;
+      }; // Handle browser request cancellation (as opposed to a manual cancellation)
+
+      request.onabort = function handleAbort() {
+        if (!request) {
+          return;
+        }
+
+        reject(createError('Request aborted', config, 'ECONNABORTED', request)); // Clean up request
+
+        request = null;
       }; // Handle low level network errors
 
       request.onerror = function handleError() {
@@ -1161,13 +1298,16 @@
   }
 
   function getDefaultAdapter() {
-    var adapter;
+    var adapter; // Only Node.JS has a process variable that is of [[Class]] process
 
-    if (typeof XMLHttpRequest !== 'undefined') {
-      // For browsers use XHR adapter
-      adapter = xhr;
-    } else if (typeof process !== 'undefined') {
+    if (
+      typeof process !== 'undefined' &&
+      Object.prototype.toString.call(process) === '[object process]'
+    ) {
       // For node use HTTP adapter
+      adapter = xhr;
+    } else if (typeof XMLHttpRequest !== 'undefined') {
+      // For browsers use XHR adapter
       adapter = xhr;
     }
 
@@ -1178,6 +1318,7 @@
     adapter: getDefaultAdapter(),
     transformRequest: [
       function transformRequest(data, headers) {
+        normalizeHeaderName(headers, 'Accept');
         normalizeHeaderName(headers, 'Content-Type');
 
         if (
@@ -1254,76 +1395,6 @@
     defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
   });
   var defaults_1 = defaults;
-
-  function InterceptorManager() {
-    this.handlers = [];
-  }
-  /**
-   * Add a new interceptor to the stack
-   *
-   * @param {Function} fulfilled The function to handle `then` for a `Promise`
-   * @param {Function} rejected The function to handle `reject` for a `Promise`
-   *
-   * @return {Number} An ID used to remove interceptor later
-   */
-
-  InterceptorManager.prototype.use = function use(fulfilled, rejected) {
-    this.handlers.push({
-      fulfilled: fulfilled,
-      rejected: rejected
-    });
-    return this.handlers.length - 1;
-  };
-  /**
-   * Remove an interceptor from the stack
-   *
-   * @param {Number} id The ID that was returned by `use`
-   */
-
-  InterceptorManager.prototype.eject = function eject(id) {
-    if (this.handlers[id]) {
-      this.handlers[id] = null;
-    }
-  };
-  /**
-   * Iterate over all the registered interceptors
-   *
-   * This method is particularly useful for skipping over any
-   * interceptors that may have become `null` calling `eject`.
-   *
-   * @param {Function} fn The function to call for each interceptor
-   */
-
-  InterceptorManager.prototype.forEach = function forEach(fn) {
-    utils.forEach(this.handlers, function forEachHandler(h) {
-      if (h !== null) {
-        fn(h);
-      }
-    });
-  };
-
-  var InterceptorManager_1 = InterceptorManager;
-
-  /**
-   * Transform the data for a request or a response
-   *
-   * @param {Object|String} data The data to be transformed
-   * @param {Array} headers The headers for the request or response
-   * @param {Array|Function} fns A single function or Array of functions
-   * @returns {*} The resulting transformed data
-   */
-
-  var transformData = function transformData(data, headers, fns) {
-    /*eslint no-param-reassign:0*/
-    utils.forEach(fns, function transform(fn) {
-      data = fn(data, headers);
-    });
-    return data;
-  };
-
-  var isCancel = function isCancel(value) {
-    return !!(value && value.__CANCEL__);
-  };
 
   /**
    * Determines whether the specified URL is absolute
@@ -1426,6 +1497,73 @@
   };
 
   /**
+   * Config-specific merge-function which creates a new config-object
+   * by merging two configuration objects together.
+   *
+   * @param {Object} config1
+   * @param {Object} config2
+   * @returns {Object} New object resulting from merging config2 to config1
+   */
+
+  var mergeConfig = function mergeConfig(config1, config2) {
+    // eslint-disable-next-line no-param-reassign
+    config2 = config2 || {};
+    var config = {};
+    utils.forEach(
+      ['url', 'method', 'params', 'data'],
+      function valueFromConfig2(prop) {
+        if (typeof config2[prop] !== 'undefined') {
+          config[prop] = config2[prop];
+        }
+      }
+    );
+    utils.forEach(['headers', 'auth', 'proxy'], function mergeDeepProperties(
+      prop
+    ) {
+      if (utils.isObject(config2[prop])) {
+        config[prop] = utils.deepMerge(config1[prop], config2[prop]);
+      } else if (typeof config2[prop] !== 'undefined') {
+        config[prop] = config2[prop];
+      } else if (utils.isObject(config1[prop])) {
+        config[prop] = utils.deepMerge(config1[prop]);
+      } else if (typeof config1[prop] !== 'undefined') {
+        config[prop] = config1[prop];
+      }
+    });
+    utils.forEach(
+      [
+        'baseURL',
+        'transformRequest',
+        'transformResponse',
+        'paramsSerializer',
+        'timeout',
+        'withCredentials',
+        'adapter',
+        'responseType',
+        'xsrfCookieName',
+        'xsrfHeaderName',
+        'onUploadProgress',
+        'onDownloadProgress',
+        'maxContentLength',
+        'validateStatus',
+        'maxRedirects',
+        'httpAgent',
+        'httpsAgent',
+        'cancelToken',
+        'socketPath'
+      ],
+      function defaultToConfig2(prop) {
+        if (typeof config2[prop] !== 'undefined') {
+          config[prop] = config2[prop];
+        } else if (typeof config1[prop] !== 'undefined') {
+          config[prop] = config1[prop];
+        }
+      }
+    );
+    return config;
+  };
+
+  /**
    * Create a new instance of Axios
    *
    * @param {Object} instanceConfig The default config for the instance
@@ -1448,23 +1586,14 @@
     /*eslint no-param-reassign:0*/
     // Allow for axios('example/url'[, config]) a la fetch API
     if (typeof config === 'string') {
-      config = utils.merge(
-        {
-          url: arguments[0]
-        },
-        arguments[1]
-      );
+      config = arguments[1] || {};
+      config.url = arguments[0];
+    } else {
+      config = config || {};
     }
 
-    config = utils.merge(
-      defaults_1,
-      {
-        method: 'get'
-      },
-      this.defaults,
-      config
-    );
-    config.method = config.method.toLowerCase(); // Hook up interceptors middleware
+    config = mergeConfig(this.defaults, config);
+    config.method = config.method ? config.method.toLowerCase() : 'get'; // Hook up interceptors middleware
 
     var chain = [dispatchRequest, undefined];
     var promise = Promise.resolve(config);
@@ -1484,6 +1613,14 @@
     }
 
     return promise;
+  };
+
+  Axios.prototype.getUri = function getUri(config) {
+    config = mergeConfig(this.defaults, config);
+    return buildURL(config.url, config.params, config.paramsSerializer).replace(
+      /^\?/,
+      ''
+    );
   }; // Provide aliases for supported request methods
 
   utils.forEach(
@@ -1637,7 +1774,7 @@
   axios.Axios = Axios_1; // Factory for creating new instances
 
   axios.create = function create(instanceConfig) {
-    return createInstance(utils.merge(defaults_1, instanceConfig));
+    return createInstance(mergeConfig(axios.defaults, instanceConfig));
   }; // Expose Cancel & CancelToken
 
   axios.Cancel = Cancel_1;
@@ -4038,11 +4175,19 @@
       };
     }
 
+    if (process.noDeprecation === true) {
+      return fn;
+    }
+
     var warned = false;
 
     function deprecated() {
       if (!warned) {
-        {
+        if (process.throwDeprecation) {
+          throw new Error(msg);
+        } else if (process.traceDeprecation) {
+          console.trace(msg);
+        } else {
           console.error(msg);
         }
 
@@ -4057,7 +4202,8 @@
   var debugs = {};
   var debugEnviron;
   function debuglog(set) {
-    if (isUndefined$1(debugEnviron)) debugEnviron = '';
+    if (isUndefined$1(debugEnviron))
+      debugEnviron = process.env.NODE_DEBUG || '';
     set = set.toUpperCase();
 
     if (!debugs[set]) {
@@ -7982,7 +8128,7 @@
     decode: ucs2decode,
     encode: ucs2encode
   };
-  var require$$4 = {
+  var require$$5 = {
     version: version$1,
     ucs2: ucs2,
     toASCII: toASCII,
@@ -9061,8 +9207,6 @@
 
   var noop$1 = noopEnableCookieJarSupport;
 
-  var net = {};
-
   function createCommonjsModule(fn, module) {
     return (
       (module = { exports: {} }), fn(module, module.exports), module.exports
@@ -9072,6 +9216,38 @@
   function getCjsExportFromNamespace(n) {
     return (n && n['default']) || n;
   }
+
+  var ipRegex = createCommonjsModule(function(module) {
+    const v4 =
+      '(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])(?:\\.(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])){3}';
+    const v6seg = '[0-9a-fA-F]{1,4}';
+    const v6 = `
+(
+(?:${v6seg}:){7}(?:${v6seg}|:)|                                // 1:2:3:4:5:6:7::  1:2:3:4:5:6:7:8
+(?:${v6seg}:){6}(?:${v4}|:${v6seg}|:)|                         // 1:2:3:4:5:6::    1:2:3:4:5:6::8   1:2:3:4:5:6::8  1:2:3:4:5:6::1.2.3.4
+(?:${v6seg}:){5}(?::${v4}|(:${v6seg}){1,2}|:)|                 // 1:2:3:4:5::      1:2:3:4:5::7:8   1:2:3:4:5::8    1:2:3:4:5::7:1.2.3.4
+(?:${v6seg}:){4}(?:(:${v6seg}){0,1}:${v4}|(:${v6seg}){1,3}|:)| // 1:2:3:4::        1:2:3:4::6:7:8   1:2:3:4::8      1:2:3:4::6:7:1.2.3.4
+(?:${v6seg}:){3}(?:(:${v6seg}){0,2}:${v4}|(:${v6seg}){1,4}|:)| // 1:2:3::          1:2:3::5:6:7:8   1:2:3::8        1:2:3::5:6:7:1.2.3.4
+(?:${v6seg}:){2}(?:(:${v6seg}){0,3}:${v4}|(:${v6seg}){1,5}|:)| // 1:2::            1:2::4:5:6:7:8   1:2::8          1:2::4:5:6:7:1.2.3.4
+(?:${v6seg}:){1}(?:(:${v6seg}){0,4}:${v4}|(:${v6seg}){1,6}|:)| // 1::              1::3:4:5:6:7:8   1::8            1::3:4:5:6:7:1.2.3.4
+(?::((?::${v6seg}){0,5}:${v4}|(?::${v6seg}){1,7}|:))           // ::2:3:4:5:6:7:8  ::2:3:4:5:6:7:8  ::8             ::1.2.3.4
+)(%[0-9a-zA-Z]{1,})?                                           // %eth0            %1
+`
+      .replace(/\s*\/\/.*$/gm, '')
+      .replace(/\n/g, '')
+      .trim();
+
+    const ip = (module.exports = opts =>
+      opts && opts.exact
+        ? new RegExp(`(?:^${v4}$)|(?:^${v6}$)`)
+        : new RegExp(`(?:${v4})|(?:${v6})`, 'g'));
+
+    ip.v4 = opts =>
+      opts && opts.exact ? new RegExp(`^${v4}$`) : new RegExp(v4, 'g');
+
+    ip.v6 = opts =>
+      opts && opts.exact ? new RegExp(`^${v6}$`) : new RegExp(v6, 'g');
+  });
 
   var rules = [
     'ac',
@@ -17723,10 +17899,10 @@
     //
 
     internals.findRule = function(domain) {
-      var punyDomain = require$$4.toASCII(domain);
+      var punyDomain = require$$5.toASCII(domain);
       return internals.rules.reduce(function(memo, rule) {
         if (rule.punySuffix === -1) {
-          rule.punySuffix = require$$4.toASCII(rule.suffix);
+          rule.punySuffix = require$$5.toASCII(rule.suffix);
         }
 
         if (
@@ -17782,7 +17958,7 @@
 
     internals.validate = function(input) {
       // Before we can validate we need to take care of IDNs with unicode chars.
-      var ascii = require$$4.toASCII(input);
+      var ascii = require$$5.toASCII(input);
 
       if (ascii.length < 1) {
         return 'DOMAIN_TOO_SHORT';
@@ -17869,11 +18045,11 @@
         }
 
         if (parsed.domain) {
-          parsed.domain = require$$4.toASCII(parsed.domain);
+          parsed.domain = require$$5.toASCII(parsed.domain);
         }
 
         if (parsed.subdomain) {
-          parsed.subdomain = require$$4.toASCII(parsed.subdomain);
+          parsed.subdomain = require$$5.toASCII(parsed.subdomain);
         }
 
         return parsed;
@@ -18309,16 +18485,19 @@
   };
 
   // generated by genversion
-  var version$2 = '2.5.0';
+  var version$2 = '3.0.1';
 
   var urlParse$1 = require$$0.parse;
+  var ipRegex$1 = ipRegex({
+    exact: true
+  });
   var Store$2 = store.Store;
   var MemoryCookieStore$1 = memstore.MemoryCookieStore;
   var pathMatch$2 = pathMatch_1.pathMatch;
   var punycode;
 
   try {
-    punycode = require$$4;
+    punycode = require$$5;
   } catch (e) {
     console.warn(
       "tough-cookie: can't load punycode; won't use punycode for domain normalization"
@@ -18645,7 +18824,7 @@
 
     /* "* The string is a host name (i.e., not an IP address)." */
 
-    if (net.isIP(str)) {
+    if (ipRegex$1.test(str)) {
       return false;
     }
     /* "* The domain string is a suffix of the string" */
@@ -19389,14 +19568,21 @@
       loose = options.loose;
     } // S5.3 step 1
 
-    if (!(cookie instanceof Cookie)) {
+    if (typeof cookie === 'string' || cookie instanceof String) {
       cookie = Cookie.parse(cookie, {
         loose: loose
       });
-    }
 
-    if (!cookie) {
-      err = new Error('Cookie failed to parse');
+      if (!cookie) {
+        err = new Error('Cookie failed to parse');
+        return cb(options.ignoreError ? null : err);
+      }
+    } else if (!(cookie instanceof Cookie)) {
+      // If you're seeing this error, and are passing in a Cookie object,
+      // it *might* be a Cookie object from another loaded version of tough-cookie.
+      err = new Error(
+        'First argument to setCookie must be a Cookie object or string'
+      );
       return cb(options.ignoreError ? null : err);
     } // S5.3 step 2
 
