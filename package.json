@@ -44,6 +44,8 @@
   "homepage": "https://github.com/CognosExt/jcognos#readme",
   "devDependencies": {
     "@babel/core": "^7.5.4",
+    "@babel/plugin-transform-arrow-functions": "^7.2.0",
+    "@babel/plugin-transform-shorthand-properties": "^7.2.0",
     "@babel/preset-env": "^7.5.4",
     "@babel/register": "^7.4.4",
     "@wdio/cli": "^5.11.0",
@@ -77,6 +79,7 @@
     "@wdio/spec-reporter": "^5.11.0",
     "axios": "^0.18.1",
     "axios-cookiejar-support": "^0.4.1",
+    "core-js": "^2.6.9",
     "https": "^1.0.0"
   }
 }
