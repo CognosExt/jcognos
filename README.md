@@ -66,27 +66,31 @@ You do not need to do this if you use jcognos in nodejs or in cordova.
     -   [reset](#reset)
     -   [getCurrentThemeSettings](#getcurrentthemesettings)
     -   [getCognosVersion](#getcognosversion)
+    -   [setKey](#setkey)
+        -   [Parameters](#parameters-2)
+    -   [getKeys](#getkeys)
     -   [\_getPublicFolderId](#_getpublicfolderid)
     -   [listRootFolder](#listrootfolder)
     -   [listPublicFolders](#listpublicfolders)
     -   [listFolderById](#listfolderbyid)
-        -   [Parameters](#parameters-2)
-    -   [getFolderDetails](#getfolderdetails)
         -   [Parameters](#parameters-3)
-    -   [addFolder](#addfolder)
+    -   [getFolderDetails](#getfolderdetails)
         -   [Parameters](#parameters-4)
-    -   [deleteFolder](#deletefolder)
+    -   [addFolder](#addfolder)
         -   [Parameters](#parameters-5)
-    -   [uploadExtension](#uploadextension)
+    -   [deleteFolder](#deletefolder)
         -   [Parameters](#parameters-6)
+    -   [uploadExtension](#uploadextension)
+        -   [Parameters](#parameters-7)
     -   [loggedin](#loggedin)
 -   [getCognos](#getcognos)
-    -   [Parameters](#parameters-7)
+    -   [Parameters](#parameters-8)
 -   [CognosObject](#cognosobject)
     -   [Properties](#properties)
 -   [NameSpace](#namespace)
     -   [Properties](#properties-1)
 -   [cRequest](#crequest)
+-   [CAF](#caf)
 -   [isStandardBrowserEnv](#isstandardbrowserenv)
 -   [isNode](#isnode)
 
@@ -160,6 +164,24 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 getCognosVersion - Fetches Cognos Product Version
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the version number
+
+### setKey
+
+setKey - Sets Configuration Key
+
+#### Parameters
+
+-   `inkey`  
+-   `value` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Value of the key
+-   `key` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of the key
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the key value
+
+### getKeys
+
+getKey - Fetches Configuration Keys
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the key value
 
 ### \_getPublicFolderId
 
@@ -281,6 +303,10 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 ## cRequest
 
 Local Variable that holds the single CognosRequest instance
+
+## CAF
+
+CAF - internal security token that is added in a Cookie for wite actions (eg. PUT )
 
 ## isStandardBrowserEnv
 
