@@ -21,19 +21,25 @@ describe('Logon Logoff with success', function() {
   afterEach(function() {
     // Somehow in WebRunner (wdio) cognos is not set on time to logout.
     if (typeof cognos !== 'undefined') {
-      return cognos.logoff().then(function(folder) {
-        console.log('logged off');
-        assert.equal(cognos.loggedin, false, 'Logged off');
-      });
+      return cognos
+        .logoff()
+        .then(function(folder) {
+          assert.equal(cognos.loggedin, false, 'Logged off');
+        })
+        .catch(function(err) {
+          console.log('Error logging of caught');
+        });
     }
   });
-  it('Succesful login without namespace', done => {
-    getCognos(url, debug)
+  it('Succesful login without namespace', function() {
+    return getCognos(url, debug)
       .then(function(lcognos) {
         cognos = lcognos;
         assert.isOk(lcognos, 'Succesfully created Cognos');
         if (!cognos.loggedin) {
           return lcognos.login(user, password, namespace);
+        } else {
+          return lcognos;
         }
       })
       .then(function(mycognos) {
@@ -56,28 +62,29 @@ describe('Logon Logoff with success', function() {
           err,
           'Network Error. ' //note the space!
         );
-      })
-      .then(done, done);
+      });
   }),
-    it('Successful login with namespace', done => {
-      getCognos(url, debug)
+    it('Successful login with namespace', function() {
+      return getCognos(url, debug)
         .then(function(lcognos) {
           cognos = lcognos;
           assert.isOk(lcognos, 'Succesfully created Cognos');
           if (!cognos.loggedin) {
             return lcognos.login(user, password, namespace);
           }
+          return lcognos;
         })
         .then(function(mycognos) {
           assert.isOk(true, 'Succesfully logged in');
+          return mycognos.logoff().then(function() {
+            return mycognos;
+          });
         })
         .catch(function(err) {
-          console.log('Error is', err);
           assert.equal(
             err,
             'Network Error. ' //note the space!
           );
-        })
-        .then(done, done);
+        });
     });
 });

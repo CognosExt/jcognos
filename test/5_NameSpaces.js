@@ -16,12 +16,11 @@ var cognos;
 describe('jcognos NameSpaces Tests', function() {
   beforeEach(function() {
     this.timeout(0);
-    var result = getCognos(url, debug).then(function(lcognos) {
+    return getCognos(url, debug).then(function(lcognos) {
       assert.isOk(lcognos, 'Succesfully created Cognos');
       cognos = lcognos;
       return lcognos;
     });
-    return result;
   });
   it('Check if default namespace is in namespaces', done => {
     var passed = false;

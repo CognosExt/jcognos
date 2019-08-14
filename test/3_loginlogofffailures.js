@@ -18,38 +18,37 @@ var assert = chai.assert;
 var cognos;
 
 describe('Logon Logoff with errors', function() {
-  it('Should throw an error if page does not exist', done => {
-    getCognos(url + 'pagedoesnotexist', debug)
+  it('Should throw an error if page does not exist', function() {
+    return getCognos(url + 'pagedoesnotexist', debug)
       .then(function(lcognos) {
         assert.fail('Error 404', 'No Error was thrown');
+        return Promise.resolve();
       })
       .catch(function(err) {
-        assert.equal(
+        return assert.equal(
           err,
           'Request failed with status code 404' //note the space!
         );
-      })
-      .then(done, done);
+      });
   }),
-    it('Should have useful error messages when login fails', done => {
-      getCognos(url, debug).then(function(lcognos) {
+    it('Should have useful error messages when login fails', function() {
+      return getCognos(url, debug).then(function(lcognos) {
         cognos = lcognos;
         assert.isOk(lcognos, 'Succesfully created Cognos');
 
-        if (!cognos.loggedin) {
-          lcognos
-            .login('SOMEONE', 'WRONGPASSWORD', namespace)
-            .then(function(someresult) {
-              //dummy code
-            })
-            .catch(function(err) {
-              assert.equal(
-                err,
-                'The provided credentials are invalid. Please type your credentials for authentication. ' //note the space!
-              );
-            })
-            .then(done, done);
-        }
+        return lcognos
+          .login('SOMEONE', 'WRONGPASSWORD', namespace)
+          .then(function(someresult) {
+            //dummy code
+            return Promise.resolve();
+          })
+          .catch(function(err) {
+            assert.equal(
+              err,
+              'The provided credentials are invalid. Please type your credentials for authentication. ' //note the space!
+            );
+            return Promise.resolve();
+          });
       });
     });
 });

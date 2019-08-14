@@ -90,7 +90,6 @@ You do not need to do this if you use jcognos in nodejs or in cordova.
 -   [NameSpace](#namespace)
     -   [Properties](#properties-1)
 -   [cRequest](#crequest)
--   [CAF](#caf)
 -   [isStandardBrowserEnv](#isstandardbrowserenv)
 -   [isNode](#isnode)
 
@@ -303,10 +302,6 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 ## cRequest
 
 Local Variable that holds the single CognosRequest instance
-
-## CAF
-
-CAF - internal security token that is added in a Cookie for wite actions (eg. PUT )
 
 ## isStandardBrowserEnv
 
