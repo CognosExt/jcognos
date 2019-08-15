@@ -1,6 +1,27 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [2.1.0](https://github.com/CognosExt/jcognos/compare/v2.0.1...v2.1.0) (2019-08-15)
+
+
+### Build System
+
+* Updated build dependencies ([5415a21](https://github.com/CognosExt/jcognos/commit/5415a21))
+* Updated packages for build and test ([90bdc82](https://github.com/CognosExt/jcognos/commit/90bdc82))
+* Updated testing dependencies ([5e82bc5](https://github.com/CognosExt/jcognos/commit/5e82bc5))
+
+
+### Features
+
+* Add functions to manager configuration settings ([867a7f7](https://github.com/CognosExt/jcognos/commit/867a7f7))
+
+
+### Tests
+
+* More stable testing with promises ([85ed66b](https://github.com/CognosExt/jcognos/commit/85ed66b))
+
+
 
 ## [2.0.1](https://github.com/CognosExt/jcognos/compare/v2.0.0...v2.0.1) (2019-07-16)
 
