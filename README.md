@@ -66,28 +66,30 @@ You do not need to do this if you use jcognos in nodejs or in cordova.
     -   [reset](#reset)
     -   [getCurrentThemeSettings](#getcurrentthemesettings)
     -   [getCognosVersion](#getcognosversion)
-    -   [setKey](#setkey)
+    -   [setConfig](#setconfig)
         -   [Parameters](#parameters-2)
-    -   [getKeys](#getkeys)
+    -   [getConfig](#getconfig)
+    -   [getConfigKey](#getconfigkey)
+        -   [Parameters](#parameters-3)
     -   [\_getPublicFolderId](#_getpublicfolderid)
     -   [listRootFolder](#listrootfolder)
     -   [listPublicFolders](#listpublicfolders)
     -   [listFolderById](#listfolderbyid)
-        -   [Parameters](#parameters-3)
-    -   [getFolderDetails](#getfolderdetails)
         -   [Parameters](#parameters-4)
-    -   [addFolder](#addfolder)
+    -   [getFolderDetails](#getfolderdetails)
         -   [Parameters](#parameters-5)
-    -   [deleteFolder](#deletefolder)
+    -   [addFolder](#addfolder)
         -   [Parameters](#parameters-6)
-    -   [uploadExtension](#uploadextension)
+    -   [deleteFolder](#deletefolder)
         -   [Parameters](#parameters-7)
+    -   [uploadExtension](#uploadextension)
+        -   [Parameters](#parameters-8)
     -   [loggedin](#loggedin)
 -   [getCognos](#getcognos)
-    -   [Parameters](#parameters-8)
--   [CognosObject](#cognosobject)
-    -   [Properties](#properties)
+    -   [Parameters](#parameters-9)
 -   [NameSpace](#namespace)
+    -   [Properties](#properties)
+-   [CognosObject](#cognosobject)
     -   [Properties](#properties-1)
 -   [cRequest](#crequest)
 -   [isStandardBrowserEnv](#isstandardbrowserenv)
@@ -164,9 +166,9 @@ getCognosVersion - Fetches Cognos Product Version
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the version number
 
-### setKey
+### setConfig
 
-setKey - Sets Configuration Key
+setConfig - Sets Configuration Key
 
 #### Parameters
 
@@ -176,9 +178,19 @@ setKey - Sets Configuration Key
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the key value
 
-### getKeys
+### getConfig
 
-getKey - Fetches Configuration Keys
+getConfig - Fetches Configuration Keys
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the full config
+
+### getConfigKey
+
+getConfigKey - Fetches Configuration Keys
+
+#### Parameters
+
+-   `key`  
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** The promise resolves to a string that holds the key value
 
@@ -280,15 +292,6 @@ at any time.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** a promise that will return the jCognos object
 
-## CognosObject
-
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
-
-### Properties
-
--   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object Id
--   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of object.
-
 ## NameSpace
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
@@ -298,6 +301,15 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 -   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The id of the namespace
 -   `value` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Displayname of the NameSpace
 -   `isDefault` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Set to true if this is the default namespace
+
+## CognosObject
+
+Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
+
+### Properties
+
+-   `id` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Cognos Object Id
+-   `name` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Name of object.
 
 ## cRequest
 

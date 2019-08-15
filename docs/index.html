@@ -104,15 +104,21 @@
                       </a></li>
                       
                       <li><a
-                        href='#cognossetkey'
+                        href='#cognossetconfig'
                         class='regular pre-open'>
-                        #setKey
+                        #setConfig
                       </a></li>
                       
                       <li><a
-                        href='#cognosgetkeys'
+                        href='#cognosgetconfig'
                         class='regular pre-open'>
-                        #getKeys
+                        #getConfig
+                      </a></li>
+                      
+                      <li><a
+                        href='#cognosgetconfigkey'
+                        class='regular pre-open'>
+                        #getConfigKey
                       </a></li>
                       
                       <li><a
@@ -183,9 +189,9 @@
               
                 
                 <li><a
-                  href='#cognosobject'
+                  href='#namespace'
                   class="">
-                  CognosObject
+                  NameSpace
                   
                 </a>
                 
@@ -193,9 +199,9 @@
               
                 
                 <li><a
-                  href='#namespace'
+                  href='#cognosobject'
                   class="">
-                  NameSpace
+                  CognosObject
                   
                 </a>
                 
@@ -899,11 +905,11 @@ retrieve the Cognos instance.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='cognossetkey'>
+    <div class='border-bottom' id='cognossetconfig'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>setKey(inkey, value, key)</span>
+            <span class='code strong strong truncate'>setConfig(inkey, value, key)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -911,9 +917,9 @@ retrieve the Cognos instance.</p>
 
   
 
-  <p>setKey - Sets Configuration Key</p>
+  <p>setConfig - Sets Configuration Key</p>
 
-    <div class='pre p1 fill-light mt0'>setKey(inkey: any, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+    <div class='pre p1 fill-light mt0'>setConfig(inkey: any, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, key: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
   
   
 
@@ -985,11 +991,11 @@ retrieve the Cognos instance.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='cognosgetkeys'>
+    <div class='border-bottom' id='cognosgetconfig'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>getKeys()</span>
+            <span class='code strong strong truncate'>getConfig()</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -997,19 +1003,87 @@ retrieve the Cognos instance.</p>
 
   
 
-  <p>getKey - Fetches Configuration Keys</p>
+  <p>getConfig - Fetches Configuration Keys</p>
 
-    <div class='pre p1 fill-light mt0'>getKeys(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
-  
-  
-
-  
-  
-  
-  
+    <div class='pre p1 fill-light mt0'>getConfig(): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
   
   
 
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></code>:
+        The promise resolves to a string that holds the full config
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='cognosgetconfigkey'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>getConfigKey(key)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>getConfigKey - Fetches Configuration Keys</p>
+
+    <div class='pre p1 fill-light mt0'>getConfigKey(key: any): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>key</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
   
 
   
@@ -1758,77 +1832,6 @@ at any time.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='cognosobject'>
-      CognosObject
-    </h3>
-    
-    
-  </div>
-  
-
-  
-    <div class='pre p1 fill-light mt0'>CognosObject</div>
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Properties</div>
-    <div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>id</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
-          : Cognos Object Id
-
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
-          : Name of object.
-
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='namespace'>
       NameSpace
     </h3>
@@ -1877,6 +1880,77 @@ at any time.</p>
         <div class='space-bottom0'>
           <span class='code bold'>isDefault</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">Boolean</a>)</code>
           : Set to true if this is the default namespace
+
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='cognosobject'>
+      CognosObject
+    </h3>
+    
+    
+  </div>
+  
+
+  
+    <div class='pre p1 fill-light mt0'>CognosObject</div>
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Properties</div>
+    <div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>id</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+          : Cognos Object Id
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+          : Name of object.
 
           
         </div>

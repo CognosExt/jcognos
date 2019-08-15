@@ -30,7 +30,8 @@ exports.config = {
     './test/2_loginlogoff.js',
     './test/3_loginlogofffailures.js',
     './test/4_Reset.js',
-    './test/5_NameSpaces.js'
+    './test/5_NameSpaces.js',
+    './test/6_ConfigurationKeys.js'
   ],
   exclude: [],
   maxInstances: 2,

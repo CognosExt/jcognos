@@ -5,6 +5,7 @@ import axiosCookieJarSupport from 'axios-cookiejar-support';
 
 // I dont think we should need this by now
 import tough from 'tough-cookie';
+import { isNull } from 'util';
 
 /**
  * Local Variable that holds the single CognosRequest instance
@@ -221,12 +222,31 @@ class CognosRequest {
         }
         return me;
       });
+    me.log('Login function made it until the end');
     return result;
+  }
+
+  setCAF(CAF) {
+    var cookieString = 'caf=' + CAF + ';';
+    var cookie = tough.parse(cookieString, { loose: false });
+    cookie.key = 'caf';
+    cookie.value = CAF;
+    cookie.maxAge = 'Infinity';
+    cookie.path = '/ibmcognos/bi/v1';
+    return this.cookies.setCookie(cookie, this.url, { loose: false }, function(
+      err,
+      mycookie
+    ) {});
   }
 
   get(path) {
     var me = this;
     var headers = {};
+    var cookieJar = new tough.CookieJar();
+    if (!isNull(this.cookies)) {
+      cookieJar = this.cookies;
+    }
+
     me.log('get URL:    ' + me.url + path);
     if (!Utils.isNode) {
       document.cookie = 'XSRF-TOKEN=' + me.token;
@@ -245,7 +265,7 @@ class CognosRequest {
       })
       .then(function(response) {
         if (typeof response !== 'undefined') {
-          me.log('Get Response Data', response.data);
+          //     me.log('Get Response Data', response.data);
           return response.data;
         }
         return '';
@@ -272,7 +292,6 @@ class CognosRequest {
 
     headers['X-Requested-With'] = 'XMLHttpRequest';
     headers['Content-Type'] = 'application/json; charset=UTF-8';
-
     var result = this.axios
       .post(me.url + path, paramsJSON, {
         headers: headers,
@@ -332,7 +351,7 @@ class CognosRequest {
     headers['Content-Type'] = 'application/json; charset=UTF-8';
 
     me.log('params: ' + paramsJSON);
-    var result = this.axios
+    return this.axios
       .delete(me.url + path, {
         data: paramsJSON,
         headers: headers,
@@ -387,7 +406,6 @@ class CognosRequest {
           throw errormessage;
         }
       });
-    return result;
   }
 
   put(path, filename = false, data = {}) {
@@ -400,11 +418,10 @@ class CognosRequest {
       return false;
     }
     var headers = {};
-    if (me.token) {
-      me.log('Token: ' + me.token);
+    if (!Utils.isNode) {
+      document.cookie = 'XSRF-TOKEN=' + me.token;
+    } else if (me.token) {
       headers['X-XSRF-TOKEN'] = me.token;
-      // This is a very tricky extra bonus that you only have to add when using PUT
-      headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
     }
 
     headers['X-Requested-With'] = 'XMLHttpRequest';
@@ -421,21 +438,17 @@ class CognosRequest {
       stream = fs.createReadStream(filename);
       stream.on('error', console.log);
     } else {
-      headers['Content-Type'] = 'application/json';
+      headers['Content-Type'] = 'application/json; charset=UTF-8';
       stream = data;
     }
 
     var axiosparams = {
-      method: 'PUT',
-      url: url,
       headers: headers,
       jar: me.cookies,
-      withCredentials: true,
-      data: stream
+      withCredentials: true
     };
-
-    var result = me
-      .axios(axiosparams)
+    return this.axios
+      .put(url, stream, axiosparams)
       .then(function(response) {
         me.log('CognosRequest : Success Putting ');
         return response.data;
@@ -463,8 +476,6 @@ class CognosRequest {
           throw errormessage;
         }
       });
-
-    return result;
   }
 
   uploadfilepart(path, filename) {

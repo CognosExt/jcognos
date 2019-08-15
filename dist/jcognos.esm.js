@@ -12,6 +12,7 @@ import axios from 'axios';
 import https from 'https';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import tough from 'tough-cookie';
+import { isNull } from 'util';
 import minimatch from 'minimatch';
 
 function _typeof(obj) {
@@ -53,6 +54,21 @@ function _createClass(Constructor, protoProps, staticProps) {
   if (protoProps) _defineProperties(Constructor.prototype, protoProps);
   if (staticProps) _defineProperties(Constructor, staticProps);
   return Constructor;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
 }
 
 var Utils = {
@@ -299,7 +315,29 @@ var CognosRequest = (function() {
 
             return me;
           });
+        me.log('Login function made it until the end');
         return result;
+      }
+    },
+    {
+      key: 'setCAF',
+      value: function setCAF(CAF) {
+        var cookieString = 'caf=' + CAF + ';';
+        var cookie = tough.parse(cookieString, {
+          loose: false
+        });
+        cookie.key = 'caf';
+        cookie.value = CAF;
+        cookie.maxAge = 'Infinity';
+        cookie.path = '/ibmcognos/bi/v1';
+        return this.cookies.setCookie(
+          cookie,
+          this.url,
+          {
+            loose: false
+          },
+          function(err, mycookie) {}
+        );
       }
     },
     {
@@ -307,6 +345,12 @@ var CognosRequest = (function() {
       value: function get(path) {
         var me = this;
         var headers = {};
+        var cookieJar = new tough.CookieJar();
+
+        if (!isNull(this.cookies)) {
+          cookieJar = this.cookies;
+        }
+
         me.log('get URL:    ' + me.url + path);
 
         if (!Utils.isNode) {
@@ -325,7 +369,6 @@ var CognosRequest = (function() {
           })
           .then(function(response) {
             if (typeof response !== 'undefined') {
-              me.log('Get Response Data', response.data);
               return response.data;
             }
 
@@ -420,7 +463,7 @@ var CognosRequest = (function() {
         headers['X-Requested-With'] = 'XMLHttpRequest';
         headers['Content-Type'] = 'application/json; charset=UTF-8';
         me.log('params: ' + paramsJSON);
-        var result = this.axios['delete'](me.url + path, {
+        return this.axios['delete'](me.url + path, {
           data: paramsJSON,
           headers: headers,
           jar: me.cookies,
@@ -473,7 +516,6 @@ var CognosRequest = (function() {
               throw errormessage;
             }
           });
-        return result;
       }
     },
     {
@@ -499,10 +541,10 @@ var CognosRequest = (function() {
 
         var headers = {};
 
-        if (me.token) {
-          me.log('Token: ' + me.token);
+        if (!Utils.isNode) {
+          document.cookie = 'XSRF-TOKEN=' + me.token;
+        } else if (me.token) {
           headers['X-XSRF-TOKEN'] = me.token;
-          headers['Cookie'] = 'XSRF-TOKEN=' + me.token;
         }
 
         headers['X-Requested-With'] = 'XMLHttpRequest';
@@ -516,27 +558,23 @@ var CognosRequest = (function() {
           me.log('About to upload extension');
           me.log('File: ' + filename);
           me.log('To:', url);
-          var result = false;
 
           var fs = require('fs');
 
           stream = fs.createReadStream(filename);
           stream.on('error', console.log);
         } else {
-          headers['Content-Type'] = 'application/json';
+          headers['Content-Type'] = 'application/json; charset=UTF-8';
           stream = data;
         }
 
         var axiosparams = {
-          method: 'PUT',
-          url: url,
           headers: headers,
           jar: me.cookies,
-          withCredentials: true,
-          data: stream
+          withCredentials: true
         };
-        var result = me
-          .axios(axiosparams)
+        return this.axios
+          .put(url, stream, axiosparams)
           .then(function(response) {
             me.log('CognosRequest : Success Putting ');
             return response.data;
@@ -565,7 +603,6 @@ var CognosRequest = (function() {
               throw errormessage;
             }
           });
-        return result;
       }
     },
     {
@@ -836,7 +873,7 @@ var Cognos = (function() {
         };
         this.loginrequest = me.requester
           .post('bi/v1/login', params)
-          .then(function() {
+          .then(function(response) {
             me.loggedin = true;
             me.username = user;
             me.password = password;
@@ -858,7 +895,16 @@ var Cognos = (function() {
                   return prefs;
                 })
             );
-            return Promise.resolve(Promise.all([capabilities, preferences]));
+            var CAF = Promise.resolve(
+              me.requester.get('bi').then(function(html) {
+                var last = html.split('cafContextId":"').pop();
+                var CAF = last.split('"')[0];
+                return me.requester.setCAF(CAF);
+              })
+            );
+            return Promise.resolve(
+              Promise.all([capabilities, preferences, CAF])
+            );
           })
           .then(function() {
             return me;
@@ -878,7 +924,7 @@ var Cognos = (function() {
         var me = this;
 
         if (_typeof(me.requester) !== undefined) {
-          var result = me.requester['delete']('bi/v1/login')
+          return me.requester['delete']('bi/v1/login')
             .then(function(body) {
               me.loggedin = false;
               return body;
@@ -886,7 +932,6 @@ var Cognos = (function() {
             ['catch'](function(err) {
               me.log('Cognos: Error when logging off.', err);
             });
-          return result;
         } else {
           me.loggedin = false;
           return Promise.resolve(true);
@@ -1023,38 +1068,76 @@ var Cognos = (function() {
       }
     },
     {
+      key: 'setConfig',
+      value: function setConfig(inkey, value) {
+        var me = this;
+        var url = 'bi/v1/configuration/keys/' + inkey;
+        var url = 'bi/v1/configuration/keys/global';
+        return me.requester
+          .put(url, false, _defineProperty({}, inkey, value))
+          .then(function(version) {
+            me.productVersion = version['Glass.productVersion'];
+            me.log('saved key ' + inkey + ' with value ' + value);
+
+            var returnvalue = _defineProperty({}, inkey, value);
+
+            return returnvalue;
+          })
+          ['catch'](function(err) {
+            me.error('Error while setting key ' + inkey, err);
+            throw err;
+          });
+      }
+    },
+    {
+      key: 'getConfig',
+      value: function getConfig() {
+        var me = this;
+        var url = 'bi/v1/configuration/keys';
+        return me.requester
+          .get(url)
+          .then(function(keys) {
+            return keys;
+          })
+          ['catch'](function(err) {
+            me.error('Error while fetching Cognos configuration keys.', err);
+            throw err;
+          });
+      }
+    },
+    {
+      key: 'getConfigKey',
+      value: function getConfigKey(key) {
+        var me = this;
+        return me
+          .getConfig()
+          .then(function(keys) {
+            return keys.global[key];
+          })
+          ['catch'](function(err) {
+            me.error('Error while fetching Cognos configuration keys.', err);
+            throw err;
+          });
+      }
+    },
+    {
       key: '_getPublicFolderId',
       value: function _getPublicFolderId() {
         var me = this;
         var url = '';
         return this.getCognosVersion().then(function(version) {
-          if (version.substr(0, 4) == '11.1') {
-            url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
-            me.log('We are version 11. Going to fetch: ' + url);
-          } else {
-            url = 'bi/v1/objects/.public_folders?fields=permissions';
-          }
-
-          return Promise.resolve(
-            me.requester
-              .get(url)
-              .then(function(folders) {
-                var id;
-
-                if (version.substr(0, 4) == '11.1') {
-                  folders = eval('(' + folders + ')');
-                  id = folders.items[0].entry[2].cm$storeID;
-                } else {
-                  id = folders.data[0].id;
-                }
-
-                return id;
-              })
-              ['catch'](function(err) {
-                me.error('There was an error fetching the folder id', err);
-                throw err;
-              })
-          );
+          url = 'bi/v1/objects/.public_folders?fields=permissions';
+          return me.requester
+            .get(url)
+            .then(function(folders) {
+              var id;
+              id = folders.data[0].id;
+              return id;
+            })
+            ['catch'](function(err) {
+              me.error('There was an error fetching the folder id', err);
+              throw err;
+            });
         });
       }
     },
@@ -1078,20 +1161,18 @@ var Cognos = (function() {
             return rootfolders;
           })
           .then(function() {
-            return Promise.resolve(
-              me._getPublicFolderId().then(function(id) {
-                me.log('Got the Public Folders');
+            return me._getPublicFolderId().then(function(id) {
+              me.log('Got the Public Folders');
 
-                if (typeof id !== 'undefined') {
-                  rootfolders.push({
-                    id: id,
-                    name: 'Team Content'
-                  });
-                }
+              if (typeof id !== 'undefined') {
+                rootfolders.push({
+                  id: id,
+                  name: 'Team Content'
+                });
+              }
 
-                return rootfolders;
-              })
-            );
+              return rootfolders;
+            });
           })
           ['catch'](function(err) {
             me.error('CognosRequest : Error in listRootFolder', err);
@@ -1230,7 +1311,7 @@ var Cognos = (function() {
           defaultName: name,
           type: 'folder'
         };
-        var result = me.requester
+        return me.requester
           .post('bi/v1/objects/' + parentid + '/items', params, true)
           .then(function(response) {
             me.log('created folder');
@@ -1259,8 +1340,6 @@ var Cognos = (function() {
                 throw err;
               });
           });
-        me.log('Maybe going to create folder');
-        return result;
       }
     },
     {
@@ -1279,7 +1358,7 @@ var Cognos = (function() {
           force: force,
           recursive: recursive
         };
-        var result = me.requester['delete']('bi/v1/objects/' + id, params, true)
+        return me.requester['delete']('bi/v1/objects/' + id, params, true)
           .then(function() {
             me.log('Deleted folder');
             return true;
@@ -1297,8 +1376,6 @@ var Cognos = (function() {
                 throw errtwo;
               });
           });
-        me.log('Returning Delete Promise');
-        return result;
       }
     },
     {

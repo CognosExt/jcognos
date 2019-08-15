@@ -33,7 +33,6 @@ class Cognos {
     this.timeout = timeout;
     this.productVersion = '';
     this.ignoreInvalidCertificates;
-
     /**
      *  capabilities - returns the Cognos User Capabilities object
      *
@@ -133,7 +132,7 @@ class Cognos {
 
     this.loginrequest = me.requester
       .post('bi/v1/login', params)
-      .then(function() {
+      .then(function(response) {
         me.loggedin = true;
         me.username = user;
         me.password = password;
@@ -151,8 +150,15 @@ class Cognos {
             return prefs;
           })
         );
+        var CAF = Promise.resolve(
+          me.requester.get('bi').then(function(html) {
+            var last = html.split('cafContextId":"').pop();
+            var CAF = last.split('"')[0];
+            return me.requester.setCAF(CAF);
+          })
+        );
 
-        return Promise.resolve(Promise.all([capabilities, preferences]));
+        return Promise.resolve(Promise.all([capabilities, preferences, CAF]));
       })
       .then(function() {
         return me;
@@ -175,7 +181,7 @@ class Cognos {
   logoff() {
     var me = this;
     if (typeof me.requester !== undefined) {
-      var result = me.requester
+      return me.requester
         .delete('bi/v1/login')
         .then(function(body) {
           me.loggedin = false;
@@ -184,7 +190,6 @@ class Cognos {
         .catch(function(err) {
           me.log('Cognos: Error when logging off.', err);
         });
-      return result;
     } else {
       me.loggedin = false;
       return Promise.resolve(true);
@@ -326,6 +331,68 @@ class Cognos {
   }
 
   /**
+   * setConfig - Sets Configuration Key
+   *
+   * @param {String} key Name of the key
+   * @param {String} value Value of the key
+   * @return {Promise}  The promise resolves to a string that holds the key value
+   */
+  setConfig(inkey, value) {
+    var me = this;
+    var url = 'bi/v1/configuration/keys/' + inkey;
+    var url = 'bi/v1/configuration/keys/global';
+    return me.requester
+      .put(url, false, { [inkey]: value })
+      .then(function(version) {
+        me.productVersion = version['Glass.productVersion'];
+        me.log('saved key ' + inkey + ' with value ' + value);
+        var returnvalue = { [inkey]: value };
+        return returnvalue;
+      })
+      .catch(function(err) {
+        me.error('Error while setting key ' + inkey, err);
+        throw err;
+      });
+  }
+
+  /**
+   * getConfig - Fetches Configuration Keys
+   *
+   * @return {Promise}  The promise resolves to a string that holds the full config
+   */
+  getConfig() {
+    var me = this;
+    var url = 'bi/v1/configuration/keys';
+    return me.requester
+      .get(url)
+      .then(function(keys) {
+        return keys;
+      })
+      .catch(function(err) {
+        me.error('Error while fetching Cognos configuration keys.', err);
+        throw err;
+      });
+  }
+
+  /**
+   * getConfigKey - Fetches Configuration Keys
+   *
+   * @return {Promise}  The promise resolves to a string that holds the key value
+   */
+  getConfigKey(key) {
+    var me = this;
+    return me
+      .getConfig()
+      .then(function(keys) {
+        return keys.global[key];
+      })
+      .catch(function(err) {
+        me.error('Error while fetching Cognos configuration keys.', err);
+        throw err;
+      });
+  }
+
+  /**
    * _getPublicFolderId - Internal function to retrieve the ObjectId of the public folders
    *
    * @return {Promise} Promise that results in an id as {String}.
@@ -335,35 +402,35 @@ class Cognos {
     var url = '';
 
     return this.getCognosVersion().then(function(version) {
-      if (version.substr(0, 4) == '11.1') {
-        // Cognos 10 & 11 (but might be depricated)
-        // the dojo= is added to make the result json. the alternative is xml.
-        url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
-        me.log('We are version 11. Going to fetch: ' + url);
-      } else {
-        url = 'bi/v1/objects/.public_folders?fields=permissions';
-      }
-      return Promise.resolve(
-        me.requester
-          .get(url)
-          .then(function(folders) {
-            var id;
-            if (version.substr(0, 4) == '11.1') {
-              // This is pure evil. It is only there because JSON.parse breaks on the json returned
-              // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
-              //JSON.parse(folders);
-              folders = eval('(' + folders + ')');
-              id = folders.items[0].entry[2].cm$storeID;
-            } else {
-              id = folders.data[0].id;
-            }
-            return id;
-          })
-          .catch(function(err) {
-            me.error('There was an error fetching the folder id', err);
-            throw err;
-          })
-      );
+      //  if (version.substr(0, 4) == '11.1') {
+      // Cognos 10 & 11 (but might be depricated)
+      // the dojo= is added to make the result json. the alternative is xml.
+      //    url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
+      //    me.log('We are version 11. Going to fetch: ' + url);
+      //  } else {
+      url = 'bi/v1/objects/.public_folders?fields=permissions';
+      //  }
+      //    return Promise.resolve(
+      return me.requester
+        .get(url)
+        .then(function(folders) {
+          var id;
+          //        if (version.substr(0, 4) == '11.1') {
+          // This is pure evil. It is only there because JSON.parse breaks on the json returned
+          // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
+          //JSON.parse(folders);
+          //        folders = eval('(' + folders + ')');
+          //      id = folders.items[0].entry[2].cm$storeID;
+          //  } else {
+          id = folders.data[0].id;
+          //}
+          return id;
+        })
+        .catch(function(err) {
+          me.error('There was an error fetching the folder id', err);
+          throw err;
+        });
+      //      );
     });
   }
 
@@ -388,18 +455,16 @@ class Cognos {
         return rootfolders;
       })
       .then(function() {
-        return Promise.resolve(
-          me._getPublicFolderId().then(function(id) {
-            me.log('Got the Public Folders');
-            if (typeof id !== 'undefined') {
-              rootfolders.push({
-                id: id,
-                name: 'Team Content'
-              });
-            }
-            return rootfolders;
-          })
-        );
+        return me._getPublicFolderId().then(function(id) {
+          me.log('Got the Public Folders');
+          if (typeof id !== 'undefined') {
+            rootfolders.push({
+              id: id,
+              name: 'Team Content'
+            });
+          }
+          return rootfolders;
+        });
       })
       .catch(function(err) {
         me.error('CognosRequest : Error in listRootFolder', err);
@@ -549,7 +614,7 @@ class Cognos {
       type: 'folder'
     };
 
-    var result = me.requester
+    return me.requester
       .post('bi/v1/objects/' + parentid + '/items', params, true)
       .then(function(response) {
         me.log('created folder');
@@ -577,9 +642,6 @@ class Cognos {
             throw err;
           });
       });
-
-    me.log('Maybe going to create folder');
-    return result;
   }
 
   /**
@@ -597,7 +659,7 @@ class Cognos {
       recursive: recursive
     };
 
-    var result = me.requester
+    return me.requester
       .delete('bi/v1/objects/' + id, params, true)
       .then(function() {
         me.log('Deleted folder');
@@ -617,8 +679,6 @@ class Cognos {
             throw errtwo;
           });
       });
-    me.log('Returning Delete Promise');
-    return result;
   }
 
   getReportData(id, prompts = {}, limit = 2000) {
