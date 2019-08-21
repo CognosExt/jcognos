@@ -7,6 +7,7 @@ import sourcemaps from 'rollup-plugin-sourcemaps';
 //import inject from 'rollup-plugin-inject';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import { terser } from 'rollup-plugin-terser';
 
 export default {
   input: 'src/index.js',
@@ -52,8 +53,14 @@ export default {
     globals(),
 
     babel({
-      plugins: ['@babel/plugin-transform-shorthand-properties']
+      plugins: [
+        '@babel/plugin-transform-shorthand-properties',
+        '@babel/plugin-transform-template-literals',
+        '@babel/plugin-transform-unicode-regex',
+        '@babel/plugin-transform-arrow-functions'
+      ]
     }),
+    terser(),
     sourcemaps(),
     filesize()
   ]
