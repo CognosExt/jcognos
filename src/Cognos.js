@@ -150,15 +150,15 @@ class Cognos {
             return prefs;
           })
         );
-        var CAF = Promise.resolve(
+        /*  var CAF = Promise.resolve(
           me.requester.get('bi').then(function(html) {
             var last = html.split('cafContextId":"').pop();
             var CAF = last.split('"')[0];
             return me.requester.setCAF(CAF);
           })
-        );
+        );*/
 
-        return Promise.resolve(Promise.all([capabilities, preferences, CAF]));
+        return Promise.resolve(Promise.all([capabilities, preferences]));
       })
       .then(function() {
         return me;
@@ -402,28 +402,29 @@ class Cognos {
     var url = '';
 
     return this.getCognosVersion().then(function(version) {
-      //  if (version.substr(0, 4) == '11.1') {
-      // Cognos 10 & 11 (but might be depricated)
-      // the dojo= is added to make the result json. the alternative is xml.
-      //    url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
-      //    me.log('We are version 11. Going to fetch: ' + url);
-      //  } else {
-      url = 'bi/v1/objects/.public_folders?fields=permissions';
-      //  }
+      if (version.substr(0, 4) == '11.1') {
+        // Cognos 10 & 11 (but might be depricated)
+        // the dojo= is added to make the result json. the alternative is xml.
+        url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
+        me.log('We are version 11. Going to fetch: ' + url);
+      } else {
+        url = 'bi/v1/objects/.public_folders?fields=permissions';
+      }
       //    return Promise.resolve(
       return me.requester
         .get(url)
         .then(function(folders) {
           var id;
-          //        if (version.substr(0, 4) == '11.1') {
-          // This is pure evil. It is only there because JSON.parse breaks on the json returned
-          // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
-          //JSON.parse(folders);
-          //        folders = eval('(' + folders + ')');
-          //      id = folders.items[0].entry[2].cm$storeID;
-          //  } else {
-          id = folders.data[0].id;
-          //}
+          if (version.substr(0, 4) == '11.1') {
+            // This is pure evil. It is only there because JSON.parse breaks on the json returned
+            // by cognos. This is not fair, because the Chrome debugger does not chocke on it.
+            folders = folders.replace(/\\\'/g, '\\"');
+            JSON.parse(folders);
+            folders = eval('(' + folders + ')');
+            id = folders.items[0].entry[2].cm$storeID;
+          } else {
+            id = folders.data[0].id;
+          }
           return id;
         })
         .catch(function(err) {

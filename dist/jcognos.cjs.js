@@ -328,27 +328,6 @@ var CognosRequest = (function() {
       }
     },
     {
-      key: 'setCAF',
-      value: function setCAF(CAF) {
-        var cookieString = 'caf=' + CAF + ';';
-        var cookie = tough.parse(cookieString, {
-          loose: false
-        });
-        cookie.key = 'caf';
-        cookie.value = CAF;
-        cookie.maxAge = 'Infinity';
-        cookie.path = '/ibmcognos/bi/v1';
-        return this.cookies.setCookie(
-          cookie,
-          this.url,
-          {
-            loose: false
-          },
-          function(err, mycookie) {}
-        );
-      }
-    },
-    {
       key: 'get',
       value: function get(path) {
         var me = this;
@@ -361,9 +340,8 @@ var CognosRequest = (function() {
 
         me.log('get URL:    ' + me.url + path);
 
-        if (!Utils.isNode) {
-          document.cookie = 'XSRF-TOKEN=' + me.token;
-        } else if (me.token) {
+        if (!Utils.isNode);
+        else if (me.token) {
           headers['X-XSRF-TOKEN'] = me.token;
         }
 
@@ -903,16 +881,7 @@ var Cognos = (function() {
                   return prefs;
                 })
             );
-            var CAF = Promise.resolve(
-              me.requester.get('bi').then(function(html) {
-                var last = html.split('cafContextId":"').pop();
-                var CAF = last.split('"')[0];
-                return me.requester.setCAF(CAF);
-              })
-            );
-            return Promise.resolve(
-              Promise.all([capabilities, preferences, CAF])
-            );
+            return Promise.resolve(Promise.all([capabilities, preferences]));
           })
           .then(function() {
             return me;
@@ -1134,12 +1103,27 @@ var Cognos = (function() {
         var me = this;
         var url = '';
         return this.getCognosVersion().then(function(version) {
-          url = 'bi/v1/objects/.public_folders?fields=permissions';
+          if (version.substr(0, 4) == '11.1') {
+            url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
+            me.log('We are version 11. Going to fetch: ' + url);
+          } else {
+            url = 'bi/v1/objects/.public_folders?fields=permissions';
+          }
+
           return me.requester
             .get(url)
             .then(function(folders) {
               var id;
-              id = folders.data[0].id;
+
+              if (version.substr(0, 4) == '11.1') {
+                folders = folders.replace(/\\\'/g, '\\"');
+                JSON.parse(folders);
+                folders = eval('(' + folders + ')');
+                id = folders.items[0].entry[2].cm$storeID;
+              } else {
+                id = folders.data[0].id;
+              }
+
               return id;
             })
             ['catch'](function(err) {

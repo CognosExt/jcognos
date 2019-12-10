@@ -226,19 +226,6 @@ class CognosRequest {
     return result;
   }
 
-  setCAF(CAF) {
-    var cookieString = 'caf=' + CAF + ';';
-    var cookie = tough.parse(cookieString, { loose: false });
-    cookie.key = 'caf';
-    cookie.value = CAF;
-    cookie.maxAge = 'Infinity';
-    cookie.path = '/ibmcognos/bi/v1';
-    return this.cookies.setCookie(cookie, this.url, { loose: false }, function(
-      err,
-      mycookie
-    ) {});
-  }
-
   get(path) {
     var me = this;
     var headers = {};
@@ -249,7 +236,7 @@ class CognosRequest {
 
     me.log('get URL:    ' + me.url + path);
     if (!Utils.isNode) {
-      document.cookie = 'XSRF-TOKEN=' + me.token;
+      //  document.cookie = 'XSRF-TOKEN=' + me.token;
     } else if (me.token) {
       headers['X-XSRF-TOKEN'] = me.token;
     }
