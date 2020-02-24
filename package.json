@@ -76,7 +76,7 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-terser": "^5.1.1",
     "standard-version": "^7.0.0",
-    "uuid": "^3.3.3",
+    "uuid": "^7.0.0",
     "webdriverio": "^5.12.4"
   },
   "dependencies": {
