@@ -1,6 +1,6 @@
-import json from 'rollup-plugin-json';
-import babel from 'rollup-plugin-babel';
-import commonjs from 'rollup-plugin-commonjs';
+import json from '@rollup/plugin-json';
+import babel from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import filesize from 'rollup-plugin-filesize';
 import sourcemaps from 'rollup-plugin-sourcemaps';
@@ -24,7 +24,7 @@ export default {
    *
    * @license GPL 3.0
    */
-  `
+  `,
   },
   plugins: [
     builtins(),
@@ -44,24 +44,25 @@ export default {
       //      preferBuiltins: false,
       // modulesOnly: false,
       //
-      preferBuiltins: true
+      preferBuiltins: true,
     }),
     commonjs({
-      include: 'node_modules/**'
+      include: 'node_modules/**',
     }),
     // The order is very important. If you put globals earlier, axios does not compile correctly
     globals(),
 
     babel({
+      babelHelpers: 'bundled',
       plugins: [
         '@babel/plugin-transform-shorthand-properties',
         '@babel/plugin-transform-template-literals',
         '@babel/plugin-transform-unicode-regex',
-        '@babel/plugin-transform-arrow-functions'
-      ]
+        '@babel/plugin-transform-arrow-functions',
+      ],
     }),
     terser(),
     sourcemaps(),
-    filesize()
-  ]
+    filesize(),
+  ],
 };

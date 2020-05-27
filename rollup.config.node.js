@@ -1,5 +1,5 @@
-import json from 'rollup-plugin-json';
-import babel from 'rollup-plugin-babel';
+import json from '@rollup/plugin-json';
+import babel from '@rollup/plugin-babel';
 import filesize from 'rollup-plugin-filesize';
 
 export default {
@@ -18,7 +18,7 @@ export default {
      *
      * @license GPL 3.0
      */
-    `
+    `,
     },
     {
       file: 'dist/jcognos.cjs.js', // equivalent to --output
@@ -33,15 +33,17 @@ export default {
      *
      * @license GPL 3.0
      */
-    `
-    }
+    `,
+    },
   ],
   plugins: [
     json(),
     babel({
-      exclude: 'node_modules/**' //,
+      exclude: 'node_modules/**',
+      babelHelpers: 'bundled',
+      //,
       //      plugins: ['@babel/plugin-external-helpers']
     }),
-    filesize()
-  ]
+    filesize(),
+  ],
 };

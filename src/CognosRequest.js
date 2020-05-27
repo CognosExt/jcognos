@@ -58,11 +58,11 @@ class CognosRequest {
       maxRedirects: 10,
 
       //cap the maximum content length we'll accept to 50MBs, just in case
-      maxContentLength: 50 * 1000 * 1000
+      maxContentLength: 50 * 1000 * 1000,
     };
     if (this.ignoreinvalidcertificates) {
       axiosparams.httpsAgent = new https.Agent({
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
       });
     }
     this.axios = axios.create(axiosparams);
@@ -79,7 +79,7 @@ class CognosRequest {
       if (me.token == '') {
         var rawcookies = document.cookie.split(';');
         var goon = true;
-        rawcookies.forEach(function(rawcookie) {
+        rawcookies.forEach(function (rawcookie) {
           var cookie = tough.parse(rawcookie);
           if (typeof cookie != 'undefined') {
             if (cookie.key == 'X-XSRF-TOKEN' || cookie.key == 'XSRF-TOKEN') {
@@ -95,7 +95,7 @@ class CognosRequest {
           }
         });
         if (!goon) {
-          result = this.delete('bi/v1/login').then(function() {
+          result = this.delete('bi/v1/login').then(function () {
             me.loggedin = false;
             return me.initialise(true);
           });
@@ -105,7 +105,7 @@ class CognosRequest {
       if (me.token) {
         firstheaders = {
           'X-XSRF-TOKEN': me.token,
-          'Content-Type': 'application/json; charset=UTF-8'
+          'Content-Type': 'application/json; charset=UTF-8',
         };
       } else {
         axiosCookieJarSupport(this.axios);
@@ -120,17 +120,21 @@ class CognosRequest {
         jar: cookieJar,
         withCredentials: false, // If true, send cookie stored in jar
         headers: firstheaders,
-        validateStatus: function validateStatus(status) {
+        /*  validateStatus: function validateStatus(status) {
           console.log('HERE IS THE ERROR: ' + status);
+          if (status = 401 ) {
+            throw('Network Error');
+          }
           return status >= 200 && status < 300;
-        }
+        }*/
       })
-      .then(function() {
+      .then(function () {
         me.log('Unexpected success');
+        console.log('Succes?');
         return me;
         // This will never happen, the first call to Cognos will always return a 401
       })
-      .catch(function(err) {
+      .catch(function (err) {
         // If there is another error, like a 500 or 404 (wrong URL)
         // Also, if there is a network error there is no response
         if (
@@ -152,10 +156,10 @@ class CognosRequest {
           var cookies = cookieJar.getCookies(
             cookieurl,
             {
-              allPaths: true
+              allPaths: true,
             },
-            function(err, cookies) {
-              cookies.forEach(function(cook) {
+            function (err, cookies) {
+              cookies.forEach(function (cook) {
                 me.log('cook: ', cook);
                 me.log('cookie key: ' + cook.key);
                 if (cook.key.toUpperCase() == 'XSRF-TOKEN') {
@@ -165,11 +169,11 @@ class CognosRequest {
                   cookieJar.setCookie(
                     'XSRF-TOKEN=' + me.token,
                     cookieurl,
-                    function() {
+                    function () {
                       cookieJar.setCookie(
                         'X-XSRF-TOKEN=' + me.token,
                         cookieurl,
-                        function() {
+                        function () {
                           me.cookies = cookieJar;
                         }
                       );
@@ -185,14 +189,18 @@ class CognosRequest {
         try {
           if (typeof err.response !== 'undefined') {
             // This is the scenario where there is only 1 namespace
-            err.response.data.promptInfo.displayObjects.forEach(function(item) {
+            err.response.data.promptInfo.displayObjects.forEach(function (
+              item
+            ) {
               if (item.name == 'CAMNamespace') {
                 me.namespace = item.value;
                 me.log('Default Namespace: ' + me.namespace);
               }
             });
             var displayName = '';
-            err.response.data.promptInfo.displayObjects.forEach(function(item) {
+            err.response.data.promptInfo.displayObjects.forEach(function (
+              item
+            ) {
               if (item.name == 'CAMNamespaceDisplayName') {
                 displayName = item.value;
                 me.log('Default Namespace Name: ' + displayName);
@@ -202,12 +210,12 @@ class CognosRequest {
               me.namespaces.push({
                 isDefault: true,
                 id: me.namespace,
-                value: displayName
+                value: displayName,
               });
             }
             if (!me.namespace) {
               err.response.data.promptInfo.displayObjects[0].promptOptions.forEach(
-                function(item) {
+                function (item) {
                   if (item.isDefault) {
                     me.namespace = item.id;
                   }
@@ -252,9 +260,9 @@ class CognosRequest {
       .get(me.url + path, {
         headers: headers,
         jar: me.cookies,
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(function(response) {
+      .then(function (response) {
         if (typeof response !== 'undefined') {
           //     me.log('Get Response Data', response.data);
           return response.data;
@@ -287,9 +295,9 @@ class CognosRequest {
       .post(me.url + path, paramsJSON, {
         headers: headers,
         jar: me.cookies,
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(function(response) {
+      .then(function (response) {
         me.log('CognosRequest : Success Posting');
         // Ok, Cognos might return som invalid json.
         // First up, it might return "hallo =\'give me a beer\']"
@@ -302,7 +310,7 @@ class CognosRequest {
         }
         return response;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         var errormessage = '';
         me.error('CognosRequest : Error in post', err);
         // We have 3 different ways to return an error.
@@ -347,9 +355,9 @@ class CognosRequest {
         data: paramsJSON,
         headers: headers,
         jar: me.cookies, // Delete does not accept the jar parameter it seems
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(function(response) {
+      .then(function (response) {
         me.log('CognosRequest : Success Deleting');
         // Ok, Cognos might return som invalid json.
         // First up, it might return "hallo =\'give me a beer\']"
@@ -367,7 +375,7 @@ class CognosRequest {
         }
         return result;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         var errormessage = '';
         // We have 3 different ways to return an error.
         if (typeof err.response !== 'undefined') {
@@ -436,15 +444,15 @@ class CognosRequest {
     var axiosparams = {
       headers: headers,
       jar: me.cookies,
-      withCredentials: true
+      withCredentials: true,
     };
     return this.axios
       .put(url, stream, axiosparams)
-      .then(function(response) {
+      .then(function (response) {
         me.log('CognosRequest : Success Putting ');
         return response.data;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         var errormessage = '';
         me.error('CognosRequest : Error in put', err);
         // We have 3 different ways to return an error.
@@ -502,13 +510,13 @@ class CognosRequest {
       .put(url, filename, {
         headers: headers,
         jar: me.cookies,
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(function(response) {
+      .then(function (response) {
         me.log('CognosRequest : Success Putting ');
         return response.data;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         var errormessage = '';
         me.error('CognosRequest : Error in put', err);
         // We have 3 different ways to return an error.
@@ -565,14 +573,14 @@ class CognosRequest {
       .put(url, false, {
         headers: headers,
         jar: me.cookies,
-        withCredentials: true
+        withCredentials: true,
       })
-      .then(function(response) {
+      .then(function (response) {
         me.log('CognosRequest : Success Putting ');
         me.log(response.data);
         return response.data;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         var errormessage = '';
         me.error('CognosRequest : Error in uploadfilepartFinish', err);
         // We have 3 different ways to return an error.

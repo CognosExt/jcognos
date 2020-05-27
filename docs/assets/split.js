@@ -1,12 +1,12 @@
 /*! Split.js - v1.5.11 */
 
-(function(global, factory) {
+(function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined'
     ? (module.exports = factory())
     : typeof define === 'function' && define.amd
     ? define(factory)
     : (global.Split = factory());
-})(this, function() {
+})(this, function () {
   'use strict';
 
   // The programming goals of Split.js are to deliver readable, understandable and
@@ -25,7 +25,7 @@
   var aGutterSize = '_b';
   var bGutterSize = '_c';
   var HORIZONTAL = 'horizontal';
-  var NOOP = function() {
+  var NOOP = function () {
     return false;
   };
 
@@ -40,7 +40,7 @@
   // http://stackoverflow.com/questions/16625140/js-feature-detection-to-detect-the-usage-of-webkit-calc-over-calc/16625167#16625167
   var calc =
     ['', '-webkit-', '-moz-', '-o-']
-      .filter(function(prefix) {
+      .filter(function (prefix) {
         var el = document.createElement('div');
         el.style.cssText = 'width:' + prefix + 'calc(9px)';
 
@@ -49,14 +49,14 @@
       .shift() + 'calc';
 
   // Helper function checks if its argument is a string-like type
-  var isString = function(v) {
+  var isString = function (v) {
     return typeof v === 'string' || v instanceof String;
   };
 
   // Helper function allows elements and string selectors to be used
   // interchangeably. In either case an element is returned. This allows us to
   // do `Split([elem1, elem2])` as well as `Split(['#id1', '#id2'])`.
-  var elementOrSelector = function(el) {
+  var elementOrSelector = function (el) {
     if (isString(el)) {
       var ele = document.querySelector(el);
       if (!ele) {
@@ -69,7 +69,7 @@
   };
 
   // Helper function gets a property from the properties object, with a default fallback
-  var getOption = function(options, propName, def) {
+  var getOption = function (options, propName, def) {
     var value = options[propName];
     if (value !== undefined) {
       return value;
@@ -77,7 +77,7 @@
     return def;
   };
 
-  var getGutterSize = function(gutterSize, isFirst, isLast, gutterAlign) {
+  var getGutterSize = function (gutterSize, isFirst, isLast, gutterAlign) {
     if (isFirst) {
       if (gutterAlign === 'end') {
         return 0;
@@ -98,13 +98,13 @@
   };
 
   // Default options
-  var defaultGutterFn = function(i, gutterDirection) {
+  var defaultGutterFn = function (i, gutterDirection) {
     var gut = document.createElement('div');
     gut.className = 'gutter gutter-' + gutterDirection;
     return gut;
   };
 
-  var defaultElementStyleFn = function(dim, size, gutSize) {
+  var defaultElementStyleFn = function (dim, size, gutSize) {
     var style = {};
 
     if (!isString(size)) {
@@ -120,7 +120,7 @@
     return style;
   };
 
-  var defaultGutterStyleFn = function(dim, gutSize) {
+  var defaultGutterStyleFn = function (dim, gutSize) {
     var obj;
 
     return (obj = {}), (obj[dim] = gutSize + 'px'), obj;
@@ -153,7 +153,7 @@
   // 4. Loop through the elements while pairing them off. Every pair gets an
   //    `pair` object and a gutter.
   // 5. Actually size the pair elements, insert gutters and attach event listeners.
-  var Split = function(idsOption, options) {
+  var Split = function (idsOption, options) {
     if (options === void 0) options = {};
 
     var ids = idsOption;
@@ -180,7 +180,7 @@
     // Set default options.sizes to equal percentages of the parent element.
     var sizes =
       getOption(options, 'sizes') ||
-      ids.map(function() {
+      ids.map(function () {
         return 100 / ids.length;
       });
 
@@ -189,7 +189,7 @@
     var minSize = getOption(options, 'minSize', 100);
     var minSizes = Array.isArray(minSize)
       ? minSize
-      : ids.map(function() {
+      : ids.map(function () {
           return minSize;
         });
 
@@ -248,7 +248,7 @@
       // make sure you calculate the gutter size by hand.
       var style = elementStyle(dimension, size, gutSize, i);
 
-      Object.keys(style).forEach(function(prop) {
+      Object.keys(style).forEach(function (prop) {
         // eslint-disable-next-line no-param-reassign
         el.style[prop] = style[prop];
       });
@@ -257,14 +257,14 @@
     function setGutterSize(gutterElement, gutSize, i) {
       var style = gutterStyle(dimension, gutSize, i);
 
-      Object.keys(style).forEach(function(prop) {
+      Object.keys(style).forEach(function (prop) {
         // eslint-disable-next-line no-param-reassign
         gutterElement.style[prop] = style[prop];
       });
     }
 
     function getSizes() {
-      return elements.map(function(element) {
+      return elements.map(function (element) {
         return element.size;
       });
     }
@@ -426,7 +426,7 @@
       }
 
       if (
-        minSizes.reduce(function(a, b) {
+        minSizes.reduce(function (a, b) {
           return a + b;
         }, 0) > parentSize
       ) {
@@ -438,7 +438,7 @@
       var excessPixels = 0;
       var toSpare = [];
 
-      var pixelSizes = sizesToTrim.map(function(size, i) {
+      var pixelSizes = sizesToTrim.map(function (size, i) {
         // Convert requested percentages to pixel sizes
         var pixelSize = (parentSize * size) / 100;
         var elementGutterSize = getGutterSize(
@@ -467,7 +467,7 @@
         return sizesToTrim;
       }
 
-      return pixelSizes.map(function(pixelSize, i) {
+      return pixelSizes.map(function (pixelSize, i) {
         var newPixelSize = pixelSize;
 
         // While there's still pixels to take, and there's enough pixels to spare,
@@ -617,13 +617,13 @@
     // |             |                     |                  |              |
     // -----------------------------------------------------------------------
     var pairs = [];
-    elements = ids.map(function(id, i) {
+    elements = ids.map(function (id, i) {
       // Create the element object.
       var element = {
         element: elementOrSelector(id),
         size: sizes[i],
         minSize: minSizes[i],
-        i: i
+        i: i,
       };
 
       var pair;
@@ -635,7 +635,7 @@
           b: i,
           dragging: false,
           direction: direction,
-          parent: parent
+          parent: parent,
         };
 
         pair[aGutterSize] = getGutterSize(
@@ -721,7 +721,7 @@
       adjust.call(pair, size);
     }
 
-    elements.forEach(function(element) {
+    elements.forEach(function (element) {
       var computedSize = element.element[getBoundingClientRect]()[dimension];
 
       if (computedSize < element.minSize) {
@@ -736,7 +736,7 @@
 
     function setSizes(newSizes) {
       var trimmed = trimToMin(newSizes);
-      trimmed.forEach(function(newSize, i) {
+      trimmed.forEach(function (newSize, i) {
         if (i > 0) {
           var pair = pairs[i - 1];
 
@@ -753,7 +753,7 @@
     }
 
     function destroy(preserveStyles, preserveGutter) {
-      pairs.forEach(function(pair) {
+      pairs.forEach(function (pair) {
         if (preserveGutter !== true) {
           pair.parent.removeChild(pair.gutter);
         } else {
@@ -770,7 +770,7 @@
         if (preserveStyles !== true) {
           var style = elementStyle(dimension, pair.a.size, pair[aGutterSize]);
 
-          Object.keys(style).forEach(function(prop) {
+          Object.keys(style).forEach(function (prop) {
             elements[pair.a].element.style[prop] = '';
             elements[pair.b].element.style[prop] = '';
           });
@@ -781,7 +781,7 @@
     if (isIE8) {
       return {
         setSizes: setSizes,
-        destroy: destroy
+        destroy: destroy,
       };
     }
 
@@ -793,7 +793,7 @@
       },
       destroy: destroy,
       parent: parent,
-      pairs: pairs
+      pairs: pairs,
     };
   };
 

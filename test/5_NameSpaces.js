@@ -1,7 +1,7 @@
 if (typeof window == 'undefined') {
   var chai = require('chai');
   var settings = require('./Settings.json');
-  var uuidv4 = require('uuid/v4');
+  var uuidv4 = require('uuid');
 
   var jcognos = require('../dist/jcognos.esm');
   var url = settings.url;
@@ -13,18 +13,18 @@ var getCognos = jcognos.getCognos;
 var assert = chai.assert;
 
 var cognos;
-describe('jcognos NameSpaces Tests', function() {
-  beforeEach(function() {
+describe('jcognos NameSpaces Tests', function () {
+  beforeEach(function () {
     this.timeout(0);
-    return getCognos(url, debug).then(function(lcognos) {
+    return getCognos(url, debug).then(function (lcognos) {
       assert.isOk(lcognos, 'Succesfully created Cognos');
       cognos = lcognos;
       return lcognos;
     });
   });
-  it('Check if default namespace is in namespaces', done => {
+  it('Check if default namespace is in namespaces', (done) => {
     var passed = false;
-    cognos.namespaces.forEach(function(item) {
+    cognos.namespaces.forEach(function (item) {
       var lpassed = cognos.defaultNamespace == item.id && item.isDefault;
       passed = passed | lpassed;
     });

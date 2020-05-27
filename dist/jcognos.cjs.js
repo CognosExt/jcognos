@@ -24,12 +24,14 @@ var util = require('util');
 var minimatch = _interopDefault(require('minimatch'));
 
 function _typeof(obj) {
+  '@babel/helpers - typeof';
+
   if (typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol') {
-    _typeof = function(obj) {
+    _typeof = function (obj) {
       return typeof obj;
     };
   } else {
-    _typeof = function(obj) {
+    _typeof = function (obj) {
       return obj &&
         typeof Symbol === 'function' &&
         obj.constructor === Symbol &&
@@ -70,7 +72,7 @@ function _defineProperty(obj, key, value) {
       value: value,
       enumerable: true,
       configurable: true,
-      writable: true
+      writable: true,
     });
   } else {
     obj[key] = value;
@@ -92,12 +94,12 @@ var Utils = {
   },
   isNode: function isNode() {
     return !Utils.isStandardBrowserEnv();
-  }
+  },
 };
 
 var cRequest;
 
-var CognosRequest = (function() {
+var CognosRequest = (function () {
   function CognosRequest(url, debug, timeout, ignoreinvalidcertificates) {
     _classCallCheck(this, CognosRequest);
 
@@ -126,7 +128,7 @@ var CognosRequest = (function() {
             console.log(text);
           }
         }
-      }
+      },
     },
     {
       key: 'error',
@@ -138,7 +140,7 @@ var CognosRequest = (function() {
             console.error(text);
           }
         }
-      }
+      },
     },
     {
       key: 'initialise',
@@ -153,12 +155,12 @@ var CognosRequest = (function() {
         var axiosparams = {
           timeout: me.timeout,
           maxRedirects: 10,
-          maxContentLength: 50 * 1000 * 1000
+          maxContentLength: 50 * 1000 * 1000,
         };
 
         if (this.ignoreinvalidcertificates) {
           axiosparams.httpsAgent = new https.Agent({
-            rejectUnauthorized: false
+            rejectUnauthorized: false,
           });
         }
 
@@ -173,7 +175,7 @@ var CognosRequest = (function() {
           if (me.token == '') {
             var rawcookies = document.cookie.split(';');
             var goon = true;
-            rawcookies.forEach(function(rawcookie) {
+            rawcookies.forEach(function (rawcookie) {
               var cookie = tough.parse(rawcookie);
 
               if (typeof cookie != 'undefined') {
@@ -192,7 +194,7 @@ var CognosRequest = (function() {
             });
 
             if (!goon) {
-              result = this['delete']('bi/v1/login').then(function() {
+              result = this['delete']('bi/v1/login').then(function () {
                 me.loggedin = false;
                 return me.initialise(true);
               });
@@ -203,7 +205,7 @@ var CognosRequest = (function() {
           if (me.token) {
             firstheaders = {
               'X-XSRF-TOKEN': me.token,
-              'Content-Type': 'application/json; charset=UTF-8'
+              'Content-Type': 'application/json; charset=UTF-8',
             };
           } else {
             axiosCookieJarSupport(this.axios);
@@ -216,13 +218,14 @@ var CognosRequest = (function() {
           .get(me.url + 'bi/v1/login', {
             jar: cookieJar,
             withCredentials: false,
-            headers: firstheaders
+            headers: firstheaders,
           })
-          .then(function() {
+          .then(function () {
             me.log('Unexpected success');
+            console.log('Succes?');
             return me;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             if (
               typeof err.response === 'undefined' ||
               err.response.status !== 441
@@ -241,10 +244,10 @@ var CognosRequest = (function() {
               var cookies = cookieJar.getCookies(
                 cookieurl,
                 {
-                  allPaths: true
+                  allPaths: true,
                 },
-                function(err, cookies) {
-                  cookies.forEach(function(cook) {
+                function (err, cookies) {
+                  cookies.forEach(function (cook) {
                     me.log('cook: ', cook);
                     me.log('cookie key: ' + cook.key);
 
@@ -255,11 +258,11 @@ var CognosRequest = (function() {
                       cookieJar.setCookie(
                         'XSRF-TOKEN=' + me.token,
                         cookieurl,
-                        function() {
+                        function () {
                           cookieJar.setCookie(
                             'X-XSRF-TOKEN=' + me.token,
                             cookieurl,
-                            function() {
+                            function () {
                               me.cookies = cookieJar;
                             }
                           );
@@ -273,7 +276,7 @@ var CognosRequest = (function() {
 
             try {
               if (typeof err.response !== 'undefined') {
-                err.response.data.promptInfo.displayObjects.forEach(function(
+                err.response.data.promptInfo.displayObjects.forEach(function (
                   item
                 ) {
                   if (item.name == 'CAMNamespace') {
@@ -282,7 +285,7 @@ var CognosRequest = (function() {
                   }
                 });
                 var displayName = '';
-                err.response.data.promptInfo.displayObjects.forEach(function(
+                err.response.data.promptInfo.displayObjects.forEach(function (
                   item
                 ) {
                   if (item.name == 'CAMNamespaceDisplayName') {
@@ -295,13 +298,13 @@ var CognosRequest = (function() {
                   me.namespaces.push({
                     isDefault: true,
                     id: me.namespace,
-                    value: displayName
+                    value: displayName,
                   });
                 }
 
                 if (!me.namespace) {
                   err.response.data.promptInfo.displayObjects[0].promptOptions.forEach(
-                    function(item) {
+                    function (item) {
                       if (item.isDefault) {
                         me.namespace = item.id;
                       }
@@ -325,7 +328,7 @@ var CognosRequest = (function() {
           });
         me.log('Login function made it until the end');
         return result;
-      }
+      },
     },
     {
       key: 'get',
@@ -351,9 +354,9 @@ var CognosRequest = (function() {
           .get(me.url + path, {
             headers: headers,
             jar: me.cookies,
-            withCredentials: true
+            withCredentials: true,
           })
-          .then(function(response) {
+          .then(function (response) {
             if (typeof response !== 'undefined') {
               return response.data;
             }
@@ -361,7 +364,7 @@ var CognosRequest = (function() {
             return '';
           });
         return result;
-      }
+      },
     },
     {
       key: 'post',
@@ -386,9 +389,9 @@ var CognosRequest = (function() {
           .post(me.url + path, paramsJSON, {
             headers: headers,
             jar: me.cookies,
-            withCredentials: true
+            withCredentials: true,
           })
-          .then(function(response) {
+          .then(function (response) {
             me.log('CognosRequest : Success Posting');
 
             if (fullResponse && typeof response !== 'undefined') {
@@ -399,7 +402,7 @@ var CognosRequest = (function() {
 
             return response;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             var errormessage = '';
             me.error('CognosRequest : Error in post', err);
 
@@ -422,7 +425,7 @@ var CognosRequest = (function() {
             }
           });
         return result;
-      }
+      },
     },
     {
       key: 'delete',
@@ -453,9 +456,9 @@ var CognosRequest = (function() {
           data: paramsJSON,
           headers: headers,
           jar: me.cookies,
-          withCredentials: true
+          withCredentials: true,
         })
-          .then(function(response) {
+          .then(function (response) {
             me.log('CognosRequest : Success Deleting');
 
             if (fullResponse) {
@@ -471,7 +474,7 @@ var CognosRequest = (function() {
 
             return result;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             var errormessage = '';
 
             if (typeof err.response !== 'undefined') {
@@ -502,7 +505,7 @@ var CognosRequest = (function() {
               throw errormessage;
             }
           });
-      }
+      },
     },
     {
       key: 'put',
@@ -557,15 +560,15 @@ var CognosRequest = (function() {
         var axiosparams = {
           headers: headers,
           jar: me.cookies,
-          withCredentials: true
+          withCredentials: true,
         };
         return this.axios
           .put(url, stream, axiosparams)
-          .then(function(response) {
+          .then(function (response) {
             me.log('CognosRequest : Success Putting ');
             return response.data;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             var errormessage = '';
             me.error('CognosRequest : Error in put', err);
 
@@ -589,7 +592,7 @@ var CognosRequest = (function() {
               throw errormessage;
             }
           });
-      }
+      },
     },
     {
       key: 'uploadfilepart',
@@ -630,13 +633,13 @@ var CognosRequest = (function() {
           .put(url, filename, {
             headers: headers,
             jar: me.cookies,
-            withCredentials: true
+            withCredentials: true,
           })
-          .then(function(response) {
+          .then(function (response) {
             me.log('CognosRequest : Success Putting ');
             return response.data;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             var errormessage = '';
             me.error('CognosRequest : Error in put', err);
 
@@ -661,7 +664,7 @@ var CognosRequest = (function() {
             }
           });
         return result;
-      }
+      },
     },
     {
       key: 'uploadfilepartFinish',
@@ -694,14 +697,14 @@ var CognosRequest = (function() {
           .put(url, false, {
             headers: headers,
             jar: me.cookies,
-            withCredentials: true
+            withCredentials: true,
           })
-          .then(function(response) {
+          .then(function (response) {
             me.log('CognosRequest : Success Putting ');
             me.log(response.data);
             return response.data;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             var errormessage = '';
             me.error('CognosRequest : Error in uploadfilepartFinish', err);
 
@@ -726,8 +729,8 @@ var CognosRequest = (function() {
             }
           });
         return result;
-      }
-    }
+      },
+    },
   ]);
 
   return CognosRequest;
@@ -764,7 +767,7 @@ function getCognosRequest(url, debug) {
 var jCognos;
 var cognosUrl;
 
-var Cognos = (function() {
+var Cognos = (function () {
   function Cognos(debug, timeout, ignoreInvalidCertificates) {
     _classCallCheck(this, Cognos);
 
@@ -797,7 +800,7 @@ var Cognos = (function() {
             console.log(text);
           }
         }
-      }
+      },
     },
     {
       key: 'error',
@@ -809,7 +812,7 @@ var Cognos = (function() {
             console.error(text);
           }
         }
-      }
+      },
     },
     {
       key: 'login',
@@ -841,25 +844,25 @@ var Cognos = (function() {
           parameters: [
             {
               name: 'CAMNamespace',
-              value: namespace
+              value: namespace,
             },
             {
               name: 'h_CAM_action',
-              value: 'logonAs'
+              value: 'logonAs',
             },
             {
               name: 'CAMUsername',
-              value: user
+              value: user,
             },
             {
               name: 'CAMPassword',
-              value: password
-            }
-          ]
+              value: password,
+            },
+          ],
         };
         this.loginrequest = me.requester
           .post('bi/v1/login', params)
-          .then(function(response) {
+          .then(function (response) {
             me.loggedin = true;
             me.username = user;
             me.password = password;
@@ -868,7 +871,7 @@ var Cognos = (function() {
             var capabilities = Promise.resolve(
               me.requester
                 .get('bi/v1/users/~/capabilities')
-                .then(function(caps) {
+                .then(function (caps) {
                   me.capabilities = caps;
                   return caps;
                 })
@@ -876,24 +879,24 @@ var Cognos = (function() {
             var preferences = Promise.resolve(
               me.requester
                 .get('bi/v1/users/~/preferences')
-                .then(function(prefs) {
+                .then(function (prefs) {
                   me.preferences = prefs;
                   return prefs;
                 })
             );
             return Promise.resolve(Promise.all([capabilities, preferences]));
           })
-          .then(function() {
+          .then(function () {
             return me;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.log('Cognos: Error when logging in.');
             me.loginrequest = false;
             throw err;
           });
         this.log('login: returning login promise', this.loginrequest);
         return this.loginrequest;
-      }
+      },
     },
     {
       key: 'logoff',
@@ -902,18 +905,18 @@ var Cognos = (function() {
 
         if (_typeof(me.requester) !== undefined) {
           return me.requester['delete']('bi/v1/login')
-            .then(function(body) {
+            .then(function (body) {
               me.loggedin = false;
               return body;
             })
-            ['catch'](function(err) {
+            ['catch'](function (err) {
               me.log('Cognos: Error when logging off.', err);
             });
         } else {
           me.loggedin = false;
           return Promise.resolve(true);
         }
-      }
+      },
     },
     {
       key: 'handleError',
@@ -949,7 +952,7 @@ var Cognos = (function() {
         }
 
         return Promise.resolve();
-      }
+      },
     },
     {
       key: 'reset',
@@ -977,18 +980,18 @@ var Cognos = (function() {
           this.timeout,
           this.ignoreInvalidCertificates
         )
-          .then(function(cRequest) {
+          .then(function (cRequest) {
             me.requester = cRequest;
             me.log('going to login again');
             var result = me.login(me.username, me.password, me.namespace);
             me.log('login promise', result);
             return Promise.resolve(result);
           })
-          .then(function() {
+          .then(function () {
             me.log('Done logging in');
             return Promise.resolve();
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('Error resetting', err);
 
             if (me.retrycount < 3) {
@@ -999,7 +1002,7 @@ var Cognos = (function() {
           });
         me.log('Returning a promise to reset', this.resetting);
         return this.resetting;
-      }
+      },
     },
     {
       key: 'getCurrentThemeSettings',
@@ -1008,10 +1011,10 @@ var Cognos = (function() {
         var url = 'bi/v1/plugins/themes/current/spec.json';
         var result = me.requester
           .get(url)
-          .then(function(themesettings) {
+          .then(function (themesettings) {
             return themesettings;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error(
               'Error while fetching Cognos Current Theme Settings.',
               err
@@ -1019,7 +1022,7 @@ var Cognos = (function() {
             throw err;
           });
         return result;
-      }
+      },
     },
     {
       key: 'getCognosVersion',
@@ -1033,16 +1036,16 @@ var Cognos = (function() {
         var url = 'bi/v1/configuration/keys/Glass.productVersion';
         var result = me.requester
           .get(url)
-          .then(function(version) {
+          .then(function (version) {
             me.productVersion = version['Glass.productVersion'];
             return me.productVersion;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('Error while fetching Cognos Version.', err);
             throw err;
           });
         return result;
-      }
+      },
     },
     {
       key: 'setConfig',
@@ -1052,7 +1055,7 @@ var Cognos = (function() {
         var url = 'bi/v1/configuration/keys/global';
         return me.requester
           .put(url, false, _defineProperty({}, inkey, value))
-          .then(function(version) {
+          .then(function (version) {
             me.productVersion = version['Glass.productVersion'];
             me.log('saved key ' + inkey + ' with value ' + value);
 
@@ -1060,11 +1063,11 @@ var Cognos = (function() {
 
             return returnvalue;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('Error while setting key ' + inkey, err);
             throw err;
           });
-      }
+      },
     },
     {
       key: 'getConfig',
@@ -1073,14 +1076,14 @@ var Cognos = (function() {
         var url = 'bi/v1/configuration/keys';
         return me.requester
           .get(url)
-          .then(function(keys) {
+          .then(function (keys) {
             return keys;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('Error while fetching Cognos configuration keys.', err);
             throw err;
           });
-      }
+      },
     },
     {
       key: 'getConfigKey',
@@ -1088,21 +1091,21 @@ var Cognos = (function() {
         var me = this;
         return me
           .getConfig()
-          .then(function(keys) {
+          .then(function (keys) {
             return keys.global[key];
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('Error while fetching Cognos configuration keys.', err);
             throw err;
           });
-      }
+      },
     },
     {
       key: '_getPublicFolderId',
       value: function _getPublicFolderId() {
         var me = this;
         var url = '';
-        return this.getCognosVersion().then(function(version) {
+        return this.getCognosVersion().then(function (version) {
           if (version.substr(0, 4) == '11.1') {
             url = 'bi/v1/disp/icd/feeds/cm/?dojo=';
             me.log('We are version 11. Going to fetch: ' + url);
@@ -1112,7 +1115,7 @@ var Cognos = (function() {
 
           return me.requester
             .get(url)
-            .then(function(folders) {
+            .then(function (folders) {
               var id;
 
               if (version.substr(0, 4) == '11.1') {
@@ -1126,12 +1129,12 @@ var Cognos = (function() {
 
               return id;
             })
-            ['catch'](function(err) {
+            ['catch'](function (err) {
               me.error('There was an error fetching the folder id', err);
               throw err;
             });
         });
-      }
+      },
     },
     {
       key: 'listRootFolder',
@@ -1140,45 +1143,45 @@ var Cognos = (function() {
         var rootfolders = [];
         return me.requester
           .get('bi/v1/objects/.my_folders?fields=permissions')
-          .then(function(folders) {
+          .then(function (folders) {
             me.log('Got the Private Folders');
 
             if (typeof folders !== 'undefined') {
               rootfolders.push({
                 id: folders.data[0].id,
-                name: 'My Content'
+                name: 'My Content',
               });
             }
 
             return rootfolders;
           })
-          .then(function() {
-            return me._getPublicFolderId().then(function(id) {
+          .then(function () {
+            return me._getPublicFolderId().then(function (id) {
               me.log('Got the Public Folders');
 
               if (typeof id !== 'undefined') {
                 rootfolders.push({
                   id: id,
-                  name: 'Team Content'
+                  name: 'Team Content',
                 });
               }
 
               return rootfolders;
             });
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in listRootFolder', err);
             me.handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, list the root folder again');
                 me.resetting = false;
                 return me.listRootFolder();
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
-      }
+      },
     },
     {
       key: 'listPublicFolders',
@@ -1187,28 +1190,28 @@ var Cognos = (function() {
 
         var result = me
           ._getPublicFolderId()
-          .then(function(id) {
+          .then(function (id) {
             if (typeof id !== 'undefined') {
               return Promise.resolve(me.listFolderById(id));
             }
 
             return {};
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in listPublicFolders', err);
             me.handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, list the public folders again');
                 me.resetting = false;
                 return me.listPublicFolders();
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
 
         return result;
-      }
+      },
     },
     {
       key: 'listFolderById',
@@ -1228,9 +1231,9 @@ var Cognos = (function() {
               id +
               '/items?nav_filter=true&fields=defaultName,defaultScreenTip'
           )
-          .then(function(folders) {
+          .then(function (folders) {
             var result = [];
-            folders.data.forEach(function(folder) {
+            folders.data.forEach(function (folder) {
               if (minimatch(folder.defaultName, pattern)) {
                 me.log('folder ', folder.defaultName);
 
@@ -1240,7 +1243,7 @@ var Cognos = (function() {
                       name: folder.defaultName,
                       id: folder.id,
                       searchPath: folder.searchPath,
-                      type: folder.type
+                      type: folder.type,
                     };
                     result.push(tpFolder);
                   }
@@ -1251,21 +1254,21 @@ var Cognos = (function() {
             });
             return result;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in listFolderById', err);
             return me
               .handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, list the folder by id again');
                 me.resetting = false;
                 return me.listFolderById(id, pattern, types);
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
         return result;
-      }
+      },
     },
     {
       key: 'getFolderDetails',
@@ -1277,23 +1280,23 @@ var Cognos = (function() {
           '?fields=id,defaultName,owner.defaultName,ancestors,defaultDescription,modificationTime,creationTime,contact,type,disabled,hidden,name.locale,permissions,tenantID,searchPath,repositoryRules';
         return me.requester
           .get(url)
-          .then(function(details) {
+          .then(function (details) {
             me.log('Got Folder Details', details);
             return details;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in getFolderDetails', err);
             me.handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, getFolderDetails again');
                 me.resetting = false;
                 return me.getFolderDetails(id);
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
-      }
+      },
     },
     {
       key: 'addFolder',
@@ -1301,11 +1304,11 @@ var Cognos = (function() {
         var me = this;
         var params = {
           defaultName: name,
-          type: 'folder'
+          type: 'folder',
         };
         return me.requester
           .post('bi/v1/objects/' + parentid + '/items', params, true)
-          .then(function(response) {
+          .then(function (response) {
             me.log('created folder');
 
             if (response.headers && response.headers.location) {
@@ -1316,23 +1319,23 @@ var Cognos = (function() {
 
             return {
               name: name,
-              id: id
+              id: id,
             };
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in addFolder', err);
             return me
               .handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, lets add the folder again');
                 me.resetting = false;
                 return me.addFolder(parentid, name);
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
-      }
+      },
     },
     {
       key: 'deleteFolder',
@@ -1348,27 +1351,27 @@ var Cognos = (function() {
         var me = this;
         var params = {
           force: force,
-          recursive: recursive
+          recursive: recursive,
         };
         return me.requester['delete']('bi/v1/objects/' + id, params, true)
-          .then(function() {
+          .then(function () {
             me.log('Deleted folder');
             return true;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in deleteFolder', err);
             return me
               .handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, delete the folder again');
                 me.resetting = false;
                 return me.deleteFolder(id, force, recursive);
               })
-              ['catch'](function(errtwo) {
+              ['catch'](function (errtwo) {
                 throw errtwo;
               });
           });
-      }
+      },
     },
     {
       key: 'getReportData',
@@ -1384,7 +1387,7 @@ var Cognos = (function() {
         var me = this;
         var promptString = '';
         var keys = Object.keys(prompts);
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
           promptString += '&p_' + key + '=' + prompts[key];
         });
         var result = me.requester
@@ -1395,25 +1398,25 @@ var Cognos = (function() {
               limit +
               promptString
           )
-          .then(function(data) {
+          .then(function (data) {
             me.log('retrieved the data', data);
             return data;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in getReportData', err);
             return me
               .handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, get Report Data again');
                 me.resetting = false;
                 return me.getReportData(id, prompts, limit);
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
         return result;
-      }
+      },
     },
     {
       key: 'uploadExtension',
@@ -1426,15 +1429,15 @@ var Cognos = (function() {
         var path = 'bi/v1/plugins/' + type + '/' + name;
         var result = this.requester
           .put(path, filename, false)
-          .then(function(response) {
+          .then(function (response) {
             me.log('New extension id =' + response.id);
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in uploadExtension', err);
             throw err;
           });
         return result;
-      }
+      },
     },
     {
       key: 'upLoadDataFile',
@@ -1443,23 +1446,23 @@ var Cognos = (function() {
         var path = 'bi/v1/metadata/files?filename=' + file;
         var result = this.requester
           .uploadfile(path, filename)
-          .then(function(response) {
+          .then(function (response) {
             me.log('New extension id =' + response);
 
             if (response) {
               path = 'bi/v1/metadata/files/segment/' + response + '?index=1';
               me.requester
                 .uploadfilepart(path, filename)
-                .then(function(response) {
+                .then(function (response) {
                   me.log('New extension id =' + response);
                   path =
                     'bi/v1/metadata/files/segment/' + response + '?index=-1';
                   me.requester
                     .uploadfilepartFinish(path)
-                    .then(function(response) {
+                    .then(function (response) {
                       me.log('New extension id =' + response);
                     })
-                    ['catch'](function(err) {
+                    ['catch'](function (err) {
                       me.error(
                         'CognosRequest : Error in uploadDataFile Part',
                         err
@@ -1467,18 +1470,18 @@ var Cognos = (function() {
                       throw err;
                     });
                 })
-                ['catch'](function(err) {
+                ['catch'](function (err) {
                   me.error('CognosRequest : Error in uploadDataFile Part', err);
                   throw err;
                 });
             }
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in uploadDataFile', err);
             throw err;
           });
         return result;
-      }
+      },
     },
     {
       key: 'getPalettes',
@@ -1486,25 +1489,25 @@ var Cognos = (function() {
         var me = this;
         var result = me.requester
           .get('bi/v1/palettes/public')
-          .then(function(data) {
+          .then(function (data) {
             me.log('retrieved the data', data);
             return data;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in getPalettes', err);
             return me
               .handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, getPalettes again');
                 me.resetting = false;
                 return me.getPalettes();
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
         return result;
-      }
+      },
     },
     {
       key: 'savePalette',
@@ -1519,11 +1522,11 @@ var Cognos = (function() {
         if (id) {
           result = me.requester
             .put('bi/v1/palettes/' + id, false, palette)
-            .then(function() {
+            .then(function () {
               me.log('saved palette ' + id);
               return id;
             })
-            ['catch'](function(err) {
+            ['catch'](function (err) {
               me.error('CognosRequest : Error in savePalette', err);
 
               if (err == 'Not Found') {
@@ -1532,56 +1535,56 @@ var Cognos = (function() {
 
               return me
                 .handleError(err)
-                .then(function() {
+                .then(function () {
                   me.log('We have been reset, savePalette again');
                   me.resetting = false;
                   return me.savePalette(id, palette);
                 })
-                ['catch'](function() {
+                ['catch'](function () {
                   throw err;
                 });
             });
         } else {
           result = me.requester
             .post('bi/v1/palettes/my', palette, true)
-            .then(function() {
+            .then(function () {
               me.log('saved palette');
             })
-            ['catch'](function(err) {
+            ['catch'](function (err) {
               me.error('CognosRequest : Error in savePalette', err);
               return me
                 .handleError(err)
-                .then(function() {
+                .then(function () {
                   me.log('We have been reset, savePalette again');
                   me.resetting = false;
                   return me.savePalette(palette, id);
                 })
-                ['catch'](function() {
+                ['catch'](function () {
                   throw err;
                 });
             });
         }
 
         return result;
-      }
+      },
     },
     {
       key: 'deletePalette',
       value: function deletePalette(id) {
         var me = this;
         var params = {
-          force: 'true'
+          force: 'true',
         };
         var result = me.requester['delete'](
           'bi/v1/palettes/' + id,
           params,
           false
         )
-          .then(function() {
+          .then(function () {
             me.log('deleted palette ' + id);
             return id;
           })
-          ['catch'](function(err) {
+          ['catch'](function (err) {
             me.error('CognosRequest : Error in deletePalette', err);
 
             if (err == 'Not Found') {
@@ -1590,18 +1593,18 @@ var Cognos = (function() {
 
             return me
               .handleError(err)
-              .then(function() {
+              .then(function () {
                 me.log('We have been reset, deletePalette again');
                 me.resetting = false;
                 return me.deletePalette(id);
               })
-              ['catch'](function() {
+              ['catch'](function () {
                 throw err;
               });
           });
         return result;
-      }
-    }
+      },
+    },
   ]);
 
   return Cognos;
@@ -1631,7 +1634,7 @@ function getCognos() {
       timeout,
       ignoreInvalidCertificates
     )
-      .then(function(cRequest) {
+      .then(function (cRequest) {
         jCognos = new Cognos(debug, timeout, ignoreInvalidCertificates);
         jCognos.requester = cRequest;
         jCognos.url = url;
@@ -1639,7 +1642,7 @@ function getCognos() {
         jCognos.namespaces = cRequest.namespaces;
         return jCognos;
       })
-      ['catch'](function(err) {
+      ['catch'](function (err) {
         throw err;
       });
     return myRequest;

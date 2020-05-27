@@ -8,8 +8,8 @@ exports.config = {
       'goog:chromeOptions': {
         // to run chrome headless the following flags are required
         // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-        args: ['--headless', '--disable-gpu']
-      }
+        args: ['--headless', '--disable-gpu'],
+      },
     },
     {
       // maxInstances can get overwritten per capability. So if you have an in house Selenium
@@ -20,18 +20,18 @@ exports.config = {
       //      specs: ["test/ffOnly/*"],
       'moz:firefoxOptions': {
         // flag to activate Firefox headless mode (see https://github.com/mozilla/geckodriver/blob/master/README.md#firefox-capabilities for more details about moz:firefoxOptions)
-        args: ['-headless']
-      }
-    }
+        args: ['-headless'],
+      },
+    },
   ],
   services: ['selenium-standalone'],
   specs: [
-    './test/1_API.js',
+    //  './test/1_API.js',
     './test/2_loginlogoff.js',
-    './test/3_loginlogofffailures.js',
-    './test/4_Reset.js',
-    './test/5_NameSpaces.js',
-    './test/6_ConfigurationKeys.js'
+    //    './test/3_loginlogofffailures.js',
+    //  './test/4_Reset.js',
+    //    './test/5_NameSpaces.js',
+    //    './test/6_ConfigurationKeys.js'
   ],
   exclude: [],
   maxInstances: 2,
@@ -47,6 +47,6 @@ exports.config = {
     ui: 'bdd',
     timeout: 30000,
     // We wrote the tests in ES-2016 so we need to transpile
-    compilers: ['js:@babel/register']
-  }
+    compilers: ['js:@babel/register'],
+  },
 };

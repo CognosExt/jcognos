@@ -1,7 +1,7 @@
 if (typeof window == 'undefined') {
   var chai = require('chai');
   var settings = require('./Settings.json');
-  var uuidv4 = require('uuid/v4');
+  var uuidv4 = require('uuid');
 
   var jcognos = require('../dist/jcognos.esm');
   var url = settings.url;
@@ -17,23 +17,23 @@ var assert = chai.assert;
 
 var cognos;
 
-describe('Logon Logoff with success', function() {
-  afterEach(function() {
+describe('Logon Logoff with success', function () {
+  afterEach(function () {
     // Somehow in WebRunner (wdio) cognos is not set on time to logout.
     if (typeof cognos !== 'undefined') {
       return cognos
         .logoff()
-        .then(function(folder) {
+        .then(function (folder) {
           assert.equal(cognos.loggedin, false, 'Logged off');
         })
-        .catch(function(err) {
+        .catch(function (err) {
           console.log('Error logging of caught');
         });
     }
   });
-  it('Succesful login without namespace', function() {
+  it('Succesful login without namespace', function () {
     return getCognos(url, debug)
-      .then(function(lcognos) {
+      .then(function (lcognos) {
         cognos = lcognos;
         assert.isOk(lcognos, 'Succesfully created Cognos');
         if (!cognos.loggedin) {
@@ -42,7 +42,7 @@ describe('Logon Logoff with success', function() {
           return lcognos;
         }
       })
-      .then(function(mycognos) {
+      .then(function (mycognos) {
         assert.isObject(cognos.preferences, 'User has preferences');
         assert.isArray(
           cognos.capabilities.userCapabilities,
@@ -56,7 +56,7 @@ describe('Logon Logoff with success', function() {
         );
         assert.isOk(true, 'Succesfully logged in');
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.log('Error is', err);
         assert.equal(
           err,
@@ -64,9 +64,9 @@ describe('Logon Logoff with success', function() {
         );
       });
   }),
-    it('Successful login with namespace', function() {
+    it('Successful login with namespace', function () {
       return getCognos(url, debug)
-        .then(function(lcognos) {
+        .then(function (lcognos) {
           cognos = lcognos;
           assert.isOk(lcognos, 'Succesfully created Cognos');
           if (!cognos.loggedin) {
@@ -74,13 +74,13 @@ describe('Logon Logoff with success', function() {
           }
           return lcognos;
         })
-        .then(function(mycognos) {
+        .then(function (mycognos) {
           assert.isOk(true, 'Succesfully logged in');
-          return mycognos.logoff().then(function() {
+          return mycognos.logoff().then(function () {
             return mycognos;
           });
         })
-        .catch(function(err) {
+        .catch(function (err) {
           assert.equal(
             err,
             'Network Error. ' //note the space!
