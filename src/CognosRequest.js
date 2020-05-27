@@ -119,7 +119,11 @@ class CognosRequest {
         //TODO CookieJar is not set. Fix that.
         jar: cookieJar,
         withCredentials: false, // If true, send cookie stored in jar
-        headers: firstheaders
+        headers: firstheaders,
+        validateStatus: function validateStatus(status) {
+          console.log('HERE IS THE ERROR: ' + status);
+          return status >= 200 && status < 300;
+        }
       })
       .then(function() {
         me.log('Unexpected success');
