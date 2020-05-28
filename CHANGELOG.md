@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/CognosExt/jcognos/compare/v2.1.1...v2.2.0) (2020-05-28)
+
+
+### Features
+
+* adding possibiltiy to upload visualisations ([d1b4674](https://github.com/CognosExt/jcognos/commit/d1b46747df06281193832589c6757156bb5b3f0d))
+
+
+### Bug Fixes
+
+* removed code and made it more robust ([b8bec1b](https://github.com/CognosExt/jcognos/commit/b8bec1bd466e18a6afd11389f4fe3db36a59e42b))
+
 ### [2.1.1](https://github.com/CognosExt/jcognos/compare/v2.1.0...v2.1.1) (2019-08-21)
 
 
