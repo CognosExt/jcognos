@@ -20,13 +20,12 @@
   },
   "lint-staged": {
     "*.js": [
-      "node_modules/.bin/prettier --write --single-quote",
-      "git add"
+      "node_modules/.bin/prettier --write --single-quote"
     ]
   },
   "husky": {
     "hooks": {
-      "pre-commit": "node_modules/documentation/bin/documentation.js build src/** -f html -o docs ; git add docs/** ;  node_modules/.bin/documentation readme src/Cognos.js --section=Usage ; git add README.md ; node_modules/.bin/lint-staged"
+      "pre-commit": "node_modules/documentation/bin/documentation.js build src/** -f html -o docs ; node_modules/.bin/documentation readme src/Cognos.js --section=Usage ; node_modules/.bin/lint-staged"
     }
   },
   "repository": {
