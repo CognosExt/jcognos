@@ -1,6 +1,6 @@
 {
   "name": "jcognos",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Javascript Library that simplifies working with IBM Cognos",
   "main": "dist/jcognos.cjs.js",
   "module": "dist/jcognos.esm.js",
@@ -81,6 +81,7 @@
     "axios": "^0.19.2",
     "axios-cookiejar-support": "^1.0.0",
     "https": "^1.0.0",
-    "rollup": "^2.10.9"
+    "rollup": "^2.10.9",
+    "tough-cookie": "^4.0.0"
   }
 }
