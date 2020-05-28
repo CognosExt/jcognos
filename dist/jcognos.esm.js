@@ -1418,7 +1418,14 @@ var Cognos = (function () {
             ? arguments[2]
             : 'extensions';
         var me = this;
-        var path = 'bi/v1/plugins/' + type + '/' + name;
+        var path = '';
+
+        if (type == 'visualisation') {
+          var path = 'bi/v1/visualizations/id/' + name;
+        } else {
+          var path = 'bi/v1/plugins/' + type + '/' + name;
+        }
+
         var result = this.requester
           .put(path, filename, false)
           .then(function (response) {

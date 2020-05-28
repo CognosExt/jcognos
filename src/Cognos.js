@@ -113,39 +113,39 @@ class Cognos {
       parameters: [
         {
           name: 'CAMNamespace',
-          value: namespace
+          value: namespace,
         },
         {
           name: 'h_CAM_action',
-          value: 'logonAs'
+          value: 'logonAs',
         },
         {
           name: 'CAMUsername',
-          value: user
+          value: user,
         },
         {
           name: 'CAMPassword',
-          value: password
-        }
-      ]
+          value: password,
+        },
+      ],
     };
 
     this.loginrequest = me.requester
       .post('bi/v1/login', params)
-      .then(function(response) {
+      .then(function (response) {
         me.loggedin = true;
         me.username = user;
         me.password = password;
         me.namespace = namespace;
         me.loginrequest = false;
         var capabilities = Promise.resolve(
-          me.requester.get('bi/v1/users/~/capabilities').then(function(caps) {
+          me.requester.get('bi/v1/users/~/capabilities').then(function (caps) {
             me.capabilities = caps;
             return caps;
           })
         );
         var preferences = Promise.resolve(
-          me.requester.get('bi/v1/users/~/preferences').then(function(prefs) {
+          me.requester.get('bi/v1/users/~/preferences').then(function (prefs) {
             me.preferences = prefs;
             return prefs;
           })
@@ -160,10 +160,10 @@ class Cognos {
 
         return Promise.resolve(Promise.all([capabilities, preferences]));
       })
-      .then(function() {
+      .then(function () {
         return me;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.log('Cognos: Error when logging in.');
         me.loginrequest = false;
         throw err;
@@ -183,11 +183,11 @@ class Cognos {
     if (typeof me.requester !== undefined) {
       return me.requester
         .delete('bi/v1/login')
-        .then(function(body) {
+        .then(function (body) {
           me.loggedin = false;
           return body;
         })
-        .catch(function(err) {
+        .catch(function (err) {
           me.log('Cognos: Error when logging off.', err);
         });
     } else {
@@ -264,18 +264,18 @@ class Cognos {
       this.timeout,
       this.ignoreInvalidCertificates
     )
-      .then(function(cRequest) {
+      .then(function (cRequest) {
         me.requester = cRequest;
         me.log('going to login again');
         let result = me.login(me.username, me.password, me.namespace);
         me.log('login promise', result);
         return Promise.resolve(result);
       })
-      .then(function() {
+      .then(function () {
         me.log('Done logging in');
         return Promise.resolve();
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('Error resetting', err);
         if (me.retrycount < 3) {
           return me.reset();
@@ -296,10 +296,10 @@ class Cognos {
     var url = 'bi/v1/plugins/themes/current/spec.json';
     var result = me.requester
       .get(url)
-      .then(function(themesettings) {
+      .then(function (themesettings) {
         return themesettings;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('Error while fetching Cognos Current Theme Settings.', err);
         throw err;
       });
@@ -319,11 +319,11 @@ class Cognos {
     var url = 'bi/v1/configuration/keys/Glass.productVersion';
     var result = me.requester
       .get(url)
-      .then(function(version) {
+      .then(function (version) {
         me.productVersion = version['Glass.productVersion'];
         return me.productVersion;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('Error while fetching Cognos Version.', err);
         throw err;
       });
@@ -343,13 +343,13 @@ class Cognos {
     var url = 'bi/v1/configuration/keys/global';
     return me.requester
       .put(url, false, { [inkey]: value })
-      .then(function(version) {
+      .then(function (version) {
         me.productVersion = version['Glass.productVersion'];
         me.log('saved key ' + inkey + ' with value ' + value);
         var returnvalue = { [inkey]: value };
         return returnvalue;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('Error while setting key ' + inkey, err);
         throw err;
       });
@@ -365,10 +365,10 @@ class Cognos {
     var url = 'bi/v1/configuration/keys';
     return me.requester
       .get(url)
-      .then(function(keys) {
+      .then(function (keys) {
         return keys;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('Error while fetching Cognos configuration keys.', err);
         throw err;
       });
@@ -383,10 +383,10 @@ class Cognos {
     var me = this;
     return me
       .getConfig()
-      .then(function(keys) {
+      .then(function (keys) {
         return keys.global[key];
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('Error while fetching Cognos configuration keys.', err);
         throw err;
       });
@@ -401,7 +401,7 @@ class Cognos {
     var me = this;
     var url = '';
 
-    return this.getCognosVersion().then(function(version) {
+    return this.getCognosVersion().then(function (version) {
       if (version.substr(0, 4) == '11.1') {
         // Cognos 10 & 11 (but might be depricated)
         // the dojo= is added to make the result json. the alternative is xml.
@@ -413,7 +413,7 @@ class Cognos {
       //    return Promise.resolve(
       return me.requester
         .get(url)
-        .then(function(folders) {
+        .then(function (folders) {
           var id;
           if (version.substr(0, 4) == '11.1') {
             // This is pure evil. It is only there because JSON.parse breaks on the json returned
@@ -427,7 +427,7 @@ class Cognos {
           }
           return id;
         })
-        .catch(function(err) {
+        .catch(function (err) {
           me.error('There was an error fetching the folder id', err);
           throw err;
         });
@@ -445,37 +445,37 @@ class Cognos {
     var rootfolders = [];
     return me.requester
       .get('bi/v1/objects/.my_folders?fields=permissions')
-      .then(function(folders) {
+      .then(function (folders) {
         me.log('Got the Private Folders');
         if (typeof folders !== 'undefined') {
           rootfolders.push({
             id: folders.data[0].id,
-            name: 'My Content'
+            name: 'My Content',
           });
         }
         return rootfolders;
       })
-      .then(function() {
-        return me._getPublicFolderId().then(function(id) {
+      .then(function () {
+        return me._getPublicFolderId().then(function (id) {
           me.log('Got the Public Folders');
           if (typeof id !== 'undefined') {
             rootfolders.push({
               id: id,
-              name: 'Team Content'
+              name: 'Team Content',
             });
           }
           return rootfolders;
         });
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in listRootFolder', err);
         me.handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, list the root folder again');
             me.resetting = false;
             return me.listRootFolder();
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -490,22 +490,22 @@ class Cognos {
     var me = this;
     var result = me
       ._getPublicFolderId()
-      .then(function(id) {
+      .then(function (id) {
         if (typeof id !== 'undefined') {
           return Promise.resolve(me.listFolderById(id));
         }
         return {};
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in listPublicFolders', err);
 
         me.handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, list the public folders again');
             me.resetting = false;
             return me.listPublicFolders();
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -529,9 +529,9 @@ class Cognos {
           id +
           '/items?nav_filter=true&fields=defaultName,defaultScreenTip'
       )
-      .then(function(folders) {
+      .then(function (folders) {
         var result = [];
-        folders.data.forEach(function(folder) {
+        folders.data.forEach(function (folder) {
           // options is optional
           if (minimatch(folder.defaultName, pattern)) {
             me.log('folder ', folder.defaultName);
@@ -541,7 +541,7 @@ class Cognos {
                   name: folder.defaultName,
                   id: folder.id,
                   searchPath: folder.searchPath,
-                  type: folder.type
+                  type: folder.type,
                 };
                 result.push(tpFolder);
               }
@@ -552,17 +552,17 @@ class Cognos {
         });
         return result;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in listFolderById', err);
 
         return me
           .handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, list the folder by id again');
             me.resetting = false;
             return me.listFolderById(id, pattern, types);
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -583,19 +583,19 @@ class Cognos {
       '?fields=id,defaultName,owner.defaultName,ancestors,defaultDescription,modificationTime,creationTime,contact,type,disabled,hidden,name.locale,permissions,tenantID,searchPath,repositoryRules';
     return me.requester
       .get(url)
-      .then(function(details) {
+      .then(function (details) {
         me.log('Got Folder Details', details);
         return details;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in getFolderDetails', err);
         me.handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, getFolderDetails again');
             me.resetting = false;
             return me.getFolderDetails(id);
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -612,12 +612,12 @@ class Cognos {
     var me = this;
     var params = {
       defaultName: name,
-      type: 'folder'
+      type: 'folder',
     };
 
     return me.requester
       .post('bi/v1/objects/' + parentid + '/items', params, true)
-      .then(function(response) {
+      .then(function (response) {
         me.log('created folder');
         if (response.headers && response.headers.location) {
           var id = response.headers.location.split('/').pop();
@@ -626,20 +626,20 @@ class Cognos {
         }
         return {
           name: name,
-          id: id
+          id: id,
         };
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in addFolder', err);
 
         return me
           .handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, lets add the folder again');
             me.resetting = false;
             return me.addFolder(parentid, name);
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -657,26 +657,26 @@ class Cognos {
     var me = this;
     var params = {
       force: force,
-      recursive: recursive
+      recursive: recursive,
     };
 
     return me.requester
       .delete('bi/v1/objects/' + id, params, true)
-      .then(function() {
+      .then(function () {
         me.log('Deleted folder');
         return true;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in deleteFolder', err);
 
         return me
           .handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, delete the folder again');
             me.resetting = false;
             return me.deleteFolder(id, force, recursive);
           })
-          .catch(function(errtwo) {
+          .catch(function (errtwo) {
             throw errtwo;
           });
       });
@@ -689,7 +689,7 @@ class Cognos {
     // https://srv06.gologic.eu/ibmcognos/bi/v1/disp/rds/reportData/report/i821EB6721EDB41A29E0361BC83393C56?fmt=DataSet&rowLimit=2000
     var promptString = '';
     var keys = Object.keys(prompts);
-    keys.forEach(function(key) {
+    keys.forEach(function (key) {
       promptString += '&p_' + key + '=' + prompts[key];
     });
 
@@ -701,21 +701,21 @@ class Cognos {
           limit +
           promptString
       )
-      .then(function(data) {
+      .then(function (data) {
         me.log('retrieved the data', data);
         return data;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in getReportData', err);
 
         return me
           .handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, get Report Data again');
             me.resetting = false;
             return me.getReportData(id, prompts, limit);
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -724,24 +724,29 @@ class Cognos {
   }
 
   /**
-   * uploadExtension - Uploads zipfile containing Cognos Extension. Only supports updating an existing module.
+   * uploadExtension - Uploads zipfile containing Cognos Extension or visualisation. Only supports updating an existing module.
    * This function is only supported by Node.js. In the browser this function returns false;
    *
    * @param  {String} filename Path to the .zip file
-   * @param  {String} name name of the module (as found in the spec.json)
-   * @param  {String} type type of upload. Default is 'extensions', for themes use 'themes'.
+   * @param  {String} name name of the module (as found in the spec.json), for visualisations: id of the visualisation (as found in the package.json > meta > id)
+   * @param  {String} type type of upload. Default is 'extensions', for themes use 'themes' for visualisations 'visualisation'.
    * @return {Promise} Promise that resolves to a string.
    */
   uploadExtension(filename, name, type = 'extensions') {
     var me = this;
-    var path = 'bi/v1/plugins/' + type + '/' + name;
+    var path = '';
+    if (type == 'visualisation') {
+      var path = 'bi/v1/visualizations/id/' + name;
+    } else {
+      var path = 'bi/v1/plugins/' + type + '/' + name;
+    }
     // The reading of the file and the actual put have to be in the same function. So not much to see here.
     var result = this.requester
       .put(path, filename, false)
-      .then(function(response) {
+      .then(function (response) {
         me.log('New extension id =' + response.id);
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in uploadExtension', err);
         throw err;
       });
@@ -757,33 +762,33 @@ class Cognos {
     // The reading of the file and the actual put have to be in the same function. So not much to see here.
     var result = this.requester
       .uploadfile(path, filename)
-      .then(function(response) {
+      .then(function (response) {
         me.log('New extension id =' + response);
 
         if (response) {
           path = 'bi/v1/metadata/files/segment/' + response + '?index=1';
           me.requester
             .uploadfilepart(path, filename)
-            .then(function(response) {
+            .then(function (response) {
               me.log('New extension id =' + response);
               path = 'bi/v1/metadata/files/segment/' + response + '?index=-1';
               me.requester
                 .uploadfilepartFinish(path)
-                .then(function(response) {
+                .then(function (response) {
                   me.log('New extension id =' + response);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                   me.error('CognosRequest : Error in uploadDataFile Part', err);
                   throw err;
                 });
             })
-            .catch(function(err) {
+            .catch(function (err) {
               me.error('CognosRequest : Error in uploadDataFile Part', err);
               throw err;
             });
         }
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in uploadDataFile', err);
         throw err;
       });
@@ -794,21 +799,21 @@ class Cognos {
     var me = this;
     var result = me.requester
       .get('bi/v1/palettes/public')
-      .then(function(data) {
+      .then(function (data) {
         me.log('retrieved the data', data);
         return data;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in getPalettes', err);
 
         return me
           .handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, getPalettes again');
             me.resetting = false;
             return me.getPalettes();
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -822,42 +827,42 @@ class Cognos {
     if (id) {
       result = me.requester
         .put('bi/v1/palettes/' + id, false, palette)
-        .then(function() {
+        .then(function () {
           me.log('saved palette ' + id);
           return id;
         })
-        .catch(function(err) {
+        .catch(function (err) {
           me.error('CognosRequest : Error in savePalette', err);
           if (err == 'Not Found') {
             throw 'Palette with id ' + id + ' is not found';
           }
           return me
             .handleError(err)
-            .then(function() {
+            .then(function () {
               me.log('We have been reset, savePalette again');
               me.resetting = false;
               return me.savePalette(id, palette);
             })
-            .catch(function() {
+            .catch(function () {
               throw err;
             });
         });
     } else {
       result = me.requester
         .post('bi/v1/palettes/my', palette, true)
-        .then(function() {
+        .then(function () {
           me.log('saved palette');
         })
-        .catch(function(err) {
+        .catch(function (err) {
           me.error('CognosRequest : Error in savePalette', err);
           return me
             .handleError(err)
-            .then(function() {
+            .then(function () {
               me.log('We have been reset, savePalette again');
               me.resetting = false;
               return me.savePalette(palette, id);
             })
-            .catch(function() {
+            .catch(function () {
               throw err;
             });
         });
@@ -868,28 +873,28 @@ class Cognos {
   deletePalette(id) {
     var me = this;
     var params = {
-      force: 'true'
+      force: 'true',
     };
 
     var result = me.requester
       .delete('bi/v1/palettes/' + id, params, false)
-      .then(function() {
+      .then(function () {
         me.log('deleted palette ' + id);
         return id;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         me.error('CognosRequest : Error in deletePalette', err);
         if (err == 'Not Found') {
           throw 'Palette with id ' + id + ' is not found';
         }
         return me
           .handleError(err)
-          .then(function() {
+          .then(function () {
             me.log('We have been reset, deletePalette again');
             me.resetting = false;
             return me.deletePalette(id);
           })
-          .catch(function() {
+          .catch(function () {
             throw err;
           });
       });
@@ -926,7 +931,7 @@ function getCognos(
       timeout,
       ignoreInvalidCertificates
     )
-      .then(function(cRequest) {
+      .then(function (cRequest) {
         jCognos = new Cognos(debug, timeout, ignoreInvalidCertificates);
         jCognos.requester = cRequest;
         jCognos.url = url;
@@ -934,7 +939,7 @@ function getCognos(
         jCognos.namespaces = cRequest.namespaces;
         return jCognos;
       })
-      .catch(function(err) {
+      .catch(function (err) {
         throw err;
       });
     return myRequest;

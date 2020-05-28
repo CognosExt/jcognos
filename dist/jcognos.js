@@ -17162,17 +17162,19 @@
                   ? arguments[2]
                   : 'extensions',
               t = this,
-              i = 'bi/v1/plugins/' + o + '/' + a,
-              n = this.requester
-                .put(i, e, !1)
-                .then(function (e) {
-                  t.log('New extension id =' + e.id);
-                })
-                .catch(function (e) {
-                  throw (
-                    (t.error('CognosRequest : Error in uploadExtension', e), e)
-                  );
-                });
+              i = '';
+            if ('visualisation' == o) i = 'bi/v1/visualizations/id/' + a;
+            else i = 'bi/v1/plugins/' + o + '/' + a;
+            var n = this.requester
+              .put(i, e, !1)
+              .then(function (e) {
+                t.log('New extension id =' + e.id);
+              })
+              .catch(function (e) {
+                throw (
+                  (t.error('CognosRequest : Error in uploadExtension', e), e)
+                );
+              });
             return n;
           },
         },

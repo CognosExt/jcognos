@@ -1665,7 +1665,7 @@ retrieve the Cognos instance.</p>
 
   
 
-  <p>uploadExtension - Uploads zipfile containing Cognos Extension. Only supports updating an existing module.
+  <p>uploadExtension - Uploads zipfile containing Cognos Extension or visualisation. Only supports updating an existing module.
 This function is only supported by Node.js. In the browser this function returns false;</p>
 
     <div class='pre p1 fill-light mt0'>uploadExtension(filename: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, type: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></div>
@@ -1695,7 +1695,7 @@ This function is only supported by Node.js. In the browser this function returns
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
-	    name of the module (as found in the spec.json)
+	    name of the module (as found in the spec.json), for visualisations: id of the visualisation (as found in the package.json > meta > id)
 
           </div>
           
@@ -1705,7 +1705,7 @@ This function is only supported by Node.js. In the browser this function returns
           <div>
             <span class='code bold'>type</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>
             = <code>&#39;extensions&#39;</code>)</code>
-	    type of upload. Default is 'extensions', for themes use 'themes'.
+	    type of upload. Default is 'extensions', for themes use 'themes' for visualisations 'visualisation'.
 
           </div>
           
