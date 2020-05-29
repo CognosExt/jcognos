@@ -741,7 +741,7 @@ class Cognos {
       var path = 'bi/v1/plugins/' + type + '/' + name;
     }
     // The reading of the file and the actual put have to be in the same function. So not much to see here.
-    var result = this.requester
+    return this.requester
       .put(path, filename, false)
       .then(function (response) {
         me.log('New extension id =' + response.id);
@@ -750,7 +750,6 @@ class Cognos {
         me.error('CognosRequest : Error in uploadExtension', err);
         throw err;
       });
-    return result;
   }
 
   upLoadDataFile(filename) {
