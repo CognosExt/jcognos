@@ -26,12 +26,12 @@ exports.config = {
   ],
   services: ['selenium-standalone'],
   specs: [
-    //  './test/1_API.js',
+    './test/1_API.js',
     './test/2_loginlogoff.js',
-    //    './test/3_loginlogofffailures.js',
-    //  './test/4_Reset.js',
-    //    './test/5_NameSpaces.js',
-    //    './test/6_ConfigurationKeys.js'
+    './test/3_loginlogofffailures.js',
+    './test/4_Reset.js',
+    './test/5_NameSpaces.js',
+    './test/6_ConfigurationKeys.js',
   ],
   exclude: [],
   maxInstances: 2,
