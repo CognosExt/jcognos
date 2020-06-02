@@ -74,7 +74,7 @@
     "rollup-plugin-terser": "^6.1.0",
     "standard-version": "^8.0.0",
     "uuid": "^8.1.0",
-    "webdriverio": "^6.1.12"
+    "webdriverio": "^6.1.16"
   },
   "dependencies": {
     "axios": "^0.19.2",
